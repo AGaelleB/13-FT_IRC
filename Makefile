@@ -8,8 +8,9 @@ CPP_FLAGS = -Wall -Wextra -Werror -std=c++98
 OBJ_DIR = objs
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.cpp=.o)))
 
-SRCS = main.cpp \
-	ircserv.cpp \
+SRCS =	main.cpp \
+		IRCServ.cpp \
+		Client.cpp \
 
 RM = rm -rf
 
