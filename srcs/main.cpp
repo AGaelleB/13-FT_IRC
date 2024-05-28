@@ -1,32 +1,18 @@
-#include "../includes/main.hpp"
+#include "../includes/Server.hpp"
 
 int main(int ac, char **av) {
-
-	Server *server;
-
 	if (ac != 3) {
 		std::cerr << RED << "Error: must be ./Server <port> <password>" << RESET << std::endl;
-		return 1;
+		return (1);
 	}
-	(void)av;
 
-	// 1. Crée un socket: socket()
-	int server_socket = socket(AF_INET, SOCK_STREAM, 0);
-	if (server_socket == -1) {
-		std::cerr << "Erreur lors de la création du socket" << std::endl;
-		return 1;
-	}
-	std::cout << "Socket créé avec succès, descripteur : " << server_socket << std::endl;
+	int port = std::atoi(av[1]);
+	std::string password = av[2];
 
-	// 2. Lie le socket à une adresse IP et un port: bind(), htons()
-	server->server_addr.sin_family = AF_INET;
-	server->server_addr.sin_addr.s_addr = 
-	server->server_addr.sin_port = 
+	Server server(port, password);
+	server.startServer();
 
-
-
-	close(server_socket); // Fermer le socket
-	return 0;
+	return (0);
 }
 
 

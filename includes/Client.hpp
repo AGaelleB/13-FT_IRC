@@ -1,8 +1,6 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "main.hpp"
-
 class Client {
 
 	private :

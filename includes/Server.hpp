@@ -1,22 +1,22 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "main.hpp"
+#include "../includes/Library.hpp"
+#include "../includes/Colors.hpp"
 
 class Server {
+	private:
+		int					_server_socket;
+		struct sockaddr_in	_server_addr;
+		std::string			_password;
 
-	private :
-	
-	public :
+	public:
 		Server();
-		Server & operator=(Server const & rhs);
-		Server(Server const & obj);
+		Server(int port, const std::string &password);
 		~Server();
 
-		struct sockaddr_in server_addr;
-
-
-
+		void	startServer();
+		int		port;
 };
 
 #endif // SERVER_HPP
