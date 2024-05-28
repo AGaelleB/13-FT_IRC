@@ -1,22 +1,22 @@
 
-#include "../includes/IRCServ.hpp"
+#include "../includes/Server.hpp"
 
 
 /****************************************** FORME CANONIQUE ******************************************/
 
-IRCServ::IRCServ() {
+Server::Server() {
 }
 
-IRCServ & IRCServ::operator=(IRCServ const & rhs) {
+Server & Server::operator=(Server const & rhs) {
 	if (this == &rhs)
 		return (*this);
 	return (*this);
 }
 
-IRCServ::IRCServ(IRCServ const & obj) {
+Server::Server(Server const & obj) {
 	*this = obj;
 }
 
-IRCServ::~IRCServ() {
+Server::~Server() {
 }
 

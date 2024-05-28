@@ -12,7 +12,7 @@ Internet Relay Chat (IRC) est un protocole de communication textuel sur Internet
 
 ### Nom du programme
 
-- **ircserv**
+- **Server**
 
 ### Fichiers de rendu
 
@@ -38,7 +38,7 @@ Internet Relay Chat (IRC) est un protocole de communication textuel sur Internet
 - Développer un serveur IRC en C++ 98.
 - Pas besoin de développer un client IRC.
 - La communication entre serveurs IRC n’est pas à implémenter.
-- Le binaire doit être lancé comme suit : `./ircserv <port> <password>`
+- Le binaire doit être lancé comme suit : `./Server <port> <password>`
 
 ## Prérequis techniques
 

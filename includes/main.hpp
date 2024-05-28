@@ -3,7 +3,7 @@
 
 #include "Colors.hpp"
 #include "Client.hpp"
-#include "IRCServ.hpp"
+#include "Server.hpp"
 
 #include <iostream>
 #include <vector>		//-> for vector
