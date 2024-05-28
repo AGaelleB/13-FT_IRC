@@ -6,7 +6,6 @@
 class Server {
 
 	private :
-		struct sockaddr_in server_addr;
 	
 	public :
 		Server();
@@ -14,6 +13,7 @@ class Server {
 		Server(Server const & obj);
 		~Server();
 
+		struct sockaddr_in server_addr;
 
 
 

@@ -20,8 +20,10 @@ int main(int ac, char **av) {
 
 	// 2. Lie le socket à une adresse IP et un port: bind(), htons()
 	server->server_addr.sin_family = AF_INET;
-	server.server_addr.sin_addr.s_addr = 
-	server.server_addr.sin_port = 
+	server->server_addr.sin_addr.s_addr = 
+	server->server_addr.sin_port = 
+
+
 
 	close(server_socket); // Fermer le socket
 	return 0;
