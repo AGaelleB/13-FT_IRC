@@ -2,6 +2,7 @@
 #define SERVER_HPP
 
 #include "../includes/Library.hpp"
+#include "../includes/Client.hpp"
 
 class Server {
 	private:
@@ -14,6 +15,7 @@ class Server {
 		Server(int port, const std::string &password);
 		~Server();
 
+		void	handleClientMessage(const std::string& message, Client& client);
 		void	startServer();
 		int		port;
 };

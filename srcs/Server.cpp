@@ -36,14 +36,25 @@ Server::~Server() {
 		close(_server_socket);
 }
 
+void Server::handleClientMessage(const std::string& message, Client& client) {
+	std::cout << "Client: " << message << std::endl; //suppr
+
+	if (message.substr(0, 6) == "/login")
+		std::cout << "Login command received" << std::endl;
+	else if (message.substr(0, 8) == "/channel")
+		std::cout << "Channel command received" << std::endl;
+	else
+		std::cout << "Unknown command" << std::endl;
+	(void)client;
+}
+
 void Server::startServer() {
 	socklen_t client_len;
 	Client client;
 
-	// Display the banner text
-	std::cout << banner;
+	std::cout << bannerServer;
 
-	std::cout << ". . . Server listening on port " << port << " . . . " << std::endl;
+	std::cout << ". . Listening on port " << port << " . . . " << std::endl;
 
 	while (true) {
 		client_len = sizeof(client.getClientAddr());
@@ -62,7 +73,8 @@ void Server::startServer() {
 		while ((bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0)) > 0)
 		{
 			buffer[bytes_received] = '\0';
-			std::cout << "\nClient: " << buffer;
+			std::string message(buffer);
+			handleClientMessage(message, client);
 		}
 
 		if (bytes_received == -1)
@@ -73,4 +85,3 @@ void Server::startServer() {
 		close(client_socket);
 	}
 }
-

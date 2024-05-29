@@ -12,12 +12,18 @@
 #define BOLD	"\033[1;37m"
 #define RESET	"\033[0m"
 
-#define banner	BLUE "\n███████╗████████╗       ██╗██████╗  ██████╗\n" RESET \
-				BLUE "██╔════╝╚══██╔══╝       ██║██╔══██╗██╔════╝\n" RESET \
-				BLUE "█████╗     ██║          ██║██████╔╝██║     \n" RESET \
-				BLUE "██╔══╝     ██║          ██║██╔══██╗██║     \n" RESET \
-				BLUE "██║        ██║ ███████╗ ██║██║  ██║╚██████╗\n" RESET \
-				BLUE "╚═╝        ╚═╝ ╚══════╝ ╚═╝╚═╝  ╚═╝ ╚═════╝\n\n\n" RESET
+#define bannerIRC "\n" \
+				BLUE "    ____________        ________  ______\n" RESET \
+                BLUE "   / ____/_  __/       /  _/ __ \\/ ____/\n" RESET \
+                BLUE "  / /_    / /          / // /_/ / /     \n" RESET \
+                BLUE " / __/   / / ______  _/ // _, _/ /___   \n" RESET \
+                BLUE "/_/     /_/ /_____/ /___/_/ |_|\\____/   \n\n" RESET \
 
+#define bannerServer "\n" \
+				BLUE "   _____ __________ _    ____________  \n" RESET \
+                BLUE "  / ___// ____/ __ \\ |  / / ____/ __ \\\n" RESET \
+                BLUE "  \\__ \\/ __/ / /_/ / | / / __/ / /_/ /\n" RESET \
+                BLUE " ___/ / /___/ _, _/| |/ / /___/ _, _/ \n" RESET \
+                BLUE "/____/_____/_/ |_| |___/_____/_/ |_|  \n\n" RESET \
 
 #endif // COLORS_HPP
