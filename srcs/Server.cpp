@@ -40,7 +40,7 @@ void Server::startServer() {
 	socklen_t client_len;
 	Client client;
 
-	// Affichage du texte
+	// Display the banner text
 	std::cout << banner;
 
 	std::cout << ". . . Serveur en écoute sur le port " << port << " . . . " << std::endl;
@@ -56,9 +56,21 @@ void Server::startServer() {
 		client.setClientSocket(client_socket);
 		std::cout << "Nouvelle connexion acceptée" << std::endl;
 
-		// Vous pouvez ajouter ici le code pour traiter les données reçues du client.
+		char buffer[1024];
+		ssize_t bytes_received;
+		
+		while ((bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0)) > 0)
+		{
+			buffer[bytes_received] = '\0';
+			std::cout << "Client: " << buffer << std::endl;
+		}
 
-		// Fermez le socket client après avoir traité les données.
-		close(client.getClientSocket());
+		if (bytes_received == -1)
+			std::cerr << "Erreur lors de la réception des données" << std::endl;
+		else
+			std::cout << "Client disconnected" << std::endl;
+
+		close(client_socket);
 	}
 }
+
