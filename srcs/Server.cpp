@@ -49,18 +49,18 @@ void Server::handleClientMessage(const std::string& message, Client& client) {
 }
 
 void Server::sendMessage(int client_socket, const char* message) {
-    if (send(client_socket, message, strlen(message), 0) == -1) {
-        std::cerr << "Error: failed to send message" << std::endl;
-    }
+	if (send(client_socket, message, strlen(message), 0) == -1) {
+		std::cerr << "Error: failed to send message" << std::endl;
+	}
 }
 
 void Server::welcomeClient(int client_socket) {
-    const char*	welcome_msg = " ~~~ Welcome on our IRC Server! ~~~ \n\n";
-    const char*	log_msg = "Please login to our server or create a new account\n\n";
+	const char*	welcome_msg = " ~~~ Welcome on our IRC Server! ~~~ \n\n";
+	const char*	log_msg = "Please login to our server or create a new account\n\n";
 
-    sendMessage(client_socket, bannerIRC);
-    sendMessage(client_socket, welcome_msg);
-    sendMessage(client_socket, log_msg);
+	sendMessage(client_socket, bannerIRC);
+	sendMessage(client_socket, welcome_msg);
+	sendMessage(client_socket, log_msg);
 }
 
 void Server::startServer() {
