@@ -68,7 +68,7 @@ void Server::startServer() {
 		{
 			buffer[bytes_received] = '\0';
 			std::string message(buffer);
-			client.handleClientMessage(message, client);
+			client.handleClientMsg(message, client);
 		}
 
 		if (bytes_received == -1)

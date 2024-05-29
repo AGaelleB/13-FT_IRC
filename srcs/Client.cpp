@@ -38,7 +38,7 @@ void Client::setClientAddr(const struct sockaddr_in& addr) {
 
 /************************************** FUNCTIONS **************************************/
 
-void Client::handleClientMessage(const std::string& message, Client& client) {
+void Client::handleClientMsg(const std::string& message, Client& client) {
 	std::cout << "Client: " << message << std::endl; //suppr
 
 	if (message.substr(0, 6) == "/login")
@@ -50,7 +50,7 @@ void Client::handleClientMessage(const std::string& message, Client& client) {
 	(void)client;
 }
 
-void Client::sendMsgClient(int client_socket, const char* message) {
+void Client::sendClientMsg(int client_socket, const char* message) {
 	if (send(client_socket, message, strlen(message), 0) == -1) {
 		std::cerr << "Error: failed to send message" << std::endl;
 	}
@@ -60,7 +60,7 @@ void Client::welcomeClient(int client_socket) {
 	const char*	welcome_msg = " ~~~ Welcome on our IRC Server! ~~~ \n\n";
 	const char*	log_msg = "Please login to our server or create a new account\n\n";
 
-	sendMsgClient(client_socket, bannerIRC);
-	sendMsgClient(client_socket, welcome_msg);
-	sendMsgClient(client_socket, log_msg);
+	sendClientMsg(client_socket, bannerIRC);
+	sendClientMsg(client_socket, welcome_msg);
+	sendClientMsg(client_socket, log_msg);
 }

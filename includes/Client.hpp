@@ -22,8 +22,8 @@ class Client {
 		void				setClientAddr(const struct sockaddr_in& addr);
 
 		// Fonctions
-		void				handleClientMessage(const std::string& message, Client& client);
-		void				sendMsgClient(int client_socket, const char* message);
+		void				handleClientMsg(const std::string& message, Client& client);
+		void				sendClientMsg(int client_socket, const char* message);
 		void				welcomeClient(int client_socket);
 };
 
