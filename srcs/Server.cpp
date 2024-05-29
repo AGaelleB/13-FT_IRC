@@ -8,7 +8,7 @@ Server::Server(int port, const std::string &password) : _server_socket(-1), _pas
 	// 1. Crée un socket: socket()
 	_server_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_server_socket == -1) {
-		std::cerr << "Erreur lors de la création du socket" << std::endl;
+		std::cerr << "Error: socket creation failed" << std::endl;
 		exit(1);
 	}
 
@@ -18,14 +18,14 @@ Server::Server(int port, const std::string &password) : _server_socket(-1), _pas
 	_server_addr.sin_port = htons(port);
 
 	if (bind(_server_socket, (struct sockaddr*)&_server_addr, sizeof(_server_addr)) == -1) {
-		std::cerr << "Erreur lors du bind" << std::endl;
+		std::cerr << "Error: bind failed" << std::endl;
 		close(_server_socket);
 		exit(1);
 	}
 
 	// 3. Met le socket en écoute pour les connexions entrantes: listen()
 	if (listen(_server_socket, SOMAXCONN) == -1) {
-		std::cerr << "Erreur lors du listen" << std::endl;
+		std::cerr << "Error: listen failed" << std::endl;
 		close(_server_socket);
 		exit(1);
 	}
@@ -43,18 +43,18 @@ void Server::startServer() {
 	// Display the banner text
 	std::cout << banner;
 
-	std::cout << ". . . Serveur en écoute sur le port " << port << " . . . " << std::endl;
+	std::cout << ". . . Server listening on port " << port << " . . . " << std::endl;
 
 	while (true) {
 		client_len = sizeof(client.getClientAddr());
 		int client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
 		if (client_socket == -1) {
-			std::cerr << "Erreur lors de l'acceptation de la connexion" << std::endl;
+			std::cerr << "Error: connection not accepted" << std::endl;
 			continue;
 		}
 
 		client.setClientSocket(client_socket);
-		std::cout << "Nouvelle connexion acceptée" << std::endl;
+		std::cout << "\nNew connection accepted ​✅" << std::endl;
 
 		char buffer[1024];
 		ssize_t bytes_received;
@@ -62,11 +62,11 @@ void Server::startServer() {
 		while ((bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0)) > 0)
 		{
 			buffer[bytes_received] = '\0';
-			std::cout << "Client: " << buffer << std::endl;
+			std::cout << "\nClient: " << buffer;
 		}
 
 		if (bytes_received == -1)
-			std::cerr << "Erreur lors de la réception des données" << std::endl;
+			std::cerr << "Error: data reception failed" << std::endl;
 		else
 			std::cout << "Client disconnected" << std::endl;
 
