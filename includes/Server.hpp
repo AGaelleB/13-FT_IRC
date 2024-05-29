@@ -2,7 +2,6 @@
 #define SERVER_HPP
 
 #include "../includes/Library.hpp"
-#include "../includes/Colors.hpp"
 
 class Server {
 	private:

@@ -1,4 +1,5 @@
 #include "../includes/Server.hpp"
+#include "../includes/Client.hpp"
 
 Server::Server() : _server_socket(-1), _password("1234"), port(6667) {
 }
@@ -36,26 +37,28 @@ Server::~Server() {
 }
 
 void Server::startServer() {
-	int client_socket;
 	socklen_t client_len;
-	struct sockaddr_in client_addr;
+	Client client;
 
-	std::cout << "Serveur en écoute sur le port " << port << std::endl;
+	// Affichage du texte
+	std::cout << banner;
 
-	// 4. Accepte les connexions des clients: accept()
+	std::cout << ". . . Serveur en écoute sur le port " << port << " . . . " << std::endl;
+
 	while (true) {
-		client_len = sizeof(client_addr);
-		client_socket = accept(_server_socket, (struct sockaddr*)&client_addr, &client_len);
+		client_len = sizeof(client.getClientAddr());
+		int client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
 		if (client_socket == -1) {
 			std::cerr << "Erreur lors de l'acceptation de la connexion" << std::endl;
 			continue;
 		}
 
+		client.setClientSocket(client_socket);
 		std::cout << "Nouvelle connexion acceptée" << std::endl;
 
 		// Vous pouvez ajouter ici le code pour traiter les données reçues du client.
 
 		// Fermez le socket client après avoir traité les données.
-		close(client_socket);
+		close(client.getClientSocket());
 	}
 }

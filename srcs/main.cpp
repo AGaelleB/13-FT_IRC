@@ -15,7 +15,6 @@ int main(int ac, char **av) {
 	return (0);
 }
 
-
 /* 
 Serveur:
 1. Crée un socket: socket()

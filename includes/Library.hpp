@@ -1,6 +1,8 @@
 #ifndef LIBRARY_HPP
 #define LIBRARY_HPP
 
+#include "../includes/Colors.hpp"
+
 #include <vector>		// pour vector
 #include <sys/socket.h>	// pour socket()
 #include <sys/types.h>	// pour socket()
@@ -12,6 +14,7 @@
 #include <csignal>		// pour signal()
 #include <cstdlib>		// pour std::atoi
 #include <string>		// Pour std::string
+#include <cstring>		// Pour memset
 #include <iostream>
 #include <cstdio>
 

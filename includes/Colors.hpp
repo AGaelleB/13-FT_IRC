@@ -7,8 +7,17 @@
 #define BLUE	"\033[1;34m"
 #define MAGENTA	"\033[1;35m"
 #define CYAN	"\033[1;36m"
+#define ORANGE	"\033[1;38;5;208m"
+#define BLACK	"\033[1;30m"
 #define BOLD	"\033[1;37m"
 #define RESET	"\033[0m"
 
-#endif // COLORS_HPP
+#define banner BLUE "\n███████╗████████╗       ██╗██████╗  ██████╗\n" RESET \
+               BLUE "██╔════╝╚══██╔══╝       ██║██╔══██╗██╔════╝\n" RESET \
+               BLUE "█████╗     ██║          ██║██████╔╝██║     \n" RESET \
+               BLUE "██╔══╝     ██║          ██║██╔══██╗██║     \n" RESET \
+               BLUE "██║        ██║ ███████╗ ██║██║  ██║╚██████╗\n" RESET \
+               BLUE "╚═╝        ╚═╝ ╚══════╝ ╚═╝╚═╝  ╚═╝ ╚═════╝\n\n\n" RESET
 
+
+#endif // COLORS_HPP

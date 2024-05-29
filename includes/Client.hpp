@@ -1,16 +1,21 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-class Client {
+#include "./Library.hpp"
 
-	private :
-	
-	public :
+class Client {
+	private:
+		int					_client_socket;
+		struct sockaddr_in	_client_addr;
+
+	public:
 		Client();
-		Client & operator=(Client const & rhs);
-		Client(Client const & obj);
 		~Client();
 
+		int getClientSocket() const;
+		struct sockaddr_in& getClientAddr();
+		void setClientSocket(int socket);
+		void setClientAddr(const struct sockaddr_in& addr);
 };
 
 #endif // CLIENT_HPP
