@@ -48,13 +48,28 @@ void Server::handleClientMessage(const std::string& message, Client& client) {
 	(void)client;
 }
 
+void Server::sendMessage(int client_socket, const char* message) {
+    if (send(client_socket, message, strlen(message), 0) == -1) {
+        std::cerr << "Error: failed to send message" << std::endl;
+    }
+}
+
+void Server::welcomeClient(int client_socket) {
+    const char*	welcome_msg = " ~~~ Welcome on our IRC Server! ~~~ \n\n";
+    const char*	log_msg = "Please login to our server or create a new account\n\n";
+
+    sendMessage(client_socket, bannerIRC);
+    sendMessage(client_socket, welcome_msg);
+    sendMessage(client_socket, log_msg);
+}
+
 void Server::startServer() {
 	socklen_t client_len;
 	Client client;
 
 	std::cout << bannerServer;
 
-	std::cout << ". . Listening on port " << port << " . . . " << std::endl;
+	std::cout << ". . . Listening on port " << port << " . . . " << std::endl;
 
 	while (true) {
 		client_len = sizeof(client.getClientAddr());
@@ -66,6 +81,7 @@ void Server::startServer() {
 
 		client.setClientSocket(client_socket);
 		std::cout << "\nNew connection accepted ​✅" << std::endl;
+		welcomeClient(client_socket);
 
 		char buffer[1024];
 		ssize_t bytes_received;

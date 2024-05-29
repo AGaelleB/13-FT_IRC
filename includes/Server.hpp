@@ -17,6 +17,8 @@ class Server {
 
 		void	handleClientMessage(const std::string& message, Client& client);
 		void	startServer();
+		void	sendMessage(int client_socket, const char* message);
+		void	welcomeClient(int client_socket);
 		int		port;
 };
 
