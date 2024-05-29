@@ -1,6 +1,8 @@
 #include "../includes/Server.hpp"
 #include "../includes/Client.hpp"
 
+/************************************* CONST ET DEST *************************************/
+
 Server::Server() : _server_socket(-1), _password("1234"), port(6667) {
 }
 
@@ -36,32 +38,8 @@ Server::~Server() {
 		close(_server_socket);
 }
 
-void Server::handleClientMessage(const std::string& message, Client& client) {
-	std::cout << "Client: " << message << std::endl; //suppr
 
-	if (message.substr(0, 6) == "/login")
-		std::cout << "Login command received" << std::endl;
-	else if (message.substr(0, 8) == "/channel")
-		std::cout << "Channel command received" << std::endl;
-	else
-		std::cout << "Unknown command" << std::endl;
-	(void)client;
-}
-
-void Server::sendMessage(int client_socket, const char* message) {
-	if (send(client_socket, message, strlen(message), 0) == -1) {
-		std::cerr << "Error: failed to send message" << std::endl;
-	}
-}
-
-void Server::welcomeClient(int client_socket) {
-	const char*	welcome_msg = " ~~~ Welcome on our IRC Server! ~~~ \n\n";
-	const char*	log_msg = "Please login to our server or create a new account\n\n";
-
-	sendMessage(client_socket, bannerIRC);
-	sendMessage(client_socket, welcome_msg);
-	sendMessage(client_socket, log_msg);
-}
+/************************************** FUNCTIONS **************************************/
 
 void Server::startServer() {
 	socklen_t client_len;
@@ -81,7 +59,7 @@ void Server::startServer() {
 
 		client.setClientSocket(client_socket);
 		std::cout << "\nNew connection accepted ​✅" << std::endl;
-		welcomeClient(client_socket);
+		client.welcomeClient(client_socket);
 
 		char buffer[1024];
 		ssize_t bytes_received;
@@ -90,13 +68,13 @@ void Server::startServer() {
 		{
 			buffer[bytes_received] = '\0';
 			std::string message(buffer);
-			handleClientMessage(message, client);
+			client.handleClientMessage(message, client);
 		}
 
 		if (bytes_received == -1)
 			std::cerr << "Error: data reception failed" << std::endl;
 		else
-			std::cout << "Client disconnected" << std::endl;
+			std::cout << "Client disconnected ❌" << std::endl;
 
 		close(client_socket);
 	}
