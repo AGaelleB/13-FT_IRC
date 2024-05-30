@@ -4,6 +4,7 @@
 #include "../includes/Colors.hpp"
 
 #include <vector>		// pour vector
+#include <map>			// pour map
 #include <sys/socket.h>	// pour socket()
 #include <sys/types.h>	// pour socket()
 #include <netinet/in.h>	// pour sockaddr_in

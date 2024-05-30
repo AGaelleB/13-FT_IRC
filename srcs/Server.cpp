@@ -1,12 +1,11 @@
 #include "../includes/Server.hpp"
-#include "../includes/Client.hpp"
 
 /************************************* CONST ET DEST *************************************/
 
-Server::Server() : _server_socket(-1), _password("1234"), port(6667) {
+Server::Server() : _server_socket(-1), _password("1234"), _port(6667) {
 }
 
-Server::Server(int port, const std::string &password) : _server_socket(-1), _password(password), port(port) {
+Server::Server(int port, const std::string &password) : _server_socket(-1), _password(password), _port(port) {
 	// 1. Crée un socket: socket()
 	_server_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_server_socket == -1) {
@@ -14,10 +13,10 @@ Server::Server(int port, const std::string &password) : _server_socket(-1), _pas
 		exit(1);
 	}
 
-	// 2. Lie le socket à une adresse IP et un port: bind(), htons()
+	// 2. Lie le socket à une adresse IP et un _port: bind(), htons()
 	_server_addr.sin_family = AF_INET;
 	_server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	_server_addr.sin_port = htons(port);
+	_server_addr.sin_port = htons(_port);
 
 	if (bind(_server_socket, (struct sockaddr*)&_server_addr, sizeof(_server_addr)) == -1) {
 		std::cerr << "Error: bind failed" << std::endl;
@@ -41,6 +40,13 @@ Server::~Server() {
 
 /************************************** FUNCTIONS **************************************/
 
+void Server::addUser(Client &client, const std::string &username, const std::string &nickname) {
+	static int current_index = 1;
+	User user(current_index++, username, nickname);
+	client.setUser(user);
+	_clients[client.getClientSocket()] = client;
+}
+
 std::string trim(const std::string& str) {
 	size_t start = 0;
 	while (start < str.size() && std::isspace(str[start])) {
@@ -61,7 +67,7 @@ void Server::startServer() {
 
 	std::cout << bannerServer;
 
-	std::cout << ". . . Listening on port " << port << " . . . " << std::endl;
+	std::cout << ". . . Listening on _port " << _port << " . . . " << std::endl;
 
 	while (true) {
 		client_len = sizeof(client.getClientAddr());
@@ -94,9 +100,6 @@ void Server::startServer() {
 			std::string pass(buffer);
 			pass = trim(pass);
 
-			// client.sendClientMsg(client_socket, ("Received: " + pass + "\n").c_str());
-			// client.sendClientMsg(client_socket, ("Expected: " + this->_password + "\n").c_str());
-
 			if (pass != this->_password) {
 				const char* invalid_pass = RED "Wrong password \n\n" RESET;
 				client.sendClientMsg(client_socket, invalid_pass);
@@ -106,6 +109,31 @@ void Server::startServer() {
 		}
 
 		client.welcomeClient(client_socket);
+
+		// Handle Username
+		client.sendClientMsg(client_socket, "Enter your username: ");
+		bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
+		if (bytes_received <= 0) {
+			std::cerr << "Error: reception failed" << std::endl;
+			close(client_socket);
+			continue;
+		}
+		buffer[bytes_received] = '\0';
+		std::string username = trim(std::string(buffer));
+
+		// Handle Nickname
+		client.sendClientMsg(client_socket, "Enter your nickname: ");
+		bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
+		if (bytes_received <= 0) {
+			std::cerr << "Error: reception failed" << std::endl;
+			close(client_socket);
+			continue;
+		}
+		buffer[bytes_received] = '\0';
+		std::string nickname = trim(std::string(buffer));
+
+		addUser(client, username, nickname);
+		client.sendClientMsg(client_socket, "You are now registered!\n");
 
 		while ((bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0)) > 0)
 		{

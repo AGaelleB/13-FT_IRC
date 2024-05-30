@@ -1,7 +1,6 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-#include "./Library.hpp"
 #include "./User.hpp"
 
 class Client {
@@ -9,19 +8,21 @@ class Client {
 	private:
 		int					_client_socket;
 		struct sockaddr_in	_client_addr;
-		// User				_users[1000];
+		User				_user;
 
 	public:
 		Client();
 		~Client();
 
 		// Getters
-		int					getClientSocket() const;
 		struct sockaddr_in&	getClientAddr();
+		int					getClientSocket() const;
+		User&				getUser();
 
 		// Setters
 		void				setClientSocket(int socket);
 		void				setClientAddr(const struct sockaddr_in& addr);
+		void				setUser(const User& user);
 
 		// Fonctions
 		void				handleClientMsg(const std::string& message, Client& client);

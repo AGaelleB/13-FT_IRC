@@ -1,23 +1,26 @@
-// #ifndef USER_HPP
-// # define USER_HPP
+#ifndef USER_HPP
+# define USER_HPP
 
-// #include "../includes/Library.hpp"
-// #include "../includes/Client.hpp"
+#include "./Library.hpp"
 
+class User {
+	private:
+		int			_index;
+		std::string	_userName;
+		std::string	_nickName;
 
-// class User
-// {
-// 	private:
-// 		std::string	_userName;
-// 		std::string	_nickName;
+	public:
+		User();
+		User(int index, const std::string& username, const std::string& nickname);
+		~User();
 
-// 	public:
-// 		User();
-// 		~User();
-// };
+		int			getIndex() const;
+		std::string	getUsername() const;
+		std::string	getNickname() const;
 
-// User::User() { }
+		void		setIndex(int index);
+		void		setUsername(const std::string& username);
+		void		setNickname(const std::string& nickname);
+};
 
-// User::~User() { }
-
-// #endif // USER_HPP
+#endif // USER_HPP

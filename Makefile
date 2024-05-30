@@ -11,6 +11,7 @@ OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.cpp=.o)))
 SRCS =	main.cpp \
 		Server.cpp \
 		Client.cpp \
+		User.cpp \
 
 RM = rm -rf
 

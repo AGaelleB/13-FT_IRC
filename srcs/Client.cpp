@@ -1,7 +1,6 @@
 
 #include "../includes/Client.hpp"
 
-
 /************************************* CONST ET DEST *************************************/
 
 Client::Client() : _client_socket(-1) {
@@ -13,7 +12,6 @@ Client::~Client() {
 		close(_client_socket);
 }
 
-
 /*************************************** GETTERS ***************************************/
 
 int Client::getClientSocket() const {
@@ -24,6 +22,9 @@ struct sockaddr_in& Client::getClientAddr() {
 	return (_client_addr);
 }
 
+User& Client::getUser() {
+	return (_user);
+}
 
 /*************************************** SETTERS ***************************************/
 
@@ -35,6 +36,9 @@ void Client::setClientAddr(const struct sockaddr_in& addr) {
 	_client_addr = addr;
 }
 
+void Client::setUser(const User& user) {
+	_user = user;
+}
 
 /************************************** FUNCTIONS **************************************/
 
@@ -57,9 +61,6 @@ void Client::sendClientMsg(int client_socket, const char* message) {
 }
 
 void Client::welcomeClient(int client_socket) {
-	const char*	welcomeMsg = BLUE "\n ~~~ Welcome on our IRC Server! ~~~ \n\n" RESET;
-	const char*	loginMsg = BOLD "Enter your login: " RESET;
-
+	const char* welcomeMsg = "\n ~~~ Welcome on our IRC Server! ~~~ \n\n";
 	sendClientMsg(client_socket, welcomeMsg);
-	sendClientMsg(client_socket, loginMsg);
 }
