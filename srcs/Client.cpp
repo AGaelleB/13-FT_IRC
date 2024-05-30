@@ -43,8 +43,8 @@ void Client::handleClientMsg(const std::string& message, Client& client) {
 
 	if (message.substr(0, 6) == "/login")
 		std::cout << "Login command received" << std::endl;
-	else if (message.substr(0, 8) == "/channel")
-		std::cout << "Channel command received" << std::endl;
+	// else if (message.substr(0, 8) == "/channel")
+	// 	std::cout << "Channel command received" << std::endl;
 	else
 		std::cout << "Unknown command" << std::endl;
 	(void)client;
@@ -58,7 +58,6 @@ void Client::sendClientMsg(int client_socket, const char* message) {
 
 void Client::welcomeClient(int client_socket) {
 	const char*	welcome_msg = " ~~~ Welcome on our IRC Server! ~~~ \n\n";
-	const char*	log_msg = "Please login to our server or create a new account\n\n";
 
 	sendClientMsg(client_socket, bannerIRC);
 	sendClientMsg(client_socket, welcome_msg);

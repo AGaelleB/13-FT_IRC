@@ -64,6 +64,15 @@ void Server::startServer() {
 		char buffer[1024];
 		ssize_t bytes_received;
 		
+		std::string pass;
+		while(pass != this->_password)
+		{
+			bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0)) > 0;
+			buffer[bytes_received] = '\0';
+			const char*	log_msg = "Please enter the Server password to access\n\n";
+			std::string pass(buffer);
+		}
+
 		while ((bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0)) > 0)
 		{
 			buffer[bytes_received] = '\0';

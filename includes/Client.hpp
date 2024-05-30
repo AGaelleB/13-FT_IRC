@@ -2,12 +2,14 @@
 #define CLIENT_HPP
 
 #include "./Library.hpp"
+#include "./User.hpp"
 
 class Client {
 
 	private:
 		int					_client_socket;
 		struct sockaddr_in	_client_addr;
+		User				_users[1000];
 
 	public:
 		Client();
