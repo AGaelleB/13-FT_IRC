@@ -78,12 +78,12 @@ void Server::startServer() {
 		client_len = sizeof(client.getClientAddr());
 		int client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
 		if (client_socket == -1) {
-			std::cerr << "Error: connection not accepted" << std::endl;
+			std::cerr << "Error: connexion not accepted" << std::endl;
 			continue;
 		}
 
 		client.setClientSocket(client_socket);
-		std::cout << "\nNew connection accepted ​✅" << std::endl;
+		std::cout << "\nNew connexion accepted ​✅" << std::endl;
 
 		char buffer[1024];
 		ssize_t bytes_received;
@@ -115,8 +115,14 @@ void Server::startServer() {
 
 		client.welcomeClient(client_socket);
 
+		const char*	putUsername = BOLD "Enter your username: " RESET;
+		const char*	putNickname = BOLD "Enter your nickname: " RESET;
+		const char*	isRegistered = GREEN "You are now registered! ​✅\n\n" RESET;
+
+		std::cout << "\n. . . Waiting for client registration . . . " << std::endl;
+
 		// Handle Username
-		client.sendClientMsg(client_socket, "Enter your username: ");
+		client.sendClientMsg(client_socket, putUsername);
 		bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
 		if (bytes_received <= 0) {
 			std::cerr << "Error: reception failed" << std::endl;
@@ -127,7 +133,7 @@ void Server::startServer() {
 		std::string username = trim(std::string(buffer));
 
 		// Handle Nickname
-		client.sendClientMsg(client_socket, "Enter your nickname: ");
+		client.sendClientMsg(client_socket, putNickname);
 		bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
 		if (bytes_received <= 0) {
 			std::cerr << "Error: reception failed" << std::endl;
@@ -137,8 +143,11 @@ void Server::startServer() {
 		buffer[bytes_received] = '\0';
 		std::string nickname = trim(std::string(buffer));
 
+
 		addUser(client, username, nickname);
-		client.sendClientMsg(client_socket, "You are now registered!\n");
+		client.sendClientMsg(client_socket, isRegistered);
+
+		std::cout << "\nClient #" << (client_socket - 3) << " is now registered ✅\n" << std::endl;
 
 		while ((bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0)) > 0)
 		{

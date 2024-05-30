@@ -1,0 +1,3 @@
+si je lance un serveur + un client. Je ne ecris rien dans le client et je le kill avec ctrlC
+
+commencer a implementer la fonction poll pour gerer les multi fd 
