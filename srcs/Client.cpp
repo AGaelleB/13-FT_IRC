@@ -61,5 +61,5 @@ void Client::welcomeClient(int client_socket) {
 
 	sendClientMsg(client_socket, bannerIRC);
 	sendClientMsg(client_socket, welcome_msg);
-	sendClientMsg(client_socket, log_msg);
+	
 }

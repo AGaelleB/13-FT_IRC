@@ -41,6 +41,20 @@ Server::~Server() {
 
 /************************************** FUNCTIONS **************************************/
 
+std::string trim(const std::string& str) {
+	size_t start = 0;
+	while (start < str.size() && std::isspace(str[start])) {
+		start++;
+	}
+
+	size_t end = str.size();
+	while (end > start && std::isspace(str[end - 1])) {
+		end--;
+	}
+
+	return (str.substr(start, end - start));
+}
+
 void Server::startServer() {
 	socklen_t client_len;
 	Client client;
@@ -63,14 +77,33 @@ void Server::startServer() {
 
 		char buffer[1024];
 		ssize_t bytes_received;
-		
-		std::string pass;
-		while(pass != this->_password)
+
+		const char* log_msg = "Please enter the Server password to access\n\n";
+		client.sendClientMsg(client_socket, log_msg);
+		while (true)
 		{
-			bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0)) > 0;
+			const char* pass_msg = "Password: ";
+			client.sendClientMsg(client_socket, pass_msg);
+
+			bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
+			if (bytes_received <= 0) {
+				std::cerr << "Error: reception failed" << std::endl;
+				break;
+			}
 			buffer[bytes_received] = '\0';
-			const char*	log_msg = "Please enter the Server password to access\n\n";
+
 			std::string pass(buffer);
+			pass = trim(pass);
+
+			// client.sendClientMsg(client_socket, ("Received: " + pass + "\n").c_str());
+			// client.sendClientMsg(client_socket, ("Expected: " + this->_password + "\n").c_str());
+
+			if (pass != this->_password) {
+				const char* invalid_pass = "Wrong password \n\n";
+				client.sendClientMsg(client_socket, invalid_pass);
+			}
+			else
+				break;
 		}
 
 		while ((bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0)) > 0)
