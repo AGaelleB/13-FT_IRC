@@ -73,16 +73,15 @@ void Server::startServer() {
 
 		client.setClientSocket(client_socket);
 		std::cout << "\nNew connection accepted ​✅" << std::endl;
-		client.welcomeClient(client_socket);
 
 		char buffer[1024];
 		ssize_t bytes_received;
 
-		const char* log_msg = "Please enter the Server password to access\n\n";
-		client.sendClientMsg(client_socket, log_msg);
+		client.sendClientMsg(client_socket, bannerIRC);
+
 		while (true)
 		{
-			const char* pass_msg = "Password: ";
+			const char* pass_msg = BOLD "Enter Server password: " RESET;
 			client.sendClientMsg(client_socket, pass_msg);
 
 			bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
@@ -99,12 +98,14 @@ void Server::startServer() {
 			// client.sendClientMsg(client_socket, ("Expected: " + this->_password + "\n").c_str());
 
 			if (pass != this->_password) {
-				const char* invalid_pass = "Wrong password \n\n";
+				const char* invalid_pass = RED "Wrong password \n\n" RESET;
 				client.sendClientMsg(client_socket, invalid_pass);
 			}
 			else
 				break;
 		}
+
+		client.welcomeClient(client_socket);
 
 		while ((bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0)) > 0)
 		{

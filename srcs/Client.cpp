@@ -57,9 +57,9 @@ void Client::sendClientMsg(int client_socket, const char* message) {
 }
 
 void Client::welcomeClient(int client_socket) {
-	const char*	welcome_msg = " ~~~ Welcome on our IRC Server! ~~~ \n\n";
+	const char*	welcomeMsg = BLUE "\n ~~~ Welcome on our IRC Server! ~~~ \n\n" RESET;
+	const char*	loginMsg = BOLD "Enter your login: " RESET;
 
-	sendClientMsg(client_socket, bannerIRC);
-	sendClientMsg(client_socket, welcome_msg);
-	
+	sendClientMsg(client_socket, welcomeMsg);
+	sendClientMsg(client_socket, loginMsg);
 }
