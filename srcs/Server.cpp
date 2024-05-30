@@ -30,6 +30,11 @@ Server::Server(int port, const std::string &password) : _server_socket(-1), _pas
 		close(_server_socket);
 		exit(1);
 	}
+
+	struct pollfd server_fd;
+	server_fd.fd = _server_socket;
+	server_fd.events = POLLIN; // What is that !!?????
+	_fds.push_back(server_fd); // why push back ?
 }
 
 Server::~Server() {
