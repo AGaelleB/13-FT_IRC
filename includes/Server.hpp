@@ -3,6 +3,20 @@
 
 #include "./Client.hpp"
 
+enum AuthState {
+    WAITING_FOR_PASSWORD,
+    WAITING_FOR_USERNAME,
+    WAITING_FOR_NICKNAME,
+    AUTHENTICATED
+};
+
+struct ClientState {
+    Client client;
+    AuthState state;
+    std::string username;
+    std::string nickname;
+};
+
 class Server {
 
 	private:
@@ -10,6 +24,7 @@ class Server {
 		struct sockaddr_in			_server_addr;
 		std::string					_password;
 		std::map<int, Client>		_clients;
+		std::map<int, ClientState>	_clientStates;
 		std::vector<struct pollfd>	_fds;
 		int							_port;
 
