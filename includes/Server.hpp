@@ -20,12 +20,16 @@ class Server {
 
 		// Functions
 		void	startServer();
-		void addUser(Client &client, const std::string &username, const std::string &nickname);
-		void manage_new_client();
-		bool authenticateClient(Client &client);
-		void manage_new_data(int client_socket);
-		void remove_fd(int client_socket);
-		void close_fds();
+		void	addUser(Client &client, const std::string &username, const std::string &nickname);
+		void	manage_new_client();
+		bool	authenticateClient(Client &client);
+		void	manage_new_data(int client_socket);
+		void	remove_fd(int client_socket);
+		void	close_fds();
+		void	acceptClient();
+		void	registrationClient(Client	client, int client_socket);
+		void	handleClientMessage(int client_socket);
+		void	removeClient(int client_socket);
 };
 
 #endif // SERVER_HPP

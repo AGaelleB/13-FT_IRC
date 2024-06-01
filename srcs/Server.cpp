@@ -66,101 +66,179 @@ std::string trim(const std::string& str) {
 	return (str.substr(start, end - start));
 }
 
-void Server::startServer() {
-	socklen_t client_len;
-	Client client;
+void Server::acceptClient() {
 
-	std::cout << bannerServer;
+	Client	client;
+    struct sockaddr_in client_addr;
+    socklen_t client_len = sizeof(client_addr);
+    int client_socket = accept(_server_socket, (struct sockaddr*)&client_addr, &client_len);
+    if (client_socket == -1) {
+        std::cerr << "Error: connexion not accepted" << std::endl;
+        return;
+    }
 
-	std::cout << ". . . Listening on _port " << _port << " . . . " << std::endl;
+    client.setClientSocket(client_socket);
+    client.setClientAddr(client_addr);
+    _clients[client_socket] = client;
+	std::cout << "\nNew connexion accepted ​✅" << std::endl;
+
+    struct pollfd client_fd;
+    client_fd.fd = client_socket;
+    client_fd.events = POLLIN;
+    _fds.push_back(client_fd);
+
+	client.sendClientMsg(client_socket, bannerIRC);
+	registrationClient(client, client_socket);
+
+	std::cout << "\nClient #" << (client_socket - 3) << " is now registered ✅\n" << std::endl;
+
+}
+
+void Server::registrationClient(Client client, int client_socket) {
+	char buffer[1024];
+	ssize_t bytes_received;
 
 	while (true) {
-		client_len = sizeof(client.getClientAddr());
-		int client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
-		if (client_socket == -1) {
-			std::cerr << "Error: connexion not accepted" << std::endl;
-			continue;
-		}
+		const char* pass_msg = BOLD "Enter Server password: " RESET;
+		client.sendClientMsg(client_socket, pass_msg);
 
-		client.setClientSocket(client_socket);
-		std::cout << "\nNew connexion accepted ​✅" << std::endl;
-
-		char buffer[1024];
-		ssize_t bytes_received;
-
-		client.sendClientMsg(client_socket, bannerIRC);
-
-		while (true)
-		{
-			const char* pass_msg = BOLD "Enter Server password: " RESET;
-			client.sendClientMsg(client_socket, pass_msg);
-
-			bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
-			if (bytes_received <= 0) {
-				std::cerr << "Error: reception failed" << std::endl;
-				break;
-			}
-			buffer[bytes_received] = '\0';
-
-			std::string pass(buffer);
-			pass = trim(pass);
-
-			if (pass != this->_password) {
-				const char* invalid_pass = RED "Wrong password \n\n" RESET;
-				client.sendClientMsg(client_socket, invalid_pass);
-			}
-			else
-				break;
-		}
-
-		client.welcomeClient(client_socket);
-
-		const char*	putUsername = BOLD "Enter your username: " RESET;
-		const char*	putNickname = BOLD "Enter your nickname: " RESET;
-		const char*	isRegistered = GREEN "You are now registered! ​✅\n\n" RESET;
-
-		std::cout << "\n. . . Waiting for client registration . . . " << std::endl;
-
-		// Handle Username
-		client.sendClientMsg(client_socket, putUsername);
 		bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
 		if (bytes_received <= 0) {
 			std::cerr << "Error: reception failed" << std::endl;
 			close(client_socket);
-			continue;
+			removeClient(client_socket);
+			return;
 		}
 		buffer[bytes_received] = '\0';
-		std::string username = trim(std::string(buffer));
 
-		// Handle Nickname
-		client.sendClientMsg(client_socket, putNickname);
-		bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
-		if (bytes_received <= 0) {
-			std::cerr << "Error: reception failed" << std::endl;
-			close(client_socket);
-			continue;
+		std::string pass(buffer);
+		pass = trim(pass);
+
+		if (pass != this->_password) {
+			const char* invalid_pass = RED "Wrong password \n\n" RESET;
+			client.sendClientMsg(client_socket, invalid_pass);
 		}
-		buffer[bytes_received] = '\0';
-		std::string nickname = trim(std::string(buffer));
-
-
-		addUser(client, username, nickname);
-		client.sendClientMsg(client_socket, isRegistered);
-
-		std::cout << "\nClient #" << (client_socket - 3) << " is now registered ✅\n" << std::endl;
-
-		while ((bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0)) > 0)
-		{
-			buffer[bytes_received] = '\0';
-			std::string message(buffer);
-			client.handleClientMsg(message, client);
-		}
-
-		if (bytes_received == -1)
-			std::cerr << "Error: data reception failed" << std::endl;
 		else
-			std::cout << "Client disconnected ❌" << std::endl;
+			break;
+	}
 
+	client.welcomeClient(client_socket);
+
+	const char* putUsername = BOLD "Enter your username: " RESET;
+	const char* putNickname = BOLD "Enter your nickname: " RESET;
+	const char* isRegistered = GREEN "You are now registered! ​✅\n\n" RESET;
+
+	std::cout << "\n. . . Waiting for client registration . . . " << std::endl;
+
+	// Handle Username
+	client.sendClientMsg(client_socket, putUsername);
+	bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
+	if (bytes_received <= 0) {
+		std::cerr << "Error: reception failed" << std::endl;
 		close(client_socket);
+		removeClient(client_socket);
+		return;
+	}
+	buffer[bytes_received] = '\0';
+	std::string username = trim(std::string(buffer));
+
+	// Handle Nickname
+	client.sendClientMsg(client_socket, putNickname);
+	bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
+	if (bytes_received <= 0) {
+		std::cerr << "Error: reception failed" << std::endl;
+		close(client_socket);
+		removeClient(client_socket);
+		return;
+	}
+	buffer[bytes_received] = '\0';
+	std::string nickname = trim(std::string(buffer));
+
+	addUser(client, username, nickname);
+	client.sendClientMsg(client_socket, isRegistered);
+}
+
+
+void Server::handleClientMessage(int client_socket) {
+    char buffer[1024];
+    ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
+    if (bytes_received <= 0) {
+        if (bytes_received == 0) {
+            std::cout << "Client disconnected ❌" << std::endl;
+        } else {
+            std::cerr << "Error: reception failed" << std::endl;
+        }
+        removeClient(client_socket);
+        return;
+    }
+    buffer[bytes_received] = '\0';
+    std::string message(buffer);
+
+    // Process the received message (command parsing)
+    std::istringstream iss(message);
+    std::string command;
+    iss >> command;
+
+    if (command == "NICK") {
+        std::string nickname;
+        iss >> nickname;
+        // Handle NICK command
+    } else if (command == "USER") {
+        std::string username;
+        iss >> username;
+        // Handle USER command
+    } else if (command == "JOIN") {
+        std::string channel;
+        iss >> channel;
+        // Handle JOIN command
+    } else if (command == "PART") {
+        std::string channel;
+        iss >> channel;
+        // Handle PART command
+    } else if (command == "PRIVMSG") {
+        std::string target;
+        iss >> target;
+        std::string msg = message.substr(message.find(target) + target.length() + 1);
+        // Handle PRIVMSG command
+    } else {
+        std::cerr << "Unknown command received: " << command << std::endl;
+    }
+}
+
+
+void Server::removeClient(int client_socket) {
+    close(client_socket);
+    _clients.erase(client_socket);
+
+    for (size_t i = 0; i < _fds.size(); ++i) {
+        if (_fds[i].fd == client_socket) {
+            _fds.erase(_fds.begin() + i);
+            break;
+        }
+    }
+}
+
+void Server::startServer() {
+	std::cout << bannerServer;
+	std::cout << ". . . Listening on port " << _port << " . . . " << std::endl;
+
+	while (true) {
+		int poll_count = poll(_fds.data(), _fds.size(), -1);
+		if (poll_count == -1) {
+			std::cerr << "Error: poll failed" << std::endl;
+			break;
+		}
+
+		for (size_t i = 0; i < _fds.size(); ++i) {
+			if (_fds[i].revents & POLLIN) {
+				if (_fds[i].fd == _server_socket) {
+					// Nouvelle connexion entrante
+					acceptClient();
+				} else {
+					// Données provenant d'un client existant
+					handleClientMessage(_fds[i].fd);
+				}
+			}
+		}
 	}
 }
