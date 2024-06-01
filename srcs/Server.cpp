@@ -67,39 +67,34 @@ std::string trim(const std::string& str) {
 }
 
 void Server::acceptClient() {
-    Client client;
-    struct sockaddr_in client_addr;
-    socklen_t client_len = sizeof(client_addr);
-    int client_socket = accept(_server_socket, (struct sockaddr*)&client_addr, &client_len);
-    if (client_socket == -1) {
-        std::cerr << "Error: connexion not accepted" << std::endl;
-        return;
-    }
+	Client client;
+	struct sockaddr_in client_addr;
+	socklen_t client_len = sizeof(client_addr);
+	int client_socket = accept(_server_socket, (struct sockaddr*)&client_addr, &client_len);
+	if (client_socket == -1) {
+		std::cerr << "Error: connexion not accepted" << std::endl;
+		return;
+	}
 
-    client.setClientSocket(client_socket);
-    client.setClientAddr(client_addr);
-    _clients[client_socket] = client;
+	client.setClientSocket(client_socket);
+	client.setClientAddr(client_addr);
+	_clients[client_socket] = client;
 
-    // Initialiser l'état du client
-    ClientState clientState;
-    clientState.client = client;
-    clientState.state = WAITING_FOR_PASSWORD;
-    _clientStates[client_socket] = clientState;
+	// Initialiser l'état du client
+	ClientState clientState;
+	clientState.client = client;
+	clientState.state = WAITING_FOR_PASSWORD;
+	_clientStates[client_socket] = clientState;
 
-    struct pollfd client_fd;
-    client_fd.fd = client_socket;
-    client_fd.events = POLLIN;
-    _fds.push_back(client_fd);
+	struct pollfd client_fd;
+	client_fd.fd = client_socket;
+	client_fd.events = POLLIN;
+	_fds.push_back(client_fd);
 
-    client.sendClientMsg(client_socket, BOLD "Enter Server password: " RESET);
+	client.sendClientMsg(client_socket, BOLD "Enter Server password: " RESET);
 
-    std::cout << "\nNew connexion accepted ​✅" << std::endl;
-
-	// std::cout << "\nClient #" << (client_socket - 3) << " is now registered ✅\n" << std::endl;
-
+	std::cout << "\nNew connexion accepted ​✅" << std::endl;
 }
-
-
 
 void Server::registrationClient(Client client, int client_socket) {
 	char buffer[1024];
@@ -167,86 +162,97 @@ void Server::registrationClient(Client client, int client_socket) {
 
 
 void Server::handleClientMessage(int client_socket) {
-    char buffer[1024];
-    ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
-    if (bytes_received <= 0) {
-        if (bytes_received == 0) {
-            std::cout << "Client disconnected ❌" << std::endl;
-        } else {
-            std::cerr << "Error: reception failed" << std::endl;
-        }
-        removeClient(client_socket);
-        return;
-    }
-    buffer[bytes_received] = '\0';
-    std::string message = trim(std::string(buffer));
+	char buffer[1024];
+	ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
+	if (bytes_received <= 0) {
+		if (bytes_received == 0) {
+			std::cout << "Client disconnected ❌" << std::endl;
+		}
+		else {
+			std::cerr << "Error: reception failed" << std::endl;
+		}
+		removeClient(client_socket);
+		return;
+	}
+	buffer[bytes_received] = '\0';
+	std::string message = trim(std::string(buffer));
 
-    ClientState &clientState = _clientStates[client_socket];
+	ClientState &clientState = _clientStates[client_socket];
 
-    switch (clientState.state) {
-        case WAITING_FOR_PASSWORD:
-            if (message == _password) {
-                clientState.state = WAITING_FOR_USERNAME;
-                clientState.client.sendClientMsg(client_socket, BOLD "Enter your username: " RESET);
-            } else {
-                clientState.client.sendClientMsg(client_socket, RED "Wrong password \n\n" RESET);
-                clientState.client.sendClientMsg(client_socket, BOLD "Enter Server password: " RESET);
-            }
-            break;
+	std::cout << RED << "AVANT SWITCH CASE" << RESET <<  std::endl;
+	switch (clientState.state) {
+		case WAITING_FOR_PASSWORD:
+			std::cout << RED << "WAITING_FOR_PASSWORD" << RESET << std::endl;
+			if (message == _password) {
+				clientState.state = WAITING_FOR_USERNAME;
+				clientState.client.sendClientMsg(client_socket, BOLD "Enter your username: " RESET);
+			} else {
+				clientState.client.sendClientMsg(client_socket, RED "Wrong password \n\n" RESET);
+				clientState.client.sendClientMsg(client_socket, BOLD "Enter Server password: " RESET);
+			}
+			break;
 
-        case WAITING_FOR_USERNAME:
-            clientState.username = message;
-            clientState.state = WAITING_FOR_NICKNAME;
-            clientState.client.sendClientMsg(client_socket, BOLD "Enter your nickname: " RESET);
-            break;
+		case WAITING_FOR_USERNAME:
+			std::cout << RED << "WAITING_FOR_USERNAME" << RESET <<  std::endl;
+			clientState.username = message;
+			clientState.state = WAITING_FOR_NICKNAME;
+			clientState.client.sendClientMsg(client_socket, BOLD "Enter your nickname: " RESET);
+			break;
 
-        case WAITING_FOR_NICKNAME:
-            clientState.nickname = message;
-            addUser(clientState.client, clientState.username, clientState.nickname);
-            clientState.client.sendClientMsg(client_socket, GREEN "You are now registered! ​✅\n\n" RESET);
-            clientState.state = AUTHENTICATED;
-            break;
+		case WAITING_FOR_NICKNAME:
+			std::cout << RED << "WAITING_FOR_NICKNAME" << RESET <<  std::endl;
+			clientState.nickname = message;
+			addUser(clientState.client, clientState.username, clientState.nickname);
+			clientState.client.sendClientMsg(client_socket, GREEN "You are now registered! ​✅\n\n" RESET);
+			clientState.state = AUTHENTICATED;
+			break;
 
-        case AUTHENTICATED:
-            // Ici vous pouvez gérer les messages des clients authentifiés
-    		std::cout << ".OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK" << std::endl;
-            break;
-    }
+		case AUTHENTICATED:
+			std::cout << RED << "AUTHENTICATED" << RESET <<  std::endl;
+			// Ici vous pouvez gérer les messages des clients authentifiés
+			std::cout << "Client #" << client_socket << " is now authenticated" << std::endl;
+			break;
+	}
 }
 
 void Server::removeClient(int client_socket) {
-    close(client_socket);
-    _clients.erase(client_socket);
+	close(client_socket);
+	_clients.erase(client_socket);
 
-    for (size_t i = 0; i < _fds.size(); ++i) {
-        if (_fds[i].fd == client_socket) {
-            _fds.erase(_fds.begin() + i);
-            break;
-        }
-    }
+	for (size_t i = 0; i < _fds.size(); ++i) {
+		if (_fds[i].fd == client_socket) {
+			_fds.erase(_fds.begin() + i);
+			break;
+		}
+	}
 }
 
 void Server::startServer() {
-    std::cout << bannerServer;
-    std::cout << ". . . Listening on port " << _port << " . . . " << std::endl;
+	std::cout << bannerServer;
+	std::cout << ". . . Listening on port " << _port << " . . . " << std::endl;
 
-    while (true) {
-        int poll_count = poll(_fds.data(), _fds.size(), -1);
-        if (poll_count == -1) {
-            std::cerr << "Error: poll failed" << std::endl;
-            break;
-        }
+	while (true) {
+		int poll_count = poll(_fds.data(), _fds.size(), -1);
+		if (poll_count == -1) {
+			std::cerr << "Error: poll failed" << std::endl;
+			break;
+		}
 
-        for (size_t i = 0; i < _fds.size(); ++i) {
-            if (_fds[i].revents & POLLIN) {
-                if (_fds[i].fd == _server_socket) {
-                    // Nouvelle connexion entrante
-                    acceptClient();
-                } else {
-                    // Données provenant d'un client existant
-                    handleClientMessage(_fds[i].fd);
-                }
-            }
-        }
-    }
+		for (size_t i = 0; i < _fds.size(); ++i) {
+			if (_fds[i].revents & POLLIN) {
+				if (_fds[i].fd == _server_socket) {
+					// Nouvelle connexion entrante
+					std::cout << RED << "AVANT acceptClient" << RESET <<  std::endl;
+					acceptClient();
+					std::cout << RED << "APRES acceptClient" << RESET <<  std::endl;
+				}
+				else {
+					// Données provenant d'un client existant
+					std::cout << RED << "AVANT handleClientMessage" << RESET <<  std::endl;
+					handleClientMessage(_fds[i].fd);
+					std::cout << RED << "APRES handleClientMessage" << RESET <<  std::endl;
+				}
+			}
+		}
+	}
 }
