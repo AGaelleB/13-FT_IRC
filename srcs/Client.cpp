@@ -43,14 +43,14 @@ void Client::setUser(const User& user) {
 /************************************** FUNCTIONS **************************************/
 
 void Client::handleClientMsg(const std::string& message, Client& client) {
-	std::cout << "Client: " << message << std::endl; //suppr
+	std::cout << BOLD << client.getUser().getUsername()  <<  " msg: " << RESET << message;
 
 	if (message.substr(0, 6) == "/login")
 		std::cout << "Login command received" << std::endl;
 	// else if (message.substr(0, 8) == "/channel")
 	// 	std::cout << "Channel command received" << std::endl;
 	else
-		std::cout << "Unknown command" << std::endl;
+		std::cout << "Unknown command\n" << std::endl;
 	(void)client;
 }
 
