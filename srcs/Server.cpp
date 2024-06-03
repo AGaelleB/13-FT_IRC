@@ -83,7 +83,7 @@ void Server::startServer() {
             if (fds[i].revents & POLLIN) {
                 if (fds[i].fd == _server_socket) {
                     // Nouvelle connexion
-                    Client client; // Initialiser un nouvel objet client
+                    Client client;
                     socklen_t client_len = sizeof(client.getClientAddr());
                     int client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
                     if (client_socket == -1) {
@@ -91,13 +91,14 @@ void Server::startServer() {
                         continue;
                     }
 
+                    std::cout << "New connection accepted, client_socket: " << client_socket << std::endl;
+
                     // Ajouter le nouveau client au vecteur pollfd
                     fds[nfds].fd = client_socket;
                     fds[nfds].events = POLLIN;
                     nfds++;
 
                     client.setClientSocket(client_socket);
-                    std::cout << "\nNew connection accepted ​✅" << std::endl;
 
                     client.sendClientMsg(client_socket, bannerIRC);
                     client.welcomeClient(client_socket);
@@ -107,9 +108,12 @@ void Server::startServer() {
 
                     // Ajouter le client au map des clients après l'authentification
                     _clients[client_socket] = client;
+
+                    std::cout << "Client registration complete. Connection remains open for client_socket: " << client_socket << std::endl;
                 } else {
                     // Message reçu d'un client existant
-                    handleClientMessage(i);
+                    std::cout << "Handling message from client_fd: " << fds[i].fd << std::endl;
+                    handleClientMessage(fds[i].fd);
                 }
             }
         }
@@ -126,7 +130,7 @@ void Server::authenticateAndRegister(Client &client) {
 
         bytes_received = recv(client.getClientSocket(), buffer, sizeof(buffer) - 1, 0);
         if (bytes_received <= 0) {
-            std::cerr << "Error: reception failed" << std::endl;
+            std::cerr << "Error: reception failed during password entry, client_socket: " << client.getClientSocket() << std::endl;
             close(client.getClientSocket());
             return;
         }
@@ -145,7 +149,7 @@ void Server::authenticateAndRegister(Client &client) {
     client.sendClientMsg(client.getClientSocket(), "Enter your username: ");
     bytes_received = recv(client.getClientSocket(), buffer, sizeof(buffer) - 1, 0);
     if (bytes_received <= 0) {
-        std::cerr << "Error: reception failed" << std::endl;
+        std::cerr << "Error: reception failed during username entry, client_socket: " << client.getClientSocket() << std::endl;
         close(client.getClientSocket());
         return;
     }
@@ -155,7 +159,7 @@ void Server::authenticateAndRegister(Client &client) {
     client.sendClientMsg(client.getClientSocket(), "Enter your nickname: ");
     bytes_received = recv(client.getClientSocket(), buffer, sizeof(buffer) - 1, 0);
     if (bytes_received <= 0) {
-        std::cerr << "Error: reception failed" << std::endl;
+        std::cerr << "Error: reception failed during nickname entry, client_socket: " << client.getClientSocket() << std::endl;
         close(client.getClientSocket());
         return;
     }
@@ -164,25 +168,34 @@ void Server::authenticateAndRegister(Client &client) {
 
     addUser(client, username, nickname);
     client.sendClientMsg(client.getClientSocket(), "You are now registered!\n");
+
+    std::cout << "Client registered: username = " << username << ", nickname = " << nickname << ", client_socket: " << client.getClientSocket() << std::endl;
 }
 
-void Server::handleClientMessage(int client_index) {
+void Server::handleClientMessage(int client_fd) {
     char buffer[1024];
-    ssize_t bytes_received = recv(fds[client_index].fd, buffer, sizeof(buffer) - 1, 0);
+    ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
     if (bytes_received <= 0) {
         if (bytes_received == 0) {
-            std::cout << "Client disconnected ❌" << std::endl;
+            std::cout << "Client disconnected ❌, client_fd: " << client_fd << std::endl;
         } else {
-            std::cerr << "Error: data reception failed" << std::endl;
+            std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
         }
-        close(fds[client_index].fd);
-        _clients.erase(fds[client_index].fd); // Supprimer le client de la map
-        fds[client_index] = fds[nfds - 1];  // Remplacer par le dernier
-        nfds--;
+        close(client_fd);
+        _clients.erase(client_fd); // Supprimer le client de la map
+        // Retirer le client de la structure pollfd
+        for (int i = 0; i < nfds; ++i) {
+            if (fds[i].fd == client_fd) {
+                fds[i] = fds[nfds - 1];
+                nfds--;
+                break;
+            }
+        }
     } else {
         buffer[bytes_received] = '\0';
         std::string message(buffer);
-        _clients[fds[client_index].fd].handleClientMsg(message, _clients[fds[client_index].fd]);
+        std::cout << "Received message from client_fd " << client_fd << ": " << message << std::endl;
+        _clients[client_fd].handleClientMsg(message, _clients[client_fd]);
     }
 }

@@ -8,8 +8,8 @@ Client::Client() : _client_socket(-1) {
 }
 
 Client::~Client() {
-	if (_client_socket != -1)
-		close(_client_socket);
+	// if (_client_socket != -1)
+	// 	close(_client_socket);
 }
 
 /*************************************** GETTERS ***************************************/
