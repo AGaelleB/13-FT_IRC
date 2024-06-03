@@ -16,6 +16,7 @@
 #include <cstdlib>		// pour std::atoi
 #include <string>		// Pour std::string
 #include <cstring>		// Pour memset
+#include <sstream>
 #include <iostream>
 #include <cstdio>
 

@@ -92,8 +92,8 @@ void Server::startServer() {
 						continue;
 					}
 
-					std::cout << BOLD << "\nNew connection accepted! ✅ ---> client_socket: " << client_socket << RESET << std::endl;
-					std::cout << "\nTotal clients: " << nfds << std::endl;
+					std::cout << GREEN << "\nNew connection accepted! ✅ ---> client_socket: " << client_socket << RESET << std::endl;
+					std::cout << "Total clients: " << nfds << std::endl;
 					std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
 
 					// Ajouter le nouveau client au vecteur pollfd
@@ -112,7 +112,7 @@ void Server::startServer() {
 					// Ajouter le client au map des clients après l'authentification
 					_clients[client_socket] = client;
 
-					std::cout << "Client registration complete. Connection remains open for client_socket: " << client_socket << std::endl << std::endl;
+					// std::cout << "Client registration complete. Connection remains open for client_socket: " << client_socket << std::endl << std::endl;
 				} else {
 					// Message reçu d'un client existant
 					// std::cout << "Handling message from client_fd: " << fds[i].fd << std::endl;
@@ -172,10 +172,13 @@ void Server::authenticateAndRegister(Client &client) {
 
 	addUser(client, username, nickname);
 
-	const char* registeredMsg = BOLD "You are now registered! ✅\n" RESET;
-	client.sendClientMsg(client.getClientSocket(), registeredMsg);
+    std::stringstream ss;
+    ss << GREEN "You are now registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
+    std::string registeredMsg = ss.str();
+    client.sendClientMsg(client.getClientSocket(), registeredMsg.c_str());
 
-	std::cout << "\nClient registered! ✅ username = " << username << ", nickname = " << nickname << ", client_socket: " << client.getClientSocket() << std::endl;
+    std::cout << GREEN << "\nClient " << username << " is registered! ✅ " RESET << std::endl;
+    // std::cout << "username = " << username << ", nickname = " << nickname << std::endl;
 }
 
 void Server::handleClientMessage(int client_fd) {

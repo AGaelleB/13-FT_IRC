@@ -43,7 +43,7 @@ void Client::setUser(const User& user) {
 /************************************** FUNCTIONS **************************************/
 
 void Client::handleClientMsg(const std::string& message, Client& client) {
-	std::cout << BOLD << client.getUser().getUsername()  <<  " msg: " << RESET << message;
+	std::cout << BOLD << "\n" << client.getUser().getUsername()  <<  " msg: " << RESET << message;
 
 	if (message.substr(0, 6) == "/login")
 		std::cout << "Login command received" << std::endl;
@@ -61,6 +61,6 @@ void Client::sendClientMsg(int client_socket, const char* message) {
 }
 
 void Client::welcomeClient(int client_socket) {
-	const char* welcomeMsg = "\n ~~~ Welcome on our IRC Server! ~~~ \n\n";
+	const char* welcomeMsg = BLUE "\n ~~~ Welcome on our IRC Server! ~~~ \n\n" RESET;
 	sendClientMsg(client_socket, welcomeMsg);
 }
