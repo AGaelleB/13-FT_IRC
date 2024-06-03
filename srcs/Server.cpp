@@ -123,7 +123,7 @@ void Server::startServer() {
 	}
 }
 
-void Server::authenticateAndRegister(Client &client) {
+void Server::checkPassword(Client &client) {
 	char buffer[1024];
 	ssize_t bytes_received;
 
@@ -137,39 +137,27 @@ void Server::authenticateAndRegister(Client &client) {
 			close(client.getClientSocket());
 			return;
 		}
-		buffer[bytes_received] = '\0';
-		std::string pass(buffer);
-		pass = trim(pass);
 
-		if (pass != this->_password) {
+		buffer[bytes_received] = '\0';
+		std::string password(buffer);
+		password = trim(password);
+
+		if (password != this->_password) {
 			const char* wrongPass = RED "Wrong password \n\n" RESET;
 			client.sendClientMsg(client.getClientSocket(), wrongPass);
-		} else {
-			break;
 		}
+		else
+			break;
 	}
-	const char* usernameMsg = BOLD "Enter your username: " RESET;
-	client.sendClientMsg(client.getClientSocket(), usernameMsg);
-	bytes_received = recv(client.getClientSocket(), buffer, sizeof(buffer) - 1, 0);
-	if (bytes_received <= 0) {
-		std::cerr << "Error: reception failed during username entry, client_socket: " << client.getClientSocket() << std::endl;
-		close(client.getClientSocket());
-		return;
-	}
-	buffer[bytes_received] = '\0';
-	std::string username = trim(std::string(buffer));
+}
 
-	const char* nicknameMsg = BOLD "Enter your username: " RESET;
-	client.sendClientMsg(client.getClientSocket(), nicknameMsg);
-	bytes_received = recv(client.getClientSocket(), buffer, sizeof(buffer) - 1, 0);
-	if (bytes_received <= 0) {
-		std::cerr << "Error: reception failed during nickname entry, client_socket: " << client.getClientSocket() << std::endl;
-		close(client.getClientSocket());
-		return;
-	}
-	buffer[bytes_received] = '\0';
-	std::string nickname = trim(std::string(buffer));
+void Server::authenticateAndRegister(Client &client) {
+	std::string username;
+	std::string nickname;
 
+	checkPassword(client);
+	username = client.setUserName();
+	nickname = client.setNickName();
 	addUser(client, username, nickname);
 
     std::stringstream ss;
@@ -178,7 +166,6 @@ void Server::authenticateAndRegister(Client &client) {
     client.sendClientMsg(client.getClientSocket(), registeredMsg.c_str());
 
     std::cout << GREEN << "\nClient " << username << " is registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
-    // std::cout << "username = " << username << ", nickname = " << nickname << std::endl;
 }
 
 void Server::handleClientMessage(int client_fd) {
@@ -189,9 +176,9 @@ void Server::handleClientMessage(int client_fd) {
 		if (bytes_received == 0) {
 			std::cout << "\nClient disconnected ❌, client_fd: " << client_fd << std::endl;
 			std::cout << "Total clients: " << nfds - 2 << std::endl;
-		} else {
-			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
 		}
+		else
+			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
 		close(client_fd);
 		_clients.erase(client_fd); // Supprimer le client de la map
 		// Retirer le client de la structure pollfd

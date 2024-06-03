@@ -22,10 +22,14 @@ class Server {
 		~Server();
 
 		// Functions
-		void	startServer();
-		void addUser(Client &client, const std::string &username, const std::string &nickname);
-		void handleClientMessage(int client_index);
-		void authenticateAndRegister(Client &client);
+		void		startServer();
+		void		addUser(Client &client, const std::string &username, const std::string &nickname);
+		void		handleClientMessage(int client_index);
+		void		authenticateAndRegister(Client &client);
+		void		checkPassword(Client &client);
+		
 };
+
+std::string	trim(const std::string& str);
 
 #endif // SERVER_HPP
