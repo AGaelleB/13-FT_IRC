@@ -79,7 +79,6 @@ void Server::startServer() {
 			exit(1);
 		}
 
-
 		for (int i = 0; i < nfds; ++i) {
 			if (fds[i].revents & POLLIN) {
 				if (fds[i].fd == _server_socket) {
@@ -102,20 +101,13 @@ void Server::startServer() {
 					nfds++;
 
 					client.setClientSocket(client_socket);
-
 					client.sendClientMsg(client_socket, bannerIRC);
 					client.welcomeClient(client_socket);
-
-					// Gérer l'authentification et les informations utilisateur
 					authenticateAndRegister(client);
+					_clients[client_socket] = client; // Ajouter le client au map des clients après l'authentification
 
-					// Ajouter le client au map des clients après l'authentification
-					_clients[client_socket] = client;
-
-					// std::cout << "Client registration complete. Connection remains open for client_socket: " << client_socket << std::endl << std::endl;
-				} else {
-					// Message reçu d'un client existant
-					// std::cout << "Handling message from client_fd: " << fds[i].fd << std::endl;
+				}
+				else {
 					handleClientMessage(fds[i].fd);
 				}
 			}
@@ -181,6 +173,7 @@ void Server::handleClientMessage(int client_fd) {
 			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
 		close(client_fd);
 		_clients.erase(client_fd); // Supprimer le client de la map
+		
 		// Retirer le client de la structure pollfd
 		for (int i = 0; i < nfds; ++i) {
 			if (fds[i].fd == client_fd) {
@@ -192,7 +185,6 @@ void Server::handleClientMessage(int client_fd) {
 	} else {
 		buffer[bytes_received] = '\0';
 		std::string message(buffer);
-		// std::cout << "Received message from client_fd " << client_fd << ": " << message << std::endl;
 		_clients[client_fd].handleClientMsg(message, _clients[client_fd]);
 	}
 }
