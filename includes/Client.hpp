@@ -28,7 +28,6 @@ class Client {
 		void				handleClientMsg(const std::string& message, Client& client);
 		void				sendClientMsg(int client_socket, const char* message);
 		void				welcomeClient(int client_socket);
-		
 };
 
 #endif // CLIENT_HPP

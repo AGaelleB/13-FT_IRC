@@ -14,9 +14,8 @@
 #include <poll.h>		// pour poll()
 #include <csignal>		// pour signal()
 #include <cstdlib>		// pour std::atoi
-#include <string>		// pour std::string
-#include <cstring>		// pour memset
-#include <sstream>		// pour iss
+#include <string>		// Pour std::string
+#include <cstring>		// Pour memset
 #include <iostream>
 #include <cstdio>
 
