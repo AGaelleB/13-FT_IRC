@@ -52,6 +52,8 @@ void Server::addUser(Client &client, const std::string &username, const std::str
 	User user(current_index++, username, nickname);
 	client.setUser(user);
 	_clients[client.getClientSocket()] = client;
+	_nicknames.insert(nickname); // Add nickname to set
+
 }
 
 std::string trim(const std::string& str) {
@@ -191,18 +193,23 @@ void Server::checkPassword(Client &client) {
 }
 
 void Server::authenticateAndRegister(Client &client) {
-	std::string username;
-	std::string nickname;
+    std::string username;
+    std::string nickname;
 
-	checkPassword(client);
-	username = client.setUserName();
-	nickname = client.setNickName();
-	addUser(client, username, nickname);
+    checkPassword(client);
+    username = client.setUserName();
+    nickname = client.setNickName(*this);
+    addUser(client, username, nickname);
 
-	std::stringstream ss;
-	ss << GREEN "You are now registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
-	std::string registeredMsg = ss.str();
-	client.sendClientMsg(client.getClientSocket(), registeredMsg.c_str());
+    std::stringstream ss;
+    ss << GREEN "You are now registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
+    std::string registeredMsg = ss.str();
+    client.sendClientMsg(client.getClientSocket(), registeredMsg.c_str());
 
-	std::cout << GREEN << "\nClient " << nickname << " is registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
+    std::cout << GREEN << "\nClient " << nickname << " is registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
 }
+
+bool Server::isNicknameAvailable(const std::string& nickname) {
+    return (_nicknames.find(nickname) == _nicknames.end());
+}
+

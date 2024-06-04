@@ -2,6 +2,9 @@
 #define CLIENT_HPP
 
 #include "./User.hpp"
+#include "./Server.hpp"
+
+class Server;
 
 class Client {
 
@@ -30,7 +33,7 @@ class Client {
 		void				welcomeClient(int client_socket);
 		bool				checkName(const std::string& username);
 		std::string			setUserName();
-		std::string			setNickName();
+		std::string			setNickName(Server& server);
 };
 
 std::string	trim(const std::string& str);

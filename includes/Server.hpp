@@ -6,6 +6,7 @@
 extern struct pollfd fds[1024];
 extern int nfds;
 
+class Client; // Déclaration anticipée de Client
 
 class Server {
 
@@ -14,7 +15,9 @@ class Server {
 		struct sockaddr_in		_server_addr;
 		std::string				_password;
 		std::map<int, Client>	_clients;
+        std::set<std::string>   _nicknames;
 		int						_port;
+
 
 	public:
 		Server();
@@ -27,7 +30,8 @@ class Server {
 		void	startServer();
 		void	checkPassword(Client &client);
 		void	authenticateAndRegister(Client &client);
-		
+		bool    isNicknameAvailable(const std::string& nickname); 
+
 };
 
 std::string	trim(const std::string& str);

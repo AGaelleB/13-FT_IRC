@@ -19,5 +19,6 @@
 #include <sstream>
 #include <iostream>
 #include <cstdio>
+#include <set>
 
 #endif // LIBRARY_HPP
