@@ -42,20 +42,6 @@ void Client::setUser(const User& user) {
 
 /************************************** FUNCTIONS **************************************/
 
-void Client::handleClientMsg(const std::string& message, Client& client) {
-	std::cout << BOLD << "\n" << client.getUser().getNickname()  <<  " msg: " << RESET << message;
-
-	if (message.substr(0, 6) == "/login")
-		std::cout << "Login command received" << std::endl;
-	// else if (message.substr(0, 8) == "/channel")
-	// 	std::cout << "Channel command received" << std::endl;
-	else {
-		const char* unknownCommand = "Unknown command ❌\n";
-		sendClientMsg(this->getClientSocket(), unknownCommand);
-	}
-	(void)client;
-}
-
 void Client::sendClientMsg(int client_socket, const char* message) {
 	if (client_socket != -1) {
 		if (send(client_socket, message, strlen(message), 0) == -1)
@@ -63,9 +49,16 @@ void Client::sendClientMsg(int client_socket, const char* message) {
 	}
 }
 
-void Client::welcomeClient(int client_socket) {
-	const char* welcomeMsg = BLUE "\n ~~~ Welcome on our IRC Server! ~~~ \n\n" RESET;
-	sendClientMsg(client_socket, welcomeMsg);
+void Client::handleClientMsg(const std::string& message, Client& client) {
+	std::cout << BOLD << "\n" << client.getUser().getNickname()  <<  " msg: " << RESET << message;
+
+	if (message.substr(0, 6) == "/login")
+		std::cout << "Login command received" << std::endl;
+	// else if (message.substr(0, 8) == "/channel")
+	// 	std::cout << "Channel command received" << std::endl;
+	else
+		sendClientMsg(this->getClientSocket(), UNKNOWN_CMD);
+	(void)client;
 }
 
 bool Client::checkName(const std::string& username) {
@@ -85,8 +78,7 @@ std::string Client::setUserName() {
 	ssize_t bytes_received;
 
 	while (true) {
-		const char* usernameMsg = BOLD "Enter your username: " RESET;
-		this->sendClientMsg(this->getClientSocket(), usernameMsg);
+		this->sendClientMsg(this->getClientSocket(), MSG_USERNAME);
 
 		bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
 		if (bytes_received <= 0) {
@@ -102,45 +94,41 @@ std::string Client::setUserName() {
 
 		if (this->checkName(std::string(buffer)) == true)
 			return (trim(std::string(buffer)));
-		const char* errorUserName = RED "Error: Your username must be less than 15 characters and contain only alphanumeric characters\n" RESET;
-		this->sendClientMsg(this->getClientSocket(), errorUserName);
+		this->sendClientMsg(this->getClientSocket(), ERROR_USERNAME);
 	}
 }
 
 std::string Client::setNickName(Server& server) {
-    char buffer[1024];
-    ssize_t bytes_received;
+	char buffer[1024];
+	ssize_t bytes_received;
 
-    while (true) {
-        const char* nicknameMsg = BOLD "Enter your nickname: " RESET;
-        this->sendClientMsg(this->getClientSocket(), nicknameMsg);
+	while (true) {
+		this->sendClientMsg(this->getClientSocket(), MSG_NICKNAME);
 
-        bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
-        if (bytes_received <= 0) {
-            if (bytes_received == 0)
-                std::cout << RED << "\nClient disconnected during nickname entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
-            else
-                std::cerr << "Error: reception failed during nickname entry, client_socket: " << this->getClientSocket() << std::endl;
-            close(this->getClientSocket());
-            return "";
-        }
-        buffer[bytes_received] = '\0';
-        std::string nickname = trim(std::string(buffer));
+		bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
+		if (bytes_received <= 0) {
+			if (bytes_received == 0)
+				std::cout << RED << "\nClient disconnected during nickname entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
+			else
+				std::cerr << "Error: reception failed during nickname entry, client_socket: " << this->getClientSocket() << std::endl;
+			close(this->getClientSocket());
+			return "";
+		}
+		buffer[bytes_received] = '\0';
+		std::string nickname = trim(std::string(buffer));
 
-        // Validate nickname format
-        if (!this->checkName(nickname)) {
-            const char* errorNickName = RED "Error: Your nickname must be less than 15 characters and contain only alphanumeric characters\n" RESET;
-            this->sendClientMsg(this->getClientSocket(), errorNickName);
-            continue;
-        }
+		// Validate nickname format
+		if (!this->checkName(nickname)) {
+			this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME);
+			continue;
+		}
 
-        // Check if nickname is available
-        if (server.isNicknameAvailable(nickname)) {
-            return (nickname);
-        }
+		// Check if nickname is available
+		if (server.isNicknameAvailable(nickname)) {
+			return (nickname);
+		}
 		else {
-            const char* errorNickNameNotAvailable = RED "Error: Nickname already taken. Please choose another one\n" RESET;
-            this->sendClientMsg(this->getClientSocket(), errorNickNameNotAvailable);
-        }
-    }
+			this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_NOT_AVAILABLE);
+		}
+	}
 }

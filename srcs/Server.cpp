@@ -3,6 +3,7 @@
 struct pollfd fds[1024];
 int nfds = 1;
 
+
 /************************************* CONST ET DEST *************************************/
 
 Server::Server() : _server_socket(-1), _password("1234"), _port(6667) {
@@ -53,7 +54,6 @@ void Server::addUser(Client &client, const std::string &username, const std::str
 	client.setUser(user);
 	_clients[client.getClientSocket()] = client;
 	_nicknames.insert(nickname); // Add nickname to set
-
 }
 
 std::string trim(const std::string& str) {
@@ -61,12 +61,10 @@ std::string trim(const std::string& str) {
 	while (start < str.size() && std::isspace(str[start])) {
 		start++;
 	}
-
 	size_t end = str.size();
 	while (end > start && std::isspace(str[end - 1])) {
 		end--;
 	}
-
 	return (str.substr(start, end - start));
 }
 
@@ -83,7 +81,6 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
 		close(client_fd);
 		_clients.erase(client_fd); // Supprimer le client de la map
-				
 		for (int i = 0; i < nfds; ++i) { // Retirer le client de la structure pollfd
 			if (fds[i].fd == client_fd) {
 				fds[i] = fds[nfds - 1];
@@ -124,7 +121,7 @@ void Server::startServer() {
 
 					std::cout << GREEN << "\nNew connection accepted! ✅ ---> client_socket: " << client_socket << RESET << std::endl;
 					std::cout << "Total clients: " << nfds << std::endl;
-					
+
 					std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
 
 					// Ajouter le nouveau client au vecteur pollfd
@@ -134,7 +131,7 @@ void Server::startServer() {
 
 					client.setClientSocket(client_socket);
 					client.sendClientMsg(client_socket, bannerIRC);
-					client.welcomeClient(client_socket);
+					client.sendClientMsg(client_socket, MSG_WELCOME);
 					authenticateAndRegister(client);
 					_clients[client_socket] = client; // Ajouter le client au map des clients après l'authentification
 					
@@ -156,14 +153,12 @@ void Server::checkPassword(Client &client) {
 	ssize_t bytes_received;
 
 	while (true) {
-		const char* passwordMsg = BOLD "Enter Server password: " RESET;
-		client.sendClientMsg(client.getClientSocket(), passwordMsg);
+		client.sendClientMsg(client.getClientSocket(), MSG_PASSWORD);
 
 		bytes_received = recv(client.getClientSocket(), buffer, sizeof(buffer) - 1, 0);
 
 		if (bytes_received >= 1023) {
-			const char* passwordErrorMsg = RED "Error: password is too long\n\n" RESET;
-			client.sendClientMsg(client.getClientSocket(), passwordErrorMsg);
+			client.sendClientMsg(client.getClientSocket(), ERROR_PASSWORD_TOO_LONG);
 
 			while ((bytes_received = recv(client.getClientSocket(), buffer, sizeof(buffer) - 1, 0)) > 0) {
 				if (bytes_received < 1023) {
@@ -184,8 +179,8 @@ void Server::checkPassword(Client &client) {
 		password = trim(password);
 
 		if (password != this->_password) {
-			const char* wrongPass = RED "Wrong password \n\n" RESET;
-			client.sendClientMsg(client.getClientSocket(), wrongPass);
+   			// std::cout << YELLOW << password << RESET << std::endl;
+			client.sendClientMsg(client.getClientSocket(), ERROR_PASSWORD);
 		}
 		else
 			break;

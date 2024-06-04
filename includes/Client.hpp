@@ -30,7 +30,6 @@ class Client {
 		// Fonctions
 		void				handleClientMsg(const std::string& message, Client& client);
 		void				sendClientMsg(int client_socket, const char* message);
-		void				welcomeClient(int client_socket);
 		bool				checkName(const std::string& username);
 		std::string			setUserName();
 		std::string			setNickName(Server& server);

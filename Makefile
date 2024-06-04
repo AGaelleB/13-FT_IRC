@@ -9,8 +9,10 @@ OBJ_DIR = objs
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.cpp=.o)))
 
 SRCS =	main.cpp \
-		Server.cpp \
 		Client.cpp \
+		irssi.cpp \
+		Parsing.cpp \
+		Server.cpp \
 		User.cpp \
 
 RM = rm -rf
