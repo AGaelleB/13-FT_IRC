@@ -57,8 +57,9 @@ void Client::handleClientMsg(const std::string& message, Client& client) {
 }
 
 void Client::sendClientMsg(int client_socket, const char* message) {
-	if (send(client_socket, message, strlen(message), 0) == -1) {
-		std::cerr << "Error: failed to send message" << std::endl;
+	if (client_socket != -1) {
+		if (send(client_socket, message, strlen(message), 0) == -1)
+			std::cerr << "Error: failed to send message" << std::endl;
 	}
 }
 
@@ -67,16 +68,14 @@ void Client::welcomeClient(int client_socket) {
 	sendClientMsg(client_socket, welcomeMsg);
 }
 
-
 bool Client::checkName(const std::string& username) {
 	std::string checkName = trim(username);
 
 	if (checkName.length() > 15)
 		return (false);
 	for (size_t i = 0; i < checkName.length(); ++i) {
-		if (!std::isalpha(checkName[i]) && checkName[i] != '_' && checkName[i] != '-') {
+		if (!std::isalpha(checkName[i]) && checkName[i] != '_' && checkName[i] != '-')
 			return (false); 
-		}
 	}
 	return (true); 
 }
@@ -86,25 +85,29 @@ std::string Client::setUserName() {
 	char buffer[1024];
 	ssize_t bytes_received;
 
-	while (true)
-	{
+	while (true) {
 		const char* usernameMsg = BOLD "Enter your username: " RESET;
 		this->sendClientMsg(this->getClientSocket(), usernameMsg);
+
 		bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
 		if (bytes_received <= 0) {
-			std::cerr << "Error: reception failed during username entry, client_socket: " << this->getClientSocket() << std::endl;
+			if (bytes_received == 0)
+				std::cout << RED << "\nClient disconnected during username entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
+			else
+				std::cerr << "Error: reception failed during username entry, client_socket: " << this->getClientSocket() << std::endl;
 			close(this->getClientSocket());
-			return (NULL);
+			return "";
 		}
+
 		buffer[bytes_received] = '\0';
-		
-		if (this->checkName(std::string(buffer)) == true) {
+
+		if (this->checkName(std::string(buffer)) == true)
 			return (trim(std::string(buffer)));
-		}
 		const char* errorUserName = RED "Error: Your username must be less than 15 characters and contain only alphanumeric characters\n" RESET;
 		this->sendClientMsg(this->getClientSocket(), errorUserName);
 	}
 }
+
 
 std::string Client::setNickName() {
 	char buffer[1024];
@@ -113,16 +116,19 @@ std::string Client::setNickName() {
 	while (true) {
 		const char* nicknameMsg = BOLD "Enter your nickname: " RESET;
 		this->sendClientMsg(this->getClientSocket(), nicknameMsg);
+
 		bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
 		if (bytes_received <= 0) {
-			std::cerr << "Error: reception failed during nickname entry, client_socket: " << this->getClientSocket() << std::endl;
+			if (bytes_received == 0)
+				std::cout << RED << "\nClient disconnected during nickname entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
+			else
+				std::cerr << "Error: reception failed during nickname entry, client_socket: " << this->getClientSocket() << std::endl;
 			close(this->getClientSocket());
-			return (NULL);
+			return "";
 		}
 		buffer[bytes_received] = '\0';
-		if (this->checkName(std::string(buffer)) == true) {
+		if (this->checkName(std::string(buffer)) == true)
 			return (trim(std::string(buffer)));
-		}
 		const char* errorNickName = RED "Error: Your nickname must be less than 15 characters and contain only alphanumeric characters\n" RESET;
 		this->sendClientMsg(this->getClientSocket(), errorNickName);
 	}
