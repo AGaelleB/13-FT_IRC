@@ -22,11 +22,11 @@ class Server {
 		~Server();
 
 		// Functions
-		void		startServer();
-		void		addUser(Client &client, const std::string &username, const std::string &nickname);
-		void		handleClientMessage(int client_index);
-		void		authenticateAndRegister(Client &client);
-		void		checkPassword(Client &client);
+		void	addUser(Client &client, const std::string &username, const std::string &nickname);
+		void	handleClientMessage(int client_index, Client& client);
+		void	startServer();
+		void	checkPassword(Client &client);
+		void	authenticateAndRegister(Client &client);
 		
 };
 

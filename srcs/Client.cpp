@@ -43,7 +43,7 @@ void Client::setUser(const User& user) {
 /************************************** FUNCTIONS **************************************/
 
 void Client::handleClientMsg(const std::string& message, Client& client) {
-	std::cout << BOLD << "\n" << client.getUser().getUsername()  <<  " msg: " << RESET << message;
+	std::cout << BOLD << "\n" << client.getUser().getNickname()  <<  " msg: " << RESET << message;
 
 	if (message.substr(0, 6) == "/login")
 		std::cout << "Login command received" << std::endl;
