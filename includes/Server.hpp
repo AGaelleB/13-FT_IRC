@@ -6,7 +6,7 @@
 extern struct pollfd fds[1024];
 extern int nfds;
 
-class Client; // Déclaration anticipée de Client
+class Client;
 
 class Server {
 
@@ -17,6 +17,7 @@ class Server {
 		std::map<int, Client>	_clients;
         std::set<std::string>   _nicknames;
 		int						_port;
+		std::string				_irssi_data;
 
 
 	public:
@@ -24,16 +25,23 @@ class Server {
 		Server(int _port, const std::string &password);
 		~Server();
 
-		// Functions
-		void	addUser(Client &client, const std::string &username, const std::string &nickname);
-		void	handleClientMessage(int client_index, Client& client);
+		// Server.cpp
 		void	startServer();
-		void	checkPassword(Client &client);
-		void	authenticateAndRegister(Client &client);
+
+		// Authentification.cpp
 		bool    isNicknameAvailable(const std::string& nickname); 
+		void	handleClientMessage(int client_index, Client& client);
+		void	checkPassword(Client &client);
+		void	addUser(Client &client, const std::string &username, const std::string &nickname);
+		void	authenticateAndRegister(Client &client);
+
+
+		// irsii.cpp
+		int		findCapLs(std::string s1);
+		int		check_irssi_entrance(int fd);
+
+
 
 };
-
-std::string	trim(const std::string& str);
 
 #endif // SERVER_HPP
