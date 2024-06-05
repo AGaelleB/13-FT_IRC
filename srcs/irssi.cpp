@@ -3,9 +3,6 @@
 int Server::findCapLs(std::string s1) 
 {
 	std::string cap_ls = "CAP LS";
-	
-	std::cout << YELLOW << "Hi CAP LS" << RESET << std::endl;
-
 	for (int i = 0; i < 6; ++i) {
 		if (s1[i] != cap_ls[i])
 			return 1;

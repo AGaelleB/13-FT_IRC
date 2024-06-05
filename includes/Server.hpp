@@ -33,7 +33,9 @@ class Server {
 		void	handleClientMessage(int client_index, Client& client);
 		void	checkPassword(Client &client);
 		void	addUser(Client &client, const std::string &username, const std::string &nickname);
+		void	isRegistered(Client &client);
 		void	authenticateAndRegister(Client &client);
+
 
 		// irsii.cpp
 		int		findCapLs(std::string s1);

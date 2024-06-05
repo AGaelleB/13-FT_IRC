@@ -1,15 +1,12 @@
 #include "../includes/Server.hpp"
 
 /* 
-	CAP LS
-	NICK gaelle
-	USER gaelle gaelle localhost :Gaga Coding
+	// gerer les signaux 
+	// voir pq on bloque si client irssi, ne permet pas a nc de se creer 
  */
 
 
 void Server::parsingDataIrssi(Client client) {
-    std::cerr << "Contents of _irssi_data before parsing:\n" << this->_irssi_data << std::endl;
-
     std::istringstream stream(this->_irssi_data);
     std::string line;
     std::string nickname;
@@ -18,21 +15,17 @@ void Server::parsingDataIrssi(Client client) {
     while (std::getline(stream, line)) {
         if (line.find("NICK ") == 0) {
             nickname = line.substr(5);
-            std::cerr << "Trimmed Nickname: " << nickname << std::endl;
         } else if (line.find("USER ") == 0) {
             std::istringstream userStream(line);
             std::string userKeyword;
             userStream >> userKeyword >> username;
-            std::cerr << "Trimmed Username: " << username << std::endl;
         }
     }
     addUser(client, username, nickname);
-    std::cerr << "Nickname after addUser: " << client.getUser().getNickname() << std::endl;
-    std::cerr << "Username after addUser: " << client.getUser().getUsername() << std::endl;
 }
 
-
 void Server::parsingDataNetclient(Client client, int new_client_socket) {
+	std::cout << YELLOW "~~~ parsingDataNetclient ~~~" << RESET << std::endl;
 
 	// Ajouter le nouveau client au vecteur pollfd
 	fds[nfds].fd = new_client_socket;
@@ -47,36 +40,43 @@ void Server::parsingDataNetclient(Client client, int new_client_socket) {
 }
 
 void Server::detectClient(Client client, int new_client_socket) {
+	
+	std::cout << YELLOW "~~~ detectClient ~~~" << RESET << std::endl;
+	
 	char buffer[1024];
+
+	std::cout << YELLOW "~~~ 1 ~~~" << RESET << std::endl;
 	sleep(1);
+
+	std::cout << YELLOW "new_client_socket: " << new_client_socket << RESET << std::endl;
+	std::cout << YELLOW "buffer: " << buffer << RESET << std::endl;
+
 	ssize_t bytes_received = recv(new_client_socket, buffer, sizeof(buffer) - 1, 0);
+	
+	std::cout << YELLOW "bytes_received: " << bytes_received << RESET << std::endl;
+	
 	if (bytes_received > 0) {
 		buffer[bytes_received] = '\0';
 		std::string answer(buffer);
-
+		
+		std::cout << YELLOW "answer: " << answer << RESET << std::endl;
 		if (findCapLs(answer) == 0) {
-   			 std::cerr << "Contents of answer:\n" << answer << std::endl;
 			std::cerr << "connected with irssi!\n\n";
 			this->_irssi_data = answer;
 			parsingDataIrssi(client);
-			std::cerr << "END connection with irssi!\n\n";
 		}
 		else { 
 			std::cerr << "connected with netcat!\n\n";
 			std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
 			parsingDataNetclient(client, new_client_socket);
 		}
+		isRegistered(client);
 	}
 	else {
 		std::cerr << "Error: recv failed" << std::endl;
 		close(new_client_socket);
 	}
 }
-
-
-
-
-
 
 
 

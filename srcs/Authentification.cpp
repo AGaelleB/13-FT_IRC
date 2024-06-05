@@ -1,7 +1,7 @@
 #include "../includes/Server.hpp"
 
 bool Server::isNicknameAvailable(const std::string& nickname) {
-    return (_nicknames.find(nickname) == _nicknames.end());
+	return (_nicknames.find(nickname) == _nicknames.end());
 }
 
 void Server::handleClientMessage(int client_fd, Client& client) {
@@ -63,7 +63,7 @@ void Server::checkPassword(Client &client) {
 		password = trim(password);
 
 		if (password != this->_password) {
-			std::cout << YELLOW << password << RESET << std::endl; ///
+			// std::cout << YELLOW << password << RESET << std::endl; ///
 			client.sendClientMsg(client.getClientSocket(), ERROR_PASSWORD);
 		}
 		else
@@ -79,19 +79,22 @@ void Server::addUser(Client &client, const std::string &username, const std::str
 	_nicknames.insert(nickname); // Add nickname to set
 }
 
+void Server::isRegistered(Client &client) {
+	std::stringstream ss;
+	ss << GREEN "You are now registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
+	std::string registeredMsg = ss.str();
+	client.sendClientMsg(client.getClientSocket(), registeredMsg.c_str());
+
+	std::cout << GREEN << "\nClient " << client.getUser().getNickname() << " is registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
+
+}
+
 void Server::authenticateAndRegister(Client &client) {
-    std::string username;
-    std::string nickname;
+	std::string username;
+	std::string nickname;
 
-    checkPassword(client);
-    username = client.setUserName();
-    nickname = client.setNickName(*this);
-    addUser(client, username, nickname);
-
-    std::stringstream ss;
-    ss << GREEN "You are now registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
-    std::string registeredMsg = ss.str();
-    client.sendClientMsg(client.getClientSocket(), registeredMsg.c_str());
-
-    std::cout << GREEN << "\nClient " << nickname << " is registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
+	checkPassword(client);
+	username = client.setUserName();
+	nickname = client.setNickName(*this);
+	addUser(client, username, nickname);
 }
