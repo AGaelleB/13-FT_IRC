@@ -65,30 +65,51 @@ void Server::startServer() {
 					// Nouvelle connexion
 					Client client;
 					socklen_t client_len = sizeof(client.getClientAddr());
-					int client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
-					if (client_socket == -1) {
+					int new_client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
+					if (new_client_socket == -1) {
 						std::cerr << "Error: connection not accepted" << std::endl;
 						continue;
 					}
 
-					std::cout << GREEN << "\nNew connection accepted! ✅ ---> client_socket: " << client_socket << RESET << std::endl;
-					std::cout << "Total clients: " << nfds << std::endl;
+					std::cout << GREEN << "\nNew connection accepted! ✅ ---> client_socket: " << new_client_socket << RESET << std::endl;
+					std::cout << "Total clients: " << nfds + 1 << std::endl;
 
-					std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
+					char buffer[1024];
+					sleep(1);
+					ssize_t bytes_received = recv(new_client_socket, buffer, sizeof(buffer) - 1, 0);
 
-					// Ajouter le nouveau client au vecteur pollfd
-					fds[nfds].fd = client_socket;
-					fds[nfds].events = POLLIN;
-					nfds++;
+					if (bytes_received > 0) {
 
-					client.setClientSocket(client_socket);
-					client.sendClientMsg(client_socket, bannerIRC);
-					client.sendClientMsg(client_socket, MSG_WELCOME);
-					authenticateAndRegister(client);
-					_clients[client_socket] = client; // Ajouter le client au map des clients après l'authentification
-					
+						buffer[bytes_received] = '\0';
+						std::string answer(buffer);
+
+						// parsing irssi
+						if (findCapLs(answer) == 0) {
+							std::cerr << "connected with irssi!\n\n";
+							this->_irssi_data = answer;
+						}
+						else { // parsing nc
+							std::cerr << "connected with netcat!\n\n";
+							std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
+
+							// Ajouter le nouveau client au vecteur pollfd
+							fds[nfds].fd = new_client_socket;
+							fds[nfds].events = POLLIN;
+							nfds++;
+
+							client.setClientSocket(new_client_socket);
+							client.sendClientMsg(new_client_socket, bannerIRC);
+							client.sendClientMsg(new_client_socket, MSG_WELCOME);
+							authenticateAndRegister(client);
+							_clients[new_client_socket] = client; // Ajouter le client au map des clients après l'authentification
+						}
+					}
+					else {
+						std::cerr << "Error: recv failed" << std::endl;
+						close(new_client_socket);
+					}
 				}
- 				else {
+				else {
 					std::map<int, Client>::iterator it = _clients.find(fds[i].fd);
 					if (it != _clients.end())
 						handleClientMessage(fds[i].fd, it->second);
