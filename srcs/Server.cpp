@@ -70,7 +70,7 @@ void Server::startServer() {
                         continue;
                     }
                     std::cout << GREEN << "\nNew connection accepted! ✅ ---> client_socket: " << new_client_socket << RESET << std::endl;
-                    std::cout << "Total clients: " << nfds + 1 << std::endl;
+                    std::cout << BOLD << "Total client[s] online: " << nfds << RESET << std::endl;
                     fds[nfds].fd = new_client_socket;
                     fds[nfds].events = POLLIN;
                     nfds++;

@@ -11,7 +11,7 @@ void Server::handleClientMessage(int client_fd, Client& client) {
     if (bytes_received <= 0) {
         if (bytes_received == 0) {
             std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ ---> client_socket: " << client_fd << RESET << std::endl;
-            // std::cout << "Total clients: " << nfds - 2 << std::endl;
+            std::cout << BOLD << "Total client[s] still online: " << nfds - 2 << RESET << std::endl;
         } else {
             std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
         }
