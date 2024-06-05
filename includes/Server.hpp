@@ -43,8 +43,9 @@ class Server {
 
 		// parsing.cpp
 		void	detectClient(int client_socket);
-		void	parsingDataIrssi(Client client);
-		void	parsingDataNetclient(Client client, int new_client_socket);
+		void	parsingDataIrssi(Client &client);
+		void	parsingDataNetclient(Client &client, int new_client_socket);
+		void	setNonBlocking(int socket);
 };
 
 #endif // SERVER_HPP

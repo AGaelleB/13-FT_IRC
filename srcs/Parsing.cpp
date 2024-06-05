@@ -6,7 +6,7 @@
  */
 
 
-void Server::parsingDataIrssi(Client client) {
+void Server::parsingDataIrssi(Client &client) {
     std::istringstream stream(this->_irssi_data);
     std::string line;
     std::string nickname;
@@ -22,57 +22,64 @@ void Server::parsingDataIrssi(Client client) {
         }
     }
     addUser(client, username, nickname);
+    std::cout << YELLOW "irssi username = " << username << RESET << std::endl;
+    std::cout << YELLOW "irssi nickname = " << nickname << RESET << std::endl;
 }
 
-void Server::parsingDataNetclient(Client client, int new_client_socket) {
-    std::cout << YELLOW "~~~ parsingDataNetclient ~~~" << RESET << std::endl;
+
+void Server::parsingDataNetclient(Client &client, int new_client_socket) {
     client.setClientSocket(new_client_socket);
     client.sendClientMsg(new_client_socket, bannerIRC);
     client.sendClientMsg(new_client_socket, MSG_WELCOME);
-    authenticateAndRegister(client);
-    _clients[new_client_socket] = client; // Ajouter le client au map des clients après l'authentification
+    authenticateAndRegister(client); // Procéder immédiatement à l'authentification et l'inscription
+    _clients[new_client_socket] = client; // Ajouter le client à la map des clients après l'authentification
 }
 
 
-void Server::detectClient(int client_socket) {
-    std::cout << YELLOW "~~~ detectClient ~~~" << RESET << std::endl;
 
-    char buffer[1024] = {0}; // Initialiser le buffer avec des zéros
+void Server::setNonBlocking(int socket) {
+	if (fcntl(socket, F_SETFL, O_NONBLOCK) == -1) {
+		std::cerr << "Error: fcntl F_SETFL failed" << std::endl;
+	}
+}
+
+void Server::detectClient(int client_socket) {
+    setNonBlocking(client_socket);  // Configure le socket en mode non-bloquant
+    char buffer[1024];
 
     // Essayer de recevoir des données initiales sans bloquer
     ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
-    std::cout << YELLOW "bytes_received: " << bytes_received << RESET << std::endl;
+    buffer[bytes_received] = '\0';
+    std::string answer(buffer);
 
-    if (bytes_received <= 0) {
-        if (bytes_received == 0 || (bytes_received == -1 && errno == EWOULDBLOCK)) {
-            // Considérer comme netcat si aucune donnée initiale n'est reçue immédiatement
-            std::cerr << "connected with netcat, no initial data received!\n\n";
-            parsingDataNetclient(_clients[client_socket], client_socket);
-            isRegistered(_clients[client_socket]); // Appel à isRegistered dans le cas de netcat
-        }
-		else {
-            std::cerr << "Error: recv failed" << std::endl;
-            close(client_socket);
-        }
-    }
-	else {
-        buffer[bytes_received] = '\0';
-        std::string answer(buffer);
-        std::cout << YELLOW "answer: " << answer << RESET << std::endl;
+    Client& client = _clients[client_socket]; // Accéder à l'objet client par référence
 
-        if (findCapLs(answer) == 0) {
-            std::cerr << "connected with irssi!\n\n";
-            this->_irssi_data = answer;
-            parsingDataIrssi(_clients[client_socket]);
-        }
-		else {
-            std::cerr << "connected with netcat!\n\n";
-            std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
-            parsingDataNetclient(_clients[client_socket], client_socket);
-            isRegistered(_clients[client_socket]); // Appel à isRegistered dans le cas de netcat
-        }
+    if (findCapLs(answer) == 0) {
+        std::cerr << "connected with irssi!\n\n";
+        this->_irssi_data = answer;
+        parsingDataIrssi(client); // Passez par référence
+        isRegistered(client); 
+    } else {
+        std::cerr << "connected with netcat!\n\n";
+        std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
+        parsingDataNetclient(client, client_socket); // Passez par référence
+        isRegistered(client); 
     }
 }
+
+
+/* 
+	pour que ca fonctitonne : 
+	1- lanccer irssi sans rien
+	2- lancer net cast sans rien
+	3- revenir dans irssi et se connect : /connect localhost 6668
+	4- revenir dans nc et se connect : nc localhost 6668
+
+ */
+
+
+
+
 
 // void Client::parsingCmd(const std::string& message, Client& client) {
 // 	std::cout << BOLD << "\n" << client.getUser().getUsername()  <<  " msg: " << RESET << message;

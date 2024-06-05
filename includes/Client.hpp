@@ -28,7 +28,7 @@ class Client {
 		void				setUser(const User& user);
 
 		// Fonctions
-		void				handleClientMsg(const std::string& message, Client& client);
+		void				printClientMsg(const std::string& message, Client& client);
 		void				sendClientMsg(int client_socket, const char* message);
 		bool				checkName(const std::string& username);
 		std::string			setUserName();
