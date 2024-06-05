@@ -74,77 +74,77 @@ bool Client::checkName(const std::string& username) {
 }
 
 std::string Client::setUserName() {
-    char buffer[1024];
-    ssize_t bytes_received;
+	char buffer[1024];
+	ssize_t bytes_received;
 
-    while (true) {
-        this->sendClientMsg(this->getClientSocket(), MSG_USERNAME);
+	while (true) {
+		this->sendClientMsg(this->getClientSocket(), MSG_USERNAME);
 
-        // Boucle jusqu'à recevoir des données valides
-        while (true) {
-            bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
-            if (bytes_received == -1 && errno == EWOULDBLOCK) {
-                usleep(100000); // Attendre un peu avant de réessayer
-                continue;
-            } else if (bytes_received > 0) {
-                break;
-            } else {
-                if (bytes_received == 0)
-                    std::cout << RED << "\nClient disconnected during username entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
-                else
-                    std::cerr << "Error: reception failed during username entry, client_socket: " << this->getClientSocket() << std::endl;
-                close(this->getClientSocket());
-                return "";
-            }
-        }
+		// Boucle jusqu'à recevoir des données valides
+		while (true) {
+			bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
+			if (bytes_received == -1 && errno == EWOULDBLOCK) {
+				usleep(42); // Attendre un peu avant de réessayer
+				continue;
+			} else if (bytes_received > 0) {
+				break;
+			} else {
+				if (bytes_received == 0)
+					std::cout << RED << "\nClient disconnected during username entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
+				else
+					std::cerr << "Error: reception failed during username entry, client_socket: " << this->getClientSocket() << std::endl;
+				close(this->getClientSocket());
+				return "";
+			}
+		}
 
-        buffer[bytes_received] = '\0';
+		buffer[bytes_received] = '\0';
 
-        if (this->checkName(std::string(buffer)) == true)
-            return trim(std::string(buffer));
-        this->sendClientMsg(this->getClientSocket(), ERROR_USERNAME);
-    }
+		if (this->checkName(std::string(buffer)) == true)
+			return trim(std::string(buffer));
+		this->sendClientMsg(this->getClientSocket(), ERROR_USERNAME);
+	}
 }
 
 std::string Client::setNickName(Server& server) {
-    char buffer[1024];
-    ssize_t bytes_received;
+	char buffer[1024];
+	ssize_t bytes_received;
 
-    while (true) {
-        this->sendClientMsg(this->getClientSocket(), MSG_NICKNAME);
+	while (true) {
+		this->sendClientMsg(this->getClientSocket(), MSG_NICKNAME);
 
-        // Boucle jusqu'à recevoir des données valides
-        while (true) {
-            bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
-            if (bytes_received == -1 && errno == EWOULDBLOCK) {
-                usleep(100000); // Attendre un peu avant de réessayer
-                continue;
-            } else if (bytes_received > 0) {
-                break;
-            } else {
-                if (bytes_received == 0)
-                    std::cout << RED << "\nClient disconnected during nickname entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
-                else
-                    std::cerr << "Error: reception failed during nickname entry, client_socket: " << this->getClientSocket() << std::endl;
-                close(this->getClientSocket());
-                return "";
-            }
-        }
+		// Boucle jusqu'à recevoir des données valides
+		while (true) {
+			bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
+			if (bytes_received == -1 && errno == EWOULDBLOCK) {
+				usleep(42); // Attendre un peu avant de réessayer
+				continue;
+			} else if (bytes_received > 0) {
+				break;
+			} else {
+				if (bytes_received == 0)
+					std::cout << RED << "\nClient disconnected during nickname entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
+				else
+					std::cerr << "Error: reception failed during nickname entry, client_socket: " << this->getClientSocket() << std::endl;
+				close(this->getClientSocket());
+				return "";
+			}
+		}
 
-        buffer[bytes_received] = '\0';
-        std::string nickname = trim(std::string(buffer));
+		buffer[bytes_received] = '\0';
+		std::string nickname = trim(std::string(buffer));
 
-        // Validate nickname format
-        if (!this->checkName(nickname)) {
-            this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME);
-            continue;
-        }
+		// Validate nickname format
+		if (!this->checkName(nickname)) {
+			this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME);
+			continue;
+		}
 
-        // Check if nickname is available
-        if (server.isNicknameAvailable(nickname)) {
-            return nickname;
-        } else {
-            this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_NOT_AVAILABLE);
-        }
-    }
+		// Check if nickname is available
+		if (server.isNicknameAvailable(nickname)) {
+			return nickname;
+		} else {
+			this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_NOT_AVAILABLE);
+		}
+	}
 }

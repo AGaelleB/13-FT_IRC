@@ -49,37 +49,37 @@ Server::~Server() {
 /************************************** FUNCTIONS **************************************/
 
 void Server::startServer() {
-    std::cout << bannerServer;
-    std::cout << BLUE << ". . . Listening on port " << _port << " . . . " << RESET << std::endl;
+	std::cout << bannerServer;
+	std::cout << BLUE << ". . . Listening on port " << _port << " . . . " << RESET << std::endl;
 
-    while (true) {
-        int poll_count = poll(fds, nfds, -1);
-        if (poll_count == -1) {
-            std::cerr << "Error: poll failed" << std::endl;
-            exit(1);
-        }
-        for (int i = 0; i < nfds; ++i) {
-            if (fds[i].revents & POLLIN) {
-                if (fds[i].fd == _server_socket) {
-                    // Nouvelle connexion
-                    Client client;
-                    socklen_t client_len = sizeof(client.getClientAddr());
-                    int new_client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
-                    if (new_client_socket == -1) {
-                        std::cerr << "Error: connection not accepted" << std::endl;
-                        continue;
-                    }
-                    std::cout << GREEN << "\nNew connection accepted! ✅ ---> client_socket: " << new_client_socket << RESET << std::endl;
-                    std::cout << BOLD << "Total client[s] online: " << nfds << RESET << std::endl;
-                    fds[nfds].fd = new_client_socket;
-                    fds[nfds].events = POLLIN;
-                    nfds++;
-                    _clients[new_client_socket] = client;
-                    detectClient(new_client_socket); // Appeler detectClient ici
-                } else {
-                    handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
-                }
-            }
-        }
-    }
+	while (true) {
+		int poll_count = poll(fds, nfds, -1);
+		if (poll_count == -1) {
+			std::cerr << "Error: poll failed" << std::endl;
+			exit(1);
+		}
+		for (int i = 0; i < nfds; ++i) {
+			if (fds[i].revents & POLLIN) {
+				if (fds[i].fd == _server_socket) {
+					// Nouvelle connexion
+					Client client;
+					socklen_t client_len = sizeof(client.getClientAddr());
+					int new_client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
+					if (new_client_socket == -1) {
+						std::cerr << "Error: connection not accepted" << std::endl;
+						continue;
+					}
+					std::cout << GREEN << "\nNew connection accepted! ✅ ---> client_socket: " << new_client_socket << RESET << std::endl;
+					std::cout << BOLD << "Total client(s) online: " << RESET << nfds << std::endl;
+					fds[nfds].fd = new_client_socket;
+					fds[nfds].events = POLLIN;
+					nfds++;
+					_clients[new_client_socket] = client;
+					detectClient(new_client_socket); // Appeler detectClient ici
+				} else {
+					handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
+				}
+			}
+		}
+	}
 }
