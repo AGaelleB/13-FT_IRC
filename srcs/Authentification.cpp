@@ -63,7 +63,7 @@ void Server::checkPassword(Client &client) {
 		password = trim(password);
 
 		if (password != this->_password) {
-   			std::cout << YELLOW << password << RESET << std::endl;
+			std::cout << YELLOW << password << RESET << std::endl; ///
 			client.sendClientMsg(client.getClientSocket(), ERROR_PASSWORD);
 		}
 		else

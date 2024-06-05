@@ -58,7 +58,6 @@ void Server::startServer() {
 			std::cerr << "Error: poll failed" << std::endl;
 			exit(1);
 		}
-
 		for (int i = 0; i < nfds; ++i) {
 			if (fds[i].revents & POLLIN) {
 				if (fds[i].fd == _server_socket) {
@@ -70,44 +69,9 @@ void Server::startServer() {
 						std::cerr << "Error: connection not accepted" << std::endl;
 						continue;
 					}
-
 					std::cout << GREEN << "\nNew connection accepted! ✅ ---> client_socket: " << new_client_socket << RESET << std::endl;
 					std::cout << "Total clients: " << nfds + 1 << std::endl;
-
-					char buffer[1024];
-					sleep(1);
-					ssize_t bytes_received = recv(new_client_socket, buffer, sizeof(buffer) - 1, 0);
-
-					if (bytes_received > 0) {
-
-						buffer[bytes_received] = '\0';
-						std::string answer(buffer);
-
-						// parsing irssi
-						if (findCapLs(answer) == 0) {
-							std::cerr << "connected with irssi!\n\n";
-							this->_irssi_data = answer;
-						}
-						else { // parsing nc
-							std::cerr << "connected with netcat!\n\n";
-							std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
-
-							// Ajouter le nouveau client au vecteur pollfd
-							fds[nfds].fd = new_client_socket;
-							fds[nfds].events = POLLIN;
-							nfds++;
-
-							client.setClientSocket(new_client_socket);
-							client.sendClientMsg(new_client_socket, bannerIRC);
-							client.sendClientMsg(new_client_socket, MSG_WELCOME);
-							authenticateAndRegister(client);
-							_clients[new_client_socket] = client; // Ajouter le client au map des clients après l'authentification
-						}
-					}
-					else {
-						std::cerr << "Error: recv failed" << std::endl;
-						close(new_client_socket);
-					}
+					detectClient(client, new_client_socket);
 				}
 				else {
 					std::map<int, Client>::iterator it = _clients.find(fds[i].fd);

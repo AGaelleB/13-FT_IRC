@@ -29,16 +29,20 @@ class Server {
 		void	startServer();
 
 		// Authentification.cpp
-		bool    isNicknameAvailable(const std::string& nickname); 
+		bool	isNicknameAvailable(const std::string& nickname); 
 		void	handleClientMessage(int client_index, Client& client);
 		void	checkPassword(Client &client);
 		void	addUser(Client &client, const std::string &username, const std::string &nickname);
 		void	authenticateAndRegister(Client &client);
 
-
 		// irsii.cpp
 		int		findCapLs(std::string s1);
 		int		check_irssi_entrance(int fd);
+
+		// parsing.cpp
+		void	detectClient(Client client, int new_client_socket);
+		void	parsingDataIrssi(Client client, int new_client_socket);
+		void	parsingDataNetclient(Client client, int new_client_socket);
 
 
 
