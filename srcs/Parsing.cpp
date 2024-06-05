@@ -74,6 +74,10 @@ void Server::detectClient(int client_socket) {
 	3- revenir dans irssi et se connect : /connect localhost 6668
 	4- revenir dans nc et se connect : nc localhost 6668
 
+	+super bizarre, je collecte bien irssi nickname = gaelle si je fais 
+	1- lancer et se co a nc localhost 6668
+	2 - lancer et se co a irssi
+
  */
 
 

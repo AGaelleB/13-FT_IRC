@@ -11,6 +11,7 @@
 # define MSG_NICKNAME BOLD "Enter your nickname: " RESET
 # define MSG_WELCOME BLUE "\n ~~~ Welcome on our IRC Server! ~~~ \n\n" RESET
 # define MSG_PASSWORD BOLD "Enter Server password: " RESET
+# define MSG_DISCONNECT BOLD "\nServer is shutting down, you have been disconnected ❌" RESET
 
 # define UNKNOWN_CMD "Unknown command ❌\n"
 
