@@ -41,7 +41,7 @@ class Server {
 
 		// parsing.cpp
 		void	detectClient(Client client, int new_client_socket);
-		void	parsingDataIrssi(Client client, int new_client_socket);
+		void	parsingDataIrssi(Client client);
 		void	parsingDataNetclient(Client client, int new_client_socket);
 
 

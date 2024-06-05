@@ -7,13 +7,30 @@
  */
 
 
-void Server::parsingDataIrssi(Client client, int new_client_socket) {
-	(void) client;
-	(void) new_client_socket;
+void Server::parsingDataIrssi(Client client) {
+    std::cerr << "Contents of _irssi_data before parsing:\n" << this->_irssi_data << std::endl;
 
+    std::istringstream stream(this->_irssi_data);
+    std::string line;
+    std::string nickname;
+    std::string username;
 
-
+    while (std::getline(stream, line)) {
+        if (line.find("NICK ") == 0) {
+            nickname = line.substr(5);
+            std::cerr << "Trimmed Nickname: " << nickname << std::endl;
+        } else if (line.find("USER ") == 0) {
+            std::istringstream userStream(line);
+            std::string userKeyword;
+            userStream >> userKeyword >> username;
+            std::cerr << "Trimmed Username: " << username << std::endl;
+        }
+    }
+    addUser(client, username, nickname);
+    std::cerr << "Nickname after addUser: " << client.getUser().getNickname() << std::endl;
+    std::cerr << "Username after addUser: " << client.getUser().getUsername() << std::endl;
 }
+
 
 void Server::parsingDataNetclient(Client client, int new_client_socket) {
 
@@ -38,9 +55,11 @@ void Server::detectClient(Client client, int new_client_socket) {
 		std::string answer(buffer);
 
 		if (findCapLs(answer) == 0) {
+   			 std::cerr << "Contents of answer:\n" << answer << std::endl;
 			std::cerr << "connected with irssi!\n\n";
 			this->_irssi_data = answer;
-			parsingDataIrssi(client, new_client_socket);
+			parsingDataIrssi(client);
+			std::cerr << "END connection with irssi!\n\n";
 		}
 		else { 
 			std::cerr << "connected with netcat!\n\n";
