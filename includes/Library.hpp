@@ -9,7 +9,7 @@
 #include <sys/socket.h>	// pour socket()
 #include <sys/types.h>	// pour socket()
 #include <netinet/in.h>	// pour sockaddr_in
-// #include <fcntl.h>		// pour fcntl()
+#include <fcntl.h>		// pour fcntl()
 #include <unistd.h>		// pour close()
 #include <arpa/inet.h>	// pour inet_ntoa()
 #include <poll.h>		// pour poll()
@@ -21,5 +21,6 @@
 #include <iostream>
 #include <cstdio>
 #include <set>
+#include <cerrno>
 
 #endif // LIBRARY_HPP

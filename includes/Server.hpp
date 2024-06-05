@@ -38,16 +38,13 @@ class Server {
 
 
 		// irsii.cpp
-		int		findCapLs(std::string s1);
+		int		findCapLs(const std::string& data);
 		int		check_irssi_entrance(int fd);
 
 		// parsing.cpp
-		void	detectClient(Client client, int new_client_socket);
+		void	detectClient(int client_socket);
 		void	parsingDataIrssi(Client client);
 		void	parsingDataNetclient(Client client, int new_client_socket);
-
-
-
 };
 
 #endif // SERVER_HPP

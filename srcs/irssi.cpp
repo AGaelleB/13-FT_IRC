@@ -10,6 +10,8 @@ int Server::findCapLs(std::string s1)
 	return 0;
 }
 
+
+
 // int Server::check_irssi_entrance(int fd)
 // {
 // 	char buffer[1024];

@@ -5,31 +5,30 @@ bool Server::isNicknameAvailable(const std::string& nickname) {
 }
 
 void Server::handleClientMessage(int client_fd, Client& client) {
-	char buffer[1024];
-	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+    char buffer[1024];
+    ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
-	if (bytes_received <= 0) {
-		if (bytes_received == 0) {
-  			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ ---> client_socket: " << client_fd << RESET << std::endl;
-			std::cout << "Total clients: " << nfds - 2 << std::endl;
-		}
-		else
-			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
-		close(client_fd);
-		_clients.erase(client_fd); // Supprimer le client de la map
-		for (int i = 0; i < nfds; ++i) { // Retirer le client de la structure pollfd
-			if (fds[i].fd == client_fd) {
-				fds[i] = fds[nfds - 1];
-				nfds--;
-				break;
-			}
-		}
-	}
-	else {
-		buffer[bytes_received] = '\0';
-		std::string message(buffer);
-		_clients[client_fd].handleClientMsg(message, _clients[client_fd]);
-	}
+    if (bytes_received <= 0) {
+        if (bytes_received == 0) {
+            std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ ---> client_socket: " << client_fd << RESET << std::endl;
+            std::cout << "Total clients: " << nfds - 2 << std::endl;
+        } else {
+            std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
+        }
+        close(client_fd);
+        _clients.erase(client_fd); // Supprimer le client de la map
+        for (int i = 0; i < nfds; ++i) { // Retirer le client de la structure pollfd
+            if (fds[i].fd == client_fd) {
+                fds[i] = fds[nfds - 1];
+                nfds--;
+                break;
+            }
+        }
+    } else {
+        buffer[bytes_received] = '\0';
+        std::string message(buffer);
+        client.handleClientMsg(message, client);
+    }
 }
 
 void Server::checkPassword(Client &client) {
@@ -63,7 +62,7 @@ void Server::checkPassword(Client &client) {
 		password = trim(password);
 
 		if (password != this->_password) {
-			// std::cout << YELLOW << password << RESET << std::endl; ///
+			std::cout << YELLOW << password << RESET << std::endl; ///
 			client.sendClientMsg(client.getClientSocket(), ERROR_PASSWORD);
 		}
 		else
@@ -90,6 +89,9 @@ void Server::isRegistered(Client &client) {
 }
 
 void Server::authenticateAndRegister(Client &client) {
+
+    std::cout << YELLOW "~~~ authenticateAndRegister ~~~" << RESET << std::endl;
+
 	std::string username;
 	std::string nickname;
 
@@ -97,4 +99,8 @@ void Server::authenticateAndRegister(Client &client) {
 	username = client.setUserName();
 	nickname = client.setNickName(*this);
 	addUser(client, username, nickname);
+
+    std::cout << YELLOW "username =" << username << RESET << std::endl;
+    std::cout << YELLOW "nickname =" << nickname << RESET << std::endl;
+
 }
