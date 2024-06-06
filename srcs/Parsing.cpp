@@ -43,7 +43,9 @@ void Server::setNonBlocking(int socket) {
 
 void Server::detectClient(int client_socket) {
 	setNonBlocking(client_socket);  // Configure le socket en mode non-bloquant
-	char buffer[1024];
+	char buffer[1024] = {0};
+
+	usleep(42); // Attendre un peu avant de réessayer
 
 	// Essayer de recevoir des données initiales sans bloquer
 	ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
@@ -56,7 +58,7 @@ void Server::detectClient(int client_socket) {
 		std::cerr << ORANGE << "connected with irssi!\n" << RESET;
 		this->_irssi_data = answer;
 		parsingDataIrssi(client); // Passez par référence
-		isRegistered(client); 
+		isRegistered(client); // a corrgiger
 	}
 	else {
 		std::cerr << ORANGE << "connected with netcat!\n" << RESET;
@@ -71,11 +73,11 @@ void Server::detectClient(int client_socket) {
 	pour que ca fonctitonne : 
 	1- lanccer irssi sans rien
 	2- lancer net cast sans rien
-	3- revenir dans irssi et se connect : /connect localhost 6668
-	4- revenir dans nc et se connect : nc localhost 6668
+	3- revenir dans irssi et se connect : /connect localhost 6667
+	4- revenir dans nc et se connect : nc localhost 6667
 
 	+super bizarre, je collecte bien irssi nickname = gaelle si je fais 
-	1- lancer et se co a nc localhost 6668
+	1- lancer et se co a nc localhost 6667
 	2 - lancer et se co a irssi
 
  */

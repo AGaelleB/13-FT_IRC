@@ -119,9 +119,11 @@ std::string Client::setNickName(Server& server) {
 			if (bytes_received == -1 && errno == EWOULDBLOCK) {
 				usleep(42); // Attendre un peu avant de réessayer
 				continue;
-			} else if (bytes_received > 0) {
+			}
+			else if (bytes_received > 0) {
 				break;
-			} else {
+			}
+			else {
 				if (bytes_received == 0)
 					std::cout << RED << "\nClient disconnected during nickname entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
 				else
