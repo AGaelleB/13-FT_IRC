@@ -50,6 +50,9 @@ class Server {
 		void	setNonBlocking(int socket);
 
 		static void	SignalHandler(int sig);
+
+		// Utils.cpp
+		void				helpCmdServer();
 };
 
 #endif // SERVER_HPP

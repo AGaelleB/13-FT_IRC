@@ -28,12 +28,14 @@ class Client {
 		void				setUser(const User& user);
 
 		// Fonctions
-		void				printClientMsg(const std::string& message, Client& client);
+		void				parseClientMsg(const std::string& message, Client& client);
 		void				sendClientMsg(int client_socket, const char* message);
 		bool				checkName(const std::string& username);
 		std::string			setUserName();
 		std::string			setNickName(Server& server);
 
+		// Utils.cpp
+		void				helpCmdClient();
 };
 
 std::string	trim(const std::string& str);

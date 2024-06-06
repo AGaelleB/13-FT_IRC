@@ -49,16 +49,51 @@ void Client::sendClientMsg(int client_socket, const char* message) {
 	}
 }
 
-void Client::printClientMsg(const std::string& message, Client& client) {
-	std::cout << BOLD << "\n" << client.getUser().getNickname()  <<  " msg: " << RESET << message;
+void Client::helpCmdClient() {
+	std::string helpMessage = 
+		"\nAvailable Commands for clients:\n\n"
+		"Command					| Action\n"
+		"---------------------------|----------------------------------------\n"
+		"/help						| Show the list of available cmds\n"
+		"/channel [channel_name]	| Join/create a channel with the given name\n"
+		"/msg [username] [message]	| Send a private message to a specific user\n"
+		"/quit						| Disconnect from the server\n"
+		"/list						| List all available channels\n"
+		"/nick [new_nickname]		| Change your nickname\n"
+		"/whois [username]			| Show information about a specific user\n\n";
+	sendClientMsg(this->getClientSocket(), helpMessage.c_str());
+}
 
-	// if (message.substr(0, 6) == "/login")
-		std::cout << "Login command received" << std::endl;
-	// else if (message.substr(0, 8) == "/channel")
-	// 	std::cout << "Channel command received" << std::endl;
-	// else
+void Client::parseClientMsg(const std::string& message, Client& client) {
+	std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
+
+	if (message.substr(0, 5) == "/help" || message.substr(0, 4) == "HELP") {
+		std::cout << "/help command received" << std::endl;
+		helpCmdClient();
+	}
+	else if (message.substr(0, 9) == "/channel ") {
+		std::cout << "Channel command received" << std::endl;
+	}
+	else if (message.substr(0, 5) == "/msg ") {
+		std::cout << "Private message command received" << std::endl;
+	}
+	else if (message.substr(0, 6) == "/quit") {
+		std::cout << "Quit command received" << std::endl;
+	}
+	else if (message.substr(0, 5) == "/list") {
+		std::cout << "List command received" << std::endl;
+	}
+	else if (message.substr(0, 6) == "/nick ") {
+		std::cout << "Nickname change command received" << std::endl;
+	}
+	else if (message.substr(0, 7) == "/whois ") {
+		std::cout << "Whois command received" << std::endl;
+	}
+	else {
 		sendClientMsg(this->getClientSocket(), UNKNOWN_CMD);
+	}
 	(void)client;
+
 }
 
 bool Client::checkName(const std::string& username) {

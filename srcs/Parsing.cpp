@@ -1,11 +1,5 @@
 #include "../includes/Server.hpp"
 
-/* 
-	// gerer les signaux 
-	// voir pq on bloque si client irssi, ne permet pas a nc de se creer 
- */
-
-
 void Server::parsingDataIrssi(Client &client, int new_client_socket) {
     std::istringstream stream(this->_irssi_data);
     std::string line;
@@ -38,6 +32,7 @@ void Server::parsingDataNetclient(Client &client, int new_client_socket) {
 	client.setClientSocket(new_client_socket);
 	client.sendClientMsg(new_client_socket, bannerIRC);
 	client.sendClientMsg(new_client_socket, MSG_WELCOME);
+	client.sendClientMsg(new_client_socket, MSG_HELP_CLIENT);
 	authenticateAndRegister(client);
 	_clients[new_client_socket] = client; // Ajout du client à la map
 }
@@ -77,7 +72,6 @@ void Server::detectClient(int client_socket) {
 /connect localhost 6667
 nc localhost 6667
  */
-
 
 
 

@@ -28,7 +28,7 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 	else {
 		buffer[bytes_received] = '\0';
 		std::string message(buffer);
-		client.printClientMsg(message, client);
+		client.parseClientMsg(message, client);
 	}
 }
 

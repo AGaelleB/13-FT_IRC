@@ -23,3 +23,4 @@ std::string trim(const std::string& str) {
     }
     return str.substr(start, end - start);
 }
+

@@ -2,6 +2,7 @@
 #define UTILS_HPP
 
 #include "./Server.hpp"
+#include "./Client.hpp"
 
 std::string	trim(const std::string& str);
 

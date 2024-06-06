@@ -60,6 +60,23 @@ Server::~Server() {
 
 /************************************** FUNCTIONS **************************************/
 
+void Server::helpCmdServer() {
+	std::string helpMessage = 
+		"Server Commands:\n\n"
+		"Command                   | Action\n"
+		"--------------------------|----------------------------------------\n"
+		"/kick [username]          | Kick a user from a channel.\n"
+		"/invite [username]        | Invite a user to a channel.\n"
+		"/topic [channel] [topic]  | Change or view the channel topic.\n"
+		"/mode [channel] [mode]    | Change the channel mode:\n"
+		"                          |   i : Set/remove invite-only channel\n"
+		"                          |   t : Set/remove topic restrictions to channel operators\n"
+		"                          |   k : Set/remove channel key (password)\n"
+		"                          |   o : Give/remove channel operator privilege\n"
+		"                          |   l : Set/remove user limit for the channel\n";
+	std::cout << helpMessage << std::endl;
+
+}
 
 void Server::SignalHandler(int sig) {
 	std::cout << std::endl << "Signal Received!" << std::endl;
@@ -89,6 +106,7 @@ void Server::stopServer() {
 
 void Server::startServer() {
 	std::cout << bannerServer;
+	std::cout << MSG_HELP_SERVER << std::endl;  // test
 	std::cout << BLUE << ". . . Listening on port " << _port << " . . . " << RESET << std::endl;
 
 	// Configurer les gestionnaires de signaux
