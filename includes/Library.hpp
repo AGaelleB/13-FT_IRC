@@ -22,5 +22,6 @@
 #include <cstdio>
 #include <set>
 #include <cerrno>
+#include <algorithm>
 
 #endif // LIBRARY_HPP

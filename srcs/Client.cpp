@@ -65,18 +65,6 @@ void Client::helpCmdClient() {
 	sendClientMsg(this->getClientSocket(), helpMessage.c_str());
 }
 
-// Ajoutez une méthode pour tester la suppression du surnom
-// void Server::testRemoveNickname() {
-//     Server server;
-//     std::string nickname = "testNickname";
-
-//     // Ajoutez le surnom au serveur pour simuler son existence
-//     server._nicknames.insert(nickname);
-
-//     // Supprimez le surnom
-//     server.removeNickname(nickname);
-// }
-
 void Server::removeNickname(const std::string& nickname) {
     std::cout << MAGENTA << "remove 1 old nickname : " << nickname << RESET << std::endl;
     _nicknames.erase(nickname);
@@ -88,6 +76,7 @@ void Server::removeNickname(const std::string& nickname) {
         std::cout << MAGENTA << "Failed to remove nickname: " << nickname << RESET << std::endl;
     }
 }
+
 void	Client::nickCmdClient(std::vector<std::string> tokens, Server server) {
 	std::string new_nickname = tokens[1];
 	std::cout << new_nickname << std::endl;
@@ -97,14 +86,10 @@ void	Client::nickCmdClient(std::vector<std::string> tokens, Server server) {
 		this->sendClientMsg(this->getClientSocket(), ERROR_NEW_NICKNAME);
 		return;
 	}
-
-	// Validate nickname format
 	if (!this->checkName(new_nickname)) {
 		this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME);
 		return;
 	}
-
-	// Check if nickname is available
 	if (server.isNicknameAvailable(new_nickname)) {
 		
 		std::string old_nickname = getUser().getNickname();
@@ -115,7 +100,6 @@ void	Client::nickCmdClient(std::vector<std::string> tokens, Server server) {
 	}
 	else
 		this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_NOT_AVAILABLE);
-
 }
 
 enum CommandType {
@@ -216,12 +200,10 @@ std::string Client::setUserName() {
 
 	while (true) {
 		this->sendClientMsg(this->getClientSocket(), MSG_USERNAME);
-
-		// Boucle jusqu'à recevoir des données valides
 		while (true) {
 			bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
 			if (bytes_received == -1 && errno == EWOULDBLOCK) {
-				usleep(42); // Attendre un peu avant de réessayer
+				usleep(42);
 				continue;
 			} else if (bytes_received > 0) {
 				break;
@@ -234,9 +216,7 @@ std::string Client::setUserName() {
 				return "";
 			}
 		}
-
 		buffer[bytes_received] = '\0';
-
 		if (this->checkName(std::string(buffer)) == true)
 			return trim(std::string(buffer));
 		this->sendClientMsg(this->getClientSocket(), ERROR_USERNAME);
@@ -250,11 +230,10 @@ std::string Client::setNickName(Server& server) {
 	while (true) {
 		this->sendClientMsg(this->getClientSocket(), MSG_NICKNAME);
 
-		// Boucle jusqu'à recevoir des données valides
 		while (true) {
 			bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
 			if (bytes_received == -1 && errno == EWOULDBLOCK) {
-				usleep(42); // Attendre un peu avant de réessayer
+				usleep(42);
 				continue;
 			}
 			else if (bytes_received > 0) {
@@ -269,21 +248,15 @@ std::string Client::setNickName(Server& server) {
 				return "";
 			}
 		}
-
 		buffer[bytes_received] = '\0';
 		std::string nickname = trim(std::string(buffer));
-
-		// Validate nickname format
 		if (!this->checkName(nickname)) {
 			this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME);
 			continue;
 		}
-
-		// Check if nickname is available
-		if (server.isNicknameAvailable(nickname)) {
+		if (server.isNicknameAvailable(nickname))
 			return nickname;
-		} else {
+		else
 			this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_NOT_AVAILABLE);
-		}
 	}
 }
