@@ -52,15 +52,15 @@ void Client::sendClientMsg(int client_socket, const char* message) {
 void Client::helpCmdClient() {
 	std::string helpMessage = 
 		"\nAvailable Commands for clients:\n\n"
-		"Command					| Action\n"
-		"---------------------------|----------------------------------------\n"
-		"/help						| Show the list of available cmds\n"
-		"/channel [channel_name]	| Join/create a channel with the given name\n"
-		"/msg [username] [message]	| Send a private message to a specific user\n"
-		"/quit						| Disconnect from the server\n"
-		"/list						| List all available channels\n"
-		"/nick [new_nickname]		| Change your nickname\n"
-		"/whois [username]			| Show information about a specific user\n\n";
+		"Command                   | Action\n"
+		"--------------------------|----------------------------------------\n"
+		"/help                     | Show the list of available cmds\n"
+		"/channel [channel_name]   | Join/create a channel\n"
+		"/msg [username] [message] | Send a private msg to a specific user\n"
+		"/quit                     | Disconnect from the server\n"
+		"/list                     | List all available channels\n"
+		"/nick [new_nickname]      | Change your nickname\n"
+		"/whois [username]         | Show info about a specific user\n\n";
 	sendClientMsg(this->getClientSocket(), helpMessage.c_str());
 }
 

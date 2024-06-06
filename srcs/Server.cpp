@@ -78,6 +78,7 @@ void Server::helpCmdServer() {
 
 }
 
+
 void Server::SignalHandler(int sig) {
 	std::cout << std::endl << "Signal Received!" << std::endl;
 	Server::shutdown_signal = true; // to stop the server
@@ -106,9 +107,8 @@ void Server::stopServer() {
 
 void Server::startServer() {
 	std::cout << bannerServer;
-	std::cout << MSG_HELP_SERVER << std::endl;  // test
 	std::cout << BLUE << ". . . Listening on port " << _port << " . . . " << RESET << std::endl;
-
+	std::cout << MSG_HELP_SERVER << std::endl;  // test
 	// Configurer les gestionnaires de signaux
 	signal(SIGINT, Server::SignalHandler); // catch the signal (ctrl + c)
 	signal(SIGQUIT, Server::SignalHandler); // catch the signal (ctrl + \)
