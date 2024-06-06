@@ -6,33 +6,40 @@
  */
 
 
-void Server::parsingDataIrssi(Client &client) {
-	std::istringstream stream(this->_irssi_data);
-	std::string line;
-	std::string nickname;
-	std::string username;
+void Server::parsingDataIrssi(Client &client, int new_client_socket) {
+    std::istringstream stream(this->_irssi_data);
+    std::string line;
+    std::string nickname;
+    std::string username;
 
-	while (std::getline(stream, line)) {
-		if (line.find("NICK ") == 0) {
-			nickname = line.substr(5);
-		}
+    while (std::getline(stream, line)) {
+        if (line.find("NICK ") == 0) {
+            nickname = line.substr(5);
+            nickname = trim(nickname);
+        }
 		else if (line.find("USER ") == 0) {
-			std::istringstream userStream(line);
-			std::string userKeyword;
-			userStream >> userKeyword >> username;
-		}
-	}
-	addUser(client, username, nickname);
+            std::istringstream userStream(line);
+            std::string userKeyword;
+            userStream >> userKeyword >> username;
+            username = trim(username);
+        }
+    }
+
+    addUser(client, username, nickname);
+	client.setClientSocket(new_client_socket);
+
 	std::cout << YELLOW "\nirssi username = " << username << RESET << std::endl;
 	std::cout << YELLOW "irssi nickname = " << nickname << RESET << std::endl;
+
 }
+
 
 void Server::parsingDataNetclient(Client &client, int new_client_socket) {
 	client.setClientSocket(new_client_socket);
 	client.sendClientMsg(new_client_socket, bannerIRC);
 	client.sendClientMsg(new_client_socket, MSG_WELCOME);
-	authenticateAndRegister(client); // Procéder immédiatement à l'authentification et l'inscription
-	_clients[new_client_socket] = client; // Ajouter le client à la map des clients après l'authentification
+	authenticateAndRegister(client);
+	_clients[new_client_socket] = client; // Ajout du client à la map
 }
 
 void Server::setNonBlocking(int socket) {
@@ -42,44 +49,33 @@ void Server::setNonBlocking(int socket) {
 }
 
 void Server::detectClient(int client_socket) {
-	setNonBlocking(client_socket);  // Configure le socket en mode non-bloquant
+	setNonBlocking(client_socket);  // socket en mode non-bloquant
 	char buffer[1024] = {0};
 
-	usleep(42); // Attendre un peu avant de réessayer
-
-	// Essayer de recevoir des données initiales sans bloquer
+	usleep(42);
 	ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
 	buffer[bytes_received] = '\0';
 	std::string answer(buffer);
 
 	Client& client = _clients[client_socket]; // Accéder à l'objet client par référence
-
 	if (findCapLs(answer) == 0) {
 		std::cerr << ORANGE << "connected with irssi!\n" << RESET;
 		this->_irssi_data = answer;
-		parsingDataIrssi(client); // Passez par référence
-		isRegistered(client); // a corrgiger
+		parsingDataIrssi(client, client_socket);
+		isRegistered(client);
 	}
 	else {
 		std::cerr << ORANGE << "connected with netcat!\n" << RESET;
 		std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
-		parsingDataNetclient(client, client_socket); // Passez par référence
+		parsingDataNetclient(client, client_socket);
 		isRegistered(client); 
 	}
 }
 
 
 /* 
-	pour que ca fonctitonne : 
-	1- lanccer irssi sans rien
-	2- lancer net cast sans rien
-	3- revenir dans irssi et se connect : /connect localhost 6667
-	4- revenir dans nc et se connect : nc localhost 6667
-
-	+super bizarre, je collecte bien irssi nickname = gaelle si je fais 
-	1- lancer et se co a nc localhost 6667
-	2 - lancer et se co a irssi
-
+/connect localhost 6667
+nc localhost 6667
  */
 
 

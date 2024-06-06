@@ -83,8 +83,8 @@ void Server::addUser(Client &client, const std::string &username, const std::str
 	static int current_index = 1;
 	User user(current_index++, username, nickname);
 	client.setUser(user);
-	_clients[client.getClientSocket()] = client; // Mise à jour correcte de l'objet client
-	_nicknames.insert(nickname); // Add nickname to set
+	_clients[client.getClientSocket()] = client;
+	_nicknames.insert(nickname);
 }
 
 void Server::isRegistered(Client &client) {
@@ -93,7 +93,7 @@ void Server::isRegistered(Client &client) {
 	std::string registeredMsg = ss.str();
 	client.sendClientMsg(client.getClientSocket(), registeredMsg.c_str());
 
-	std::cout << GREEN << "\nClient " << client.getUser().getNickname() << " is registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
+	std::cout << GREEN << "\nClient " << client.getUser().getNickname() << " is registered! ✅ ---> : " << client.getClientSocket() << RESET << std::endl;
 }
 
 void Server::authenticateAndRegister(Client &client) {
