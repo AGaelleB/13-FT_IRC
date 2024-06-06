@@ -28,7 +28,7 @@ class Client {
 		void				setUser(const User& user);
 
 		// Fonctions
-		void				parseClientMsg(const std::string& message, Client& client);
+		void				parseClientMsg(const std::string& message, Server server);
 		void				sendClientMsg(int client_socket, const char* message);
 		bool				checkName(const std::string& username);
 		std::string			setUserName();
@@ -36,6 +36,8 @@ class Client {
 
 		// Utils.cpp
 		void				helpCmdClient();
+		void				nickCmdClient(std::vector<std::string> tokens, Server server);
+
 };
 
 std::string	trim(const std::string& str);

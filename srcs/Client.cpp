@@ -58,42 +58,144 @@ void Client::helpCmdClient() {
 		"/channel [channel_name]   | Join/create a channel\n"
 		"/msg [username] [message] | Send a private msg to a specific user\n"
 		"/quit                     | Disconnect from the server\n"
-		"/list                     | List all available channels\n"
+		"/list user                | List all available users\n"
+		"/list channel             | List all available channels\n"
 		"/nick [new_nickname]      | Change your nickname\n"
 		"/whois [username]         | Show info about a specific user\n\n";
 	sendClientMsg(this->getClientSocket(), helpMessage.c_str());
 }
 
-void Client::parseClientMsg(const std::string& message, Client& client) {
-	std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
+// Ajoutez une méthode pour tester la suppression du surnom
+// void Server::testRemoveNickname() {
+//     Server server;
+//     std::string nickname = "testNickname";
 
-	if (message.substr(0, 5) == "/help" || message.substr(0, 4) == "HELP") {
-		std::cout << "/help command received" << std::endl;
-		helpCmdClient();
+//     // Ajoutez le surnom au serveur pour simuler son existence
+//     server._nicknames.insert(nickname);
+
+//     // Supprimez le surnom
+//     server.removeNickname(nickname);
+// }
+
+void Server::removeNickname(const std::string& nickname) {
+    std::cout << MAGENTA << "remove 1 old nickname : " << nickname << RESET << std::endl;
+    _nicknames.erase(nickname);
+    std::cout << MAGENTA << "remove 2 old nickname : " << nickname << RESET << std::endl;
+    
+    if (_nicknames.find(nickname) == _nicknames.end()) {
+        std::cout << MAGENTA << "Nickname " << nickname << " successfully removed." << RESET << std::endl;
+    } else {
+        std::cout << MAGENTA << "Failed to remove nickname: " << nickname << RESET << std::endl;
+    }
+}
+void	Client::nickCmdClient(std::vector<std::string> tokens, Server server) {
+	std::string new_nickname = tokens[1];
+	std::cout << new_nickname << std::endl;
+	
+	new_nickname.erase(std::remove(new_nickname.begin(), new_nickname.end(), '\n'), new_nickname.end());
+	if (new_nickname.empty()) {
+		this->sendClientMsg(this->getClientSocket(), ERROR_NEW_NICKNAME);
+		return;
 	}
-	else if (message.substr(0, 8) == "/channel") {
-		std::cout << "Channel command received" << std::endl;
+
+	// Validate nickname format
+	if (!this->checkName(new_nickname)) {
+		this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME);
+		return;
 	}
-	else if (message.substr(0, 4) == "/msg") {
-		std::cout << "Private message command received" << std::endl;
+
+	// Check if nickname is available
+	if (server.isNicknameAvailable(new_nickname)) {
+		
+		std::string old_nickname = getUser().getNickname();
+        server.removeNickname(old_nickname);
+		std::cout << MAGENTA << "cmd old nickname : " << old_nickname << RESET << std::endl;
+		// ici faire une suppression de l'ancien nickname pour le rendre accessible une fois que le client a changer
+		getUser().setNickname(new_nickname);
 	}
-	else if (message.substr(0, 5) == "/quit") {
-		std::cout << "Quit command received" << std::endl;
+	else
+		this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_NOT_AVAILABLE);
+
+}
+
+enum CommandType {
+	HELP,
+	CHANNEL,
+	MSG,
+	QUIT,
+	LIST,
+	NICK,
+	WHOIS,
+	UNKNOWN
+};
+
+std::vector<std::string> split(const std::string &str) {
+	std::vector<std::string> tokens;
+	size_t pos = str.find_first_of(" \n");
+
+	if (pos != std::string::npos) {
+		tokens.push_back(str.substr(0, pos));
+		if (pos + 1 < str.length())
+			tokens.push_back(str.substr(pos + 1));
 	}
-	else if (message.substr(0, 5) == "/list") {
-		std::cout << "List command received" << std::endl;
-	}
-	else if (message.substr(0, 5) == "/nick") {
-		std::cout << "Nickname change command received" << std::endl;
-	}
-	else if (message.substr(0, 6) == "/whois") {
-		std::cout << "Whois command received" << std::endl;
-	}
-	else {
+	else
+		tokens.push_back(str);
+	return (tokens);
+}
+
+CommandType getCommandType(const std::string& command) {
+	if (command == "/help") return HELP;
+	if (command == "/channel") return CHANNEL;
+	if (command == "/msg") return MSG;
+	if (command == "/quit") return QUIT;
+	if (command == "/list") return LIST;
+	if (command == "/nick") return NICK;
+	if (command == "/whois") return WHOIS;
+	return UNKNOWN;
+}
+
+void Client::parseClientMsg(const std::string& message, Server server) {
+	std::cout << BOLD << "\n" << getUser().getNickname() << " msg: " << RESET << message << std::endl;
+
+	std::vector<std::string> tokens = split(message);
+	if (tokens.empty()) {
 		sendClientMsg(this->getClientSocket(), UNKNOWN_CMD);
+		return;
 	}
-	(void)client;
+	// for (std::vector<std::string>::const_iterator it = tokens.begin(); it != tokens.end(); ++it) {
+	// std::cout << *it << std::endl;
+	// }
 
+	CommandType command = getCommandType(tokens[0]);
+	switch (command) {
+		case HELP:
+			std::cout << "/help command received" << std::endl;
+			helpCmdClient();
+			break;
+		case CHANNEL:
+			std::cout << "Channel command received" << std::endl;
+			break;
+		case MSG:
+			std::cout << "Private message command received" << std::endl;
+			break;
+		case QUIT:
+			std::cout << "Quit command received" << std::endl;
+			break;
+		case LIST:
+			std::cout << "List command received" << std::endl;
+			break;
+		case NICK:
+			std::cout << "Nickname change command received" << std::endl;
+			nickCmdClient(tokens, server);
+			break;
+		case WHOIS:
+			std::cout << "Whois command received" << std::endl;
+			break;
+		case UNKNOWN:
+		default:
+			sendClientMsg(this->getClientSocket(), UNKNOWN_CMD);
+			break;
+	}
 }
 
 bool Client::checkName(const std::string& username) {

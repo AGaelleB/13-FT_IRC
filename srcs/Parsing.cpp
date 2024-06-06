@@ -69,6 +69,8 @@ void Server::detectClient(int client_socket) {
 
 
 /* 
+/msg gaga coucou
+
 /connect localhost 6667
 nc localhost 6667
  */

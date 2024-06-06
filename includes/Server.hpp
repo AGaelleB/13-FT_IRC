@@ -52,7 +52,9 @@ class Server {
 		static void	SignalHandler(int sig);
 
 		// Utils.cpp
+		void				removeNickname(const std::string& nickname);
 		void				helpCmdServer();
+		void				testRemoveNickname();
 };
 
 #endif // SERVER_HPP
