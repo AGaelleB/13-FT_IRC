@@ -1,4 +1,32 @@
-#include "../includes/Server.hpp"
+#include "../../includes/Server.hpp"
+
+void Server::handleClientMessage(int client_fd, Client& client) {
+	char buffer[1024];
+	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+
+	if (bytes_received <= 0) {
+		if (bytes_received == 0) {
+			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ ---> client_socket: " << client_fd << RESET << std::endl;
+			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << std::endl;
+		}
+		else
+			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
+		close(client_fd);
+		_clients.erase(client_fd); // Supprimer le client de la map
+		for (int i = 0; i < nfds; ++i) { // Retirer le client de la structure pollfd
+			if (fds[i].fd == client_fd) {
+				fds[i] = fds[nfds - 1];
+				nfds--;
+				break;
+			}
+		}
+	}
+	else {
+		buffer[bytes_received] = '\0';
+		std::string message(buffer);
+		parseClientMsg(message, client);
+	}
+}
 
 void Server::parsingDataIrssi(Client &client, int new_client_socket) {
     std::istringstream stream(this->_irssi_data);
@@ -27,8 +55,7 @@ void Server::parsingDataIrssi(Client &client, int new_client_socket) {
 
 }
 
-
-void Server::parsingDataNetclient(Client &client, int new_client_socket) {
+void Server::parsingDataNetcat(Client &client, int new_client_socket) {
 	client.setClientSocket(new_client_socket);
 	client.sendClientMsg(new_client_socket, bannerIRC);
 	client.sendClientMsg(new_client_socket, MSG_WELCOME);
@@ -62,7 +89,7 @@ void Server::detectClient(int client_socket) {
 	else {
 		std::cerr << ORANGE << "connected with netcat!\n" << RESET;
 		std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
-		parsingDataNetclient(client, client_socket);
+		parsingDataNetcat(client, client_socket);
 		isRegistered(client); 
 	}
 }
@@ -75,19 +102,3 @@ void Server::detectClient(int client_socket) {
 nc localhost 6667
  */
 
-
-
-
-// void Client::parsingCmd(const std::string& message, Client& client) {
-// 	std::cout << BOLD << "\n" << client.getUser().getUsername()  <<  " msg: " << RESET << message;
-
-// 	if (message.substr(0, 6) == "/login")
-// 		std::cout << "Login command received" << std::endl;
-// 	// else if (message.substr(0, 8) == "/channel")
-// 	// 	std::cout << "Channel command received" << std::endl;
-// 	else {
-// 		// const char* unknownCommand = "Unknown command ❌\n";
-// 		sendClientMsg(this->getClientSocket(), unknownCommand);
-// 	}
-// 	(void)client;
-// }

@@ -1,4 +1,4 @@
-#include "../includes/User.hpp"
+#include "../../includes/User.hpp"
 
 User::User() : _index(0), _userName("username"), _nickName("nickname") { }
 

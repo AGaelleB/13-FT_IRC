@@ -1,4 +1,4 @@
-#include "../includes/Server.hpp"
+#include "../../includes/Server.hpp"
 
 // Définition de la variable statique shutdown_signal
 bool Server::shutdown_signal = false;
@@ -57,33 +57,7 @@ Server::~Server() {
 }
 
 
-
 /************************************** FUNCTIONS **************************************/
-
-void Server::helpCmdServer() {
-	std::string helpMessage = 
-		"Server Commands:\n\n"
-		"Command                   | Action\n"
-		"--------------------------|----------------------------------------\n"
-		"/kick [username]          | Kick a user from a channel.\n"
-		"/invite [username]        | Invite a user to a channel.\n"
-		"/topic [channel] [topic]  | Change or view the channel topic.\n"
-		"/mode [channel] [mode]    | Change the channel mode:\n"
-		"                          |   i : Set/remove invite-only channel\n"
-		"                          |   t : Set/remove topic restrictions to channel operators\n"
-		"                          |   k : Set/remove channel key (password)\n"
-		"                          |   o : Give/remove channel operator privilege\n"
-		"                          |   l : Set/remove user limit for the channel\n";
-	std::cout << helpMessage << std::endl;
-
-}
-
-
-void Server::SignalHandler(int sig) {
-	std::cout << std::endl << "Signal Received!" << std::endl;
-	Server::shutdown_signal = true; // to stop the server
-	(void)sig;
-}
 
 void Server::sendDisconnectMessageToClients() {
     for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
@@ -93,32 +67,26 @@ void Server::sendDisconnectMessageToClients() {
 
 void Server::stopServer() {
 	std::cout << "Shutting down server..." << std::endl;
-
-	sendDisconnectMessageToClients(); // Envoyer un message de déconnexion à tous les clients
-
-	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+	sendDisconnectMessageToClients();
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 		close(it->first);
-	}
-
 	close(_server_socket);
 	std::cout << "Server stopped." << std::endl;
 }
 
-
 void Server::startServer() {
 	std::cout << bannerServer;
 	std::cout << BLUE << ". . . Listening on port " << _port << " . . . " << RESET << std::endl;
-	std::cout << MSG_HELP_SERVER << std::endl;  // test
-	// Configurer les gestionnaires de signaux
+	// std::cout << MSG_HELP_SERVER << std::endl;  // test
+
 	signal(SIGINT, Server::SignalHandler); // catch the signal (ctrl + c)
 	signal(SIGQUIT, Server::SignalHandler); // catch the signal (ctrl + \)
 
 	while (!shutdown_signal) {
-		int poll_count = poll(fds, nfds, 1000); // Ajout d'un timeout pour gérer le shutdown proprement
+		int poll_count = poll(fds, nfds, 1000);
 		if (poll_count == -1) {
-			if (errno == EINTR) {
+			if (errno == EINTR)
 				continue; // Interrompu par un signal
-			}
 			std::cerr << "Error: poll failed" << std::endl;
 			break;
 		}
@@ -147,6 +115,5 @@ void Server::startServer() {
 			}
 		}
 	}
-
 	stopServer();
 }

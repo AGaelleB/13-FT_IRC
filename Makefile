@@ -1,4 +1,3 @@
-
 NAME = ircserv
 
 CC = c++
@@ -6,16 +5,20 @@ CC = c++
 CPP_FLAGS = -Wall -Wextra -Werror -std=c++98 -g3
 
 OBJ_DIR = objs
-OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.cpp=.o)))
 
-SRCS =	main.cpp \
-		Authentification.cpp \
-		Client.cpp \
-		irssi.cpp \
-		Parsing.cpp \
-		Server.cpp \
-		User.cpp \
-		Utils.cpp \
+SRCS = srcs/main.cpp \
+       srcs/Client/Client.cpp \
+       srcs/Client/User.cpp \
+       srcs/Commands/AllCommands.cpp \
+       srcs/Commands/help.cpp \
+       srcs/Commands/nick.cpp \
+       srcs/Registration/Authentification.cpp \
+       srcs/Registration/Parsing.cpp \
+       srcs/Server/irssi.cpp \
+       srcs/Server/Server.cpp \
+       srcs/Server/Utils.cpp
+
+OBJS = $(SRCS:srcs/%.cpp=$(OBJ_DIR)/%.o)
 
 RM = rm -rf
 
@@ -31,22 +34,23 @@ all: $(OBJ_DIR) $(NAME)
 
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(OBJ_DIR)/Client $(OBJ_DIR)/Commands $(OBJ_DIR)/Registration $(OBJ_DIR)/Server
 
 $(OBJ_DIR)/%.o: srcs/%.cpp
 	@$(CC) $(CPP_FLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
 	@$(CC) $(CPP_FLAGS) $(OBJS) -o $(NAME)
-	@echo "$(GREEN)[Make : '$(NAME)' is done ​​✅​]$(RESET)"
+	@echo "$(GREEN)[Make : '$(NAME)' is done ✅]$(RESET)"
 
 clean :
 	@rm -rf $(OBJ_DIR)
-	@echo "$(BLUE)[clean : .o of $(NAME) have been deleted ​​🗑️ ​🧹​]$(RESET)"
+	@echo "$(BLUE)[clean : .o of $(NAME) have been deleted 🗑️ 🧹]$(RESET)"
 
 fclean:
 	@$(RM) $(OBJ_DIR)
 	@$(RM) $(NAME)
-	@echo "$(BLUE)[fclean : '$(NAME)' is done ​​🗑️ ​🧹​]$(RESET)"
+	@echo "$(BLUE)[fclean : '$(NAME)' is done 🗑️ 🧹]$(RESET)"
 
 re: fclean all
 

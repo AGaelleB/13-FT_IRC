@@ -27,17 +27,11 @@ class Client {
 		void				setClientAddr(const struct sockaddr_in& addr);
 		void				setUser(const User& user);
 
-		// Fonctions
-		void				parseClientMsg(const std::string& message, Server server);
+		// Functions
 		void				sendClientMsg(int client_socket, const char* message);
 		bool				checkName(const std::string& username);
 		std::string			setUserName();
 		std::string			setNickName(Server& server);
-
-		// Utils.cpp
-		void				helpCmdClient();
-		void				nickCmdClient(std::vector<std::string> tokens, Server server);
-
 };
 
 std::string	trim(const std::string& str);

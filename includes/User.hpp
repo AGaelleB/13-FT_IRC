@@ -2,6 +2,7 @@
 # define USER_HPP
 
 #include "./Library.hpp"
+#include "./Utils.hpp"
 
 class User {
 	private:

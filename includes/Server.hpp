@@ -27,34 +27,42 @@ class Server {
 		~Server();
 
 		// Server.cpp
-		void	startServer();
-		void	stopServer(); // Nouvelle méthode pour arrêter le serveur
-		void    sendDisconnectMessageToClients();
+		void    	sendDisconnectMessageToClients();
+		void		stopServer();
+		void		startServer();
+
+		//AllCommands.cpp
+		void		parseClientMsg(const std::string& message, Client& client);
+
+		//help.cpp
+		void		helpCmdClient(Client& client);
+		void		helpCmdServer();
+
+		//nick.cpp
+		bool		isNicknameAvailable(const std::string& nickname); 
+		void		removeNickname(const std::string& nickname);
+		void		addNickname(const std::string& nickname);
+		void		nickCmdClient(std::vector<std::string> tokens, Client& client);
 
 		// Authentification.cpp
-		bool	isNicknameAvailable(const std::string& nickname); 
-		void	handleClientMessage(int client_index, Client& client);
-		void	checkPassword(Client &client);
-		void	addUser(Client &client, const std::string &username, const std::string &nickname);
-		void	isRegistered(Client &client);
-		void	authenticateAndRegister(Client &client);
-
-		// irsii.cpp
-		int		findCapLs(const std::string& data);
-		int		check_irssi_entrance(int fd);
+		void		checkPassword(Client &client);
+		void		addUser(Client &client, const std::string &username, const std::string &nickname);
+		void		isRegistered(Client &client);
+		void		authenticateAndRegister(Client &client);
 
 		// parsing.cpp
-		void	detectClient(int client_socket);
-		void	parsingDataIrssi(Client &client, int new_client_socket);
-		void	parsingDataNetclient(Client &client, int new_client_socket);
-		void	setNonBlocking(int socket);
+		void		handleClientMessage(int client_fd, Client& client);
+		void		parsingDataIrssi(Client &client, int new_client_socket);
+		void		parsingDataNetcat(Client &client, int new_client_socket);
+		void		setNonBlocking(int socket);
+		void		detectClient(int client_socket);
 
+		// irsii.cpp
+		int			findCapLs(const std::string& data);
+		
+		// Utils.cpp
 		static void	SignalHandler(int sig);
 
-		// Utils.cpp
-		void				removeNickname(const std::string& nickname);
-		void				helpCmdServer();
-		void				testRemoveNickname();
 };
 
 #endif // SERVER_HPP
