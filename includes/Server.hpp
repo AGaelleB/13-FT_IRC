@@ -52,6 +52,7 @@ class Server {
 
 		// parsing.cpp
 		void		handleClientMessage(int client_fd, Client& client);
+		void		logRPLirssi(Client& client);
 		void		parsingDataIrssi(Client &client, int new_client_socket);
 		void		parsingDataNetcat(Client &client, int new_client_socket);
 		void		setNonBlocking(int socket);

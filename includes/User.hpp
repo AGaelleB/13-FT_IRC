@@ -1,8 +1,9 @@
 #ifndef USER_HPP
 # define USER_HPP
 
-#include "./Library.hpp"
+// #include "./Library.hpp"
 #include "./Utils.hpp"
+#include "./RPL.hpp"
 
 class User {
 	private:

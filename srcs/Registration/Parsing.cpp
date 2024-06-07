@@ -28,27 +28,45 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 	}
 }
 
+void Server::logRPLirssi(Client& client) {
+
+	std::string IPaddress = "127.0.0.1";
+	std::string welcomeMsg = RPL_WELCOME(client.getUser().getNickname(), IPaddress);
+	std::string yourHostMsg = RPL_YOURHOST(client.getUser().getNickname(), "localhost");
+	std::string createdMsg = RPL_CREATED(client.getUser().getNickname(), "now");
+	std::string myInfoMsg = RPL_MYINFO(client.getUser().getNickname(), "localhost");
+	std::string iSupportMsg = RPL_ISUPPORT(client.getUser().getNickname());
+
+	client.sendClientMsg(client.getClientSocket(), welcomeMsg.c_str());
+	client.sendClientMsg(client.getClientSocket(), yourHostMsg.c_str());
+	client.sendClientMsg(client.getClientSocket(), createdMsg.c_str());
+	client.sendClientMsg(client.getClientSocket(), myInfoMsg.c_str());
+	client.sendClientMsg(client.getClientSocket(), iSupportMsg.c_str());
+}
+
 void Server::parsingDataIrssi(Client &client, int new_client_socket) {
-    std::istringstream stream(this->_irssi_data);
-    std::string line;
-    std::string nickname;
-    std::string username;
+	std::istringstream stream(this->_irssi_data);
+	std::string line;
+	std::string nickname;
+	std::string username;
 
-    while (std::getline(stream, line)) {
-        if (line.find("NICK ") == 0) {
-            nickname = line.substr(5);
-            nickname = trim(nickname);
-        }
+	while (std::getline(stream, line)) {
+		if (line.find("NICK ") == 0) {
+			nickname = line.substr(5);
+			nickname = trim(nickname);
+		}
 		else if (line.find("USER ") == 0) {
-            std::istringstream userStream(line);
-            std::string userKeyword;
-            userStream >> userKeyword >> username;
-            username = trim(username);
-        }
-    }
+			std::istringstream userStream(line);
+			std::string userKeyword;
+			userStream >> userKeyword >> username;
+			username = trim(username);
+		}
+	}
 
-    addUser(client, username, nickname);
+	addUser(client, username, nickname);
 	client.setClientSocket(new_client_socket);
+	
+	logRPLirssi(client); // ici ? 
 
 	std::cout << YELLOW "\nirssi username = " << username << RESET << std::endl;
 	std::cout << YELLOW "irssi nickname = " << nickname << RESET << std::endl;
@@ -78,6 +96,8 @@ void Server::detectClient(int client_socket) {
 	ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
 	buffer[bytes_received] = '\0';
 	std::string answer(buffer);
+	   
+	std::cout << YELLOW << "DetectClient received: " << answer << RESET << std::endl; // test
 
 	Client& client = _clients[client_socket]; // Accéder à l'objet client par référence
 	if (findCapLs(answer) == 0) {
