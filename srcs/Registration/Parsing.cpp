@@ -30,6 +30,9 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 
 void Server::logRPLirssi(Client& client) {
 
+	client.sendClientMsg(client.getClientSocket(), bannerIRC);
+	client.sendClientMsg(client.getClientSocket(), "\n");
+
 	std::string IPaddress = "127.0.0.1";
 	std::string welcomeMsg = RPL_WELCOME(client.getUser().getNickname(), IPaddress);
 	std::string yourHostMsg = RPL_YOURHOST(client.getUser().getNickname(), "localhost");
@@ -49,6 +52,8 @@ void Server::parsingDataIrssi(Client &client, int new_client_socket) {
 	std::string line;
 	std::string nickname;
 	std::string username;
+
+
 
 	while (std::getline(stream, line)) {
 		if (line.find("NICK ") == 0) {
@@ -101,10 +106,17 @@ void Server::detectClient(int client_socket) {
 
 	Client& client = _clients[client_socket]; // Accéder à l'objet client par référence
 	if (findCapLs(answer) == 0) {
-		std::cerr << ORANGE << "connected with irssi!\n" << RESET;
-		this->_irssi_data = answer;
-		parsingDataIrssi(client, client_socket);
-		isRegistered(client);
+		if (checkPasswordirssi(answer, client) == 1) {
+			std::cerr << ORANGE << "connected with irssi!\n" << RESET;
+			this->_irssi_data = answer;
+			parsingDataIrssi(client, client_socket);
+			isRegistered(client);
+		}
+		else {
+			std::cout << RED << "Error: must be ./Server <port> <password>" << RESET << std::endl;
+			std::string err_needmoreparams = ERR_NEEDMOREPARAMS(client.getUser().getNickname(), "add password");
+			client.sendClientMsg(client.getClientSocket(), err_needmoreparams.c_str());
+		}
 	}
 	else {
 		std::cerr << ORANGE << "connected with netcat!\n" << RESET;

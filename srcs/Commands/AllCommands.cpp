@@ -17,7 +17,7 @@ CommandType getCommandType(const std::string& command) {
 	if (command == "/msg") return MSG;
 	if (command == "/quit") return QUIT;
 	if (command == "/list") return LIST;
-	if (command == "/nick") return NICK;
+	if (command == "/nick" || "NICK") return NICK;
 	if (command == "/whois") return WHOIS;
 	return UNKNOWN;
 }

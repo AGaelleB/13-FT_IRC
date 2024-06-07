@@ -44,6 +44,9 @@ class Server {
 		void		addNickname(const std::string& nickname);
 		void		nickCmdClient(std::vector<std::string> tokens, Client& client);
 
+		//pass.cpp
+		bool		checkPasswordirssi(std::string answer, Client& client);
+
 		// Authentification.cpp
 		void		checkPassword(Client &client);
 		void		addUser(Client &client, const std::string &username, const std::string &nickname);
@@ -63,6 +66,8 @@ class Server {
 		
 		// Utils.cpp
 		static void	SignalHandler(int sig);
+
+
 
 };
 

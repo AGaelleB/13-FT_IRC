@@ -12,7 +12,8 @@ SRCS = srcs/main.cpp \
        srcs/Commands/AllCommands.cpp \
        srcs/Commands/help.cpp \
        srcs/Commands/nick.cpp \
-       srcs/Macro/RPL.cpp \
+       srcs/Commands/Pass.cpp \
+       srcs/RPL/RPL.cpp \
        srcs/Registration/Authentification.cpp \
        srcs/Registration/Parsing.cpp \
        srcs/Server/irssi.cpp \
@@ -35,7 +36,7 @@ all: $(OBJ_DIR) $(NAME)
 
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
-	@mkdir -p $(OBJ_DIR)/Client $(OBJ_DIR)/Commands $(OBJ_DIR)/Registration $(OBJ_DIR)/Server $(OBJ_DIR)/Macro
+	@mkdir -p $(OBJ_DIR)/Client $(OBJ_DIR)/Commands $(OBJ_DIR)/Registration $(OBJ_DIR)/Server $(OBJ_DIR)/RPL
 
 $(OBJ_DIR)/%.o: srcs/%.cpp
 	@$(CC) $(CPP_FLAGS) -c $< -o $@

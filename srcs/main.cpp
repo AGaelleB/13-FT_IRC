@@ -27,8 +27,11 @@ int main(int ac, char **av) {
 
 /* TO DO
 
-	- parser toutes les commandes des user : ex /login
-	- comprendre irssi
-	- coder les commandes parse
+ATTENTION AU PARSING DE NICKNAME, lorsque l on se connecte avec irssi, 
+on parse directement tout le message CAP LS etc, et du coup on essaie d affecter duirectement le NICKNAME
+
+Voir pour envoyer le msg Error: must be ./Server <port> <password> sur irsssi
+
+
 
  */

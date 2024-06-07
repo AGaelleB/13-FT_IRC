@@ -107,7 +107,7 @@ void Server::startServer() {
 					fds[nfds].events = POLLIN;
 					nfds++;
 					_clients[new_client_socket] = client;
-					detectClient(new_client_socket); // Appeler detectClient ici
+					detectClient(new_client_socket);
 				}
 				else {
 					handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
@@ -117,3 +117,42 @@ void Server::startServer() {
 	}
 	stopServer();
 }
+
+
+/* 
+
+[(status)] /connect localhost 6667
+	Irssi v1.2.3-1ubuntu4 - https://irssi.org                                                                                                                                                      
+	15:37 -!-  ___           _
+	15:37 -!- |_ _|_ _ _____(_)
+	15:37 -!-  | || '_(_-<_-< |
+	15:37 -!- |___|_| /__/__/_|
+	15:37 -!- Irssi v1.2.3-1ubuntu4 - https://irssi.org
+	15:38 -!- Irssi: Looking up localhost
+	15:38 -!- Irssi: Connecting to localhost [127.0.0.1] port 6667
+	15:38 -!- Irssi: Connection to localhost established
+	15:38 -!- add [-w <password>] Not enough parameters.
+
+
+[(status)] /connect localhost 6667 1
+	15:38 [localhost2] -!- Irssi: Looking up localhost
+	15:38 [localhost2] -!- Irssi: Connecting to localhost [127.0.0.1] port 6667
+	15:38 [localhost2] -!- Irssi: Connection to localhost established
+	15:38 [localhost2] -!- !!! WELCOME TO THE INTERNET RELAY NETWORK !!! | gaelle:127.0.0.1
+	15:38 [localhost2] -!- -Your host is [pirate server] (localhost), running version 1.0.1 
+	15:38 [localhost2] -!- -This server was created 07-06-2024 15:37:52
+	15:38 [localhost2] -!- -[pirate server] 1.0.1 io kost k
+	15:38 [localhost2] -!- -CHANNELLEN=32 NICKLEN=9 TOPICLEN=307 : are supported by this server
+	15:38 [localhost2] -!- I /$$$$$$$$ /$$$$$$$$     /$$$$$$ /$$$$$$$   /$$$$$$ 
+	15:38 [localhost2] -!- | $$_____/|__  $$__/    |_  $$_/| $$__  $$ /$$__  $$
+	15:38 [localhost2] -!- | $$         | $$         | $$  | $$  \ $$| $$  \__/
+	15:38 [localhost2] -!- | $$$$$      | $$         | $$  | $$$$$$$/|$$      
+	15:38 [localhost2] -!- | $$__/      | $$         | $$  | $$__  $$|$$      
+	15:38 [localhost2] -!- | $$         | $$         | $$  | $$  \ $$| $$    $$
+	15:38 [localhost2] -!- | $$         | $$        /$$$$$$| $$  | $$|  $$$$$$/
+	15:38 [localhost2] -!- |__/         |__//$$$$$$|______/|__/  |__/ \______/ 
+	15:38 [localhost2] -!-                 |______/                          
+	15:38 [localhost2] -!- Enjoy!
+	15:38 [localhost2] -!- :gaelle MODE gaelle :+i
+
+ */
