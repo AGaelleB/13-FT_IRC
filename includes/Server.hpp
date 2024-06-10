@@ -16,7 +16,7 @@ class Server {
 		struct sockaddr_in		_server_addr;
 		std::string				_password;
 		std::map<int, Client>	_clients;
-		std::set<std::string>   _nicknames;
+		std::set<std::string>	_nicknames;
 		int						_port;
 		std::string				_irssi_data;
 		static bool				shutdown_signal;
@@ -37,6 +37,11 @@ class Server {
 		//help.cpp
 		void		helpCmdClient(Client& client);
 		void		helpCmdServer();
+
+		//list.cpp
+		void		witchList(std::string tokens, Client& client);
+		void		channelList(Client& client);
+		void		UserList(Client& client);
 
 		//nick.cpp
 		bool		isNicknameAvailable(const std::string& nickname); 
