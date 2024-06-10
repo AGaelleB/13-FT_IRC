@@ -23,6 +23,9 @@ CommandType getCommandType(const std::string& command) {
 }
 
 void Server::parseClientMsg(const std::string& message, Client& client) {
+
+		(void)message;
+		(void)client;
 	std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
 
 	std::vector<std::string> tokens = split(message);
@@ -30,9 +33,21 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 		client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
 		return;
 	}
-	// for (std::vector<std::string>::const_iterator it = tokens.begin(); it != tokens.end(); ++it) {
-	// std::cout << *it << std::endl;
-	// }
+
+	for (std::vector<std::string>::const_iterator it = tokens.begin(); it != tokens.end(); ++it) {
+		// std::cout << *it << std::endl;
+		std::cout << CYAN << *it << RESET << std::endl;
+
+	}
+
+	for (size_t i = 0; i < tokens.size(); ++i) {
+		std::cout << ORANGE << "i = " << i << RESET << std::endl;
+		// std::cout << ORANGE << "tokens = " << tokens << RESET << std::endl;
+		if (i >= 4) {
+			std::cout << ORANGE << "I HAVE TOO MANY TOKENS OMG !!!!!!!!!!!" << RESET << std::endl;
+			return;
+		}
+    }
 
 	CommandType command = getCommandType(tokens[0]);
 	switch (command) {
