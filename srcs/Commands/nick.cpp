@@ -5,19 +5,20 @@ bool Server::isNicknameAvailable(const std::string& nickname) {
 }
 
 void Server::removeNickname(const std::string& nickname) {
-	std::cout << MAGENTA << "remove 1 old nickname : " << nickname << RESET << std::endl;
 	_nicknames.erase(nickname);
-	std::cout << MAGENTA << "remove 2 old nickname : " << nickname << RESET << std::endl;
 	
 	if (_nicknames.find(nickname) == _nicknames.end()) {
-		std::cout << MAGENTA << "Nickname " << nickname << " successfully removed." << RESET << std::endl;
-	} else {
+		std::cout << MAGENTA << "OLD Nickname " << nickname  << RESET << std::endl;
+	}
+	else {
 		std::cout << MAGENTA << "Failed to remove nickname: " << nickname << RESET << std::endl;
 	}
 }
 
 void Server::addNickname(const std::string& nickname) {
 	_nicknames.insert(nickname);
+	// std::cout << MAGENTA << "NEW Nickname " << nickname << RESET << std::endl;
+
 }
 
 void	Server::nickCmdClient(std::vector<std::string> tokens, Client& client) {
@@ -37,10 +38,10 @@ void	Server::nickCmdClient(std::vector<std::string> tokens, Client& client) {
 		
 		std::string old_nickname = client.getUser().getNickname();
 		removeNickname(old_nickname);
-		std::cout << MAGENTA << "cmd old nickname : " << old_nickname << RESET << std::endl;
 		// ici faire une suppression de l'ancien nickname pour le rendre accessible une fois que le client a changer
 		client.getUser().setNickname(new_nickname);
 		addNickname(new_nickname);
+		std::cout << MAGENTA << "NEW Nickname " << client.getUser().getNickname() << RESET << std::endl;
 	}
 	else
 		client.sendClientMsg(client.getClientSocket(), ERROR_NICKNAME_NOT_AVAILABLE);

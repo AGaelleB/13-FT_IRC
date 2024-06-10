@@ -8,6 +8,7 @@ enum CommandType {
 	LIST,
 	NICK,
 	WHOIS,
+	PING,
 	UNKNOWN
 };
 
@@ -17,16 +18,14 @@ CommandType getCommandType(const std::string& command) {
 	if (command == "/msg") return MSG;
 	if (command == "/quit") return QUIT;
 	if (command == "/list") return LIST;
-	if (command == "/nick" || "NICK") return NICK;
+	if (command == "/nick" || command == "NICK") return NICK;
 	if (command == "/whois") return WHOIS;
+	if (command == "PING") return PING;
 	return UNKNOWN;
 }
 
 void Server::parseClientMsg(const std::string& message, Client& client) {
-
-		(void)message;
-		(void)client;
-	std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
+	// std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
 
 	std::vector<std::string> tokens = split(message);
 	if (tokens.empty()) {
@@ -34,23 +33,12 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 		return;
 	}
 
-	for (std::vector<std::string>::const_iterator it = tokens.begin(); it != tokens.end(); ++it) {
-		// std::cout << *it << std::endl;
-		std::cout << CYAN << *it << RESET << std::endl;
+	std::string command = tokens[0];
+	std::cout << "Command received: " << command << std::endl;
 
-	}
-
-	for (size_t i = 0; i < tokens.size(); ++i) {
-		std::cout << ORANGE << "i = " << i << RESET << std::endl;
-		// std::cout << ORANGE << "tokens = " << tokens << RESET << std::endl;
-		if (i >= 4) {
-			std::cout << ORANGE << "I HAVE TOO MANY TOKENS OMG !!!!!!!!!!!" << RESET << std::endl;
-			return;
-		}
-    }
-
-	CommandType command = getCommandType(tokens[0]);
-	switch (command) {
+	// Traitement des commandes après l'initialisation
+	CommandType commandType = getCommandType(command);
+	switch (commandType) {
 		case HELP:
 			std::cout << "/help command received" << std::endl;
 			helpCmdClient(client);
@@ -74,9 +62,21 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 		case WHOIS:
 			std::cout << "Whois command received" << std::endl;
 			break;
+		case PING: // Ajout du cas PING
+			if (tokens.size() > 1) {
+				std::cout << ORANGE << "JE TE REPONDS A TON PING" << RESET << std::endl;
+				std::string response = RPL_PONG(client.getUser().getNickname(), tokens[1]);
+				client.sendClientMsg(client.getClientSocket(), response.c_str());
+			}
+			break;
 		case UNKNOWN:
 		default:
 			client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
 			break;
 	}
+	std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
+
 }
+
+
+// /connect localhost 6667 1

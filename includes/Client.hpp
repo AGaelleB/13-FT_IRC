@@ -32,6 +32,7 @@ class Client {
 		bool				checkName(const std::string& username);
 		std::string			setUserName();
 		std::string			setNickName(Server& server);
+
 };
 
 std::string	trim(const std::string& str);
