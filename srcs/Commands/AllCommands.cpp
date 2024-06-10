@@ -115,6 +115,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 	gerer la 1er cmd gaelle msg: MODE gaelle +i pour pqs auelle ne soit  Unknown command ❌
 		=> sera gerer lors du code de la cmd MODE 
 
-	faire la cmd msg
+	WARNING verifier l initialisation du client a la construction, pourquoi ca ne change pas
+	si on init a -1 ??????? 
 
  */

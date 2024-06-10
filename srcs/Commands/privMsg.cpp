@@ -1,6 +1,14 @@
 #include "../../includes/Server.hpp"
 
 void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& tokens, const std::string& message) {
+	
+	std::cout << ORANGE << "client.getClientSocket() = " << client.getClientSocket() << RESET << std::endl;
+	std::cout << "Connected clients:" << std::endl;
+    for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+        std::cout << "Socket: " << it->first << ", Nickname: " << it->second.getUser().getNickname() << std::endl;
+    }
+
+
 	if (tokens.size() < 3) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
 		return;
@@ -23,7 +31,6 @@ void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& to
 			break;
 		}
 	}
-
 	// Si le destinataire n'est pas trouvé, envoyer une erreur au client expéditeur
 	if (recipientSocket == -1) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_TARGET_NOT_FOUND);
