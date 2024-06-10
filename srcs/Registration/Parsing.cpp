@@ -48,12 +48,10 @@ void Server::logRPLirssi(Client& client) {
 }
 
 void Server::parsingDataIrssi(Client &client, int new_client_socket) {
-	std::istringstream stream(this->_irssi_data);
-	std::string line;
-	std::string nickname;
-	std::string username;
-
-
+	std::istringstream	stream(this->_irssi_data);
+	std::string			line;
+	std::string			nickname;
+	std::string			username;
 
 	while (std::getline(stream, line)) {
 		if (line.find("NICK ") == 0) {
@@ -67,15 +65,13 @@ void Server::parsingDataIrssi(Client &client, int new_client_socket) {
 			username = trim(username);
 		}
 	}
-
 	addUser(client, username, nickname);
 	client.setClientSocket(new_client_socket);
 	
-	logRPLirssi(client); // ici ? 
+	logRPLirssi(client);
 
 	std::cout << YELLOW "\nirssi username = " << username << RESET << std::endl;
 	std::cout << YELLOW "irssi nickname = " << nickname << RESET << std::endl;
-
 }
 
 void Server::parsingDataNetcat(Client &client, int new_client_socket) {

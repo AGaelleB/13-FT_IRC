@@ -60,8 +60,8 @@ bool Client::checkName(const std::string& username) {
 }
 
 std::string Client::setUserName() {
-	char buffer[1024];
-	ssize_t bytes_received;
+	char	buffer[1024];
+	ssize_t	bytes_received;
 
 	while (true) {
 		this->sendClientMsg(this->getClientSocket(), MSG_USERNAME);
@@ -89,21 +89,19 @@ std::string Client::setUserName() {
 }
 
 std::string Client::setNickName(Server& server) {
-	char buffer[1024];
-	ssize_t bytes_received;
+	char	buffer[1024];
+	ssize_t	bytes_received;
 
 	while (true) {
 		this->sendClientMsg(this->getClientSocket(), MSG_NICKNAME);
-
 		while (true) {
 			bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
 			if (bytes_received == -1 && errno == EWOULDBLOCK) {
 				usleep(42);
 				continue;
 			}
-			else if (bytes_received > 0) {
+			else if (bytes_received > 0)
 				break;
-			}
 			else {
 				if (bytes_received == 0)
 					std::cout << RED << "\nClient disconnected during nickname entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;

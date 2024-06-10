@@ -1,39 +1,39 @@
 #include "../../includes/Server.hpp"
 
 enum CommandType {
-    HELP,
-    NICK,
-    LIST,
-    PRIVMSG,
-    CHANNEL,
-    QUIT,
-    JOIN,
-    PART,
-    TOPIC,
-    KICK,
-    INVITE,
-    PING,
-    USER,
-    MODE,
-    UNKNOWN
+	HELP,
+	NICK,
+	LIST,
+	PRIVMSG,
+	CHANNEL,
+	QUIT,
+	JOIN,
+	PART,
+	TOPIC,
+	KICK,
+	INVITE,
+	PING,
+	USER,
+	MODE,
+	UNKNOWN
 };
 
 CommandType getCommandType(const std::string& command) {
-    if (command == "/help") return HELP;
-    if (command == "/nick" || command == "NICK") return NICK;
-    if (command == "/list" || command == "LIST") return LIST;
-    if (command == "/msg" || command == "PRIVMSG") return PRIVMSG;
-    if (command == "/channel") return CHANNEL;
-    if (command == "/quit") return QUIT;
-    if (command == "/join") return JOIN;
-    if (command == "/part") return PART;
-    if (command == "/topic") return TOPIC;
-    if (command == "/kick") return KICK;
-    if (command == "/invite") return INVITE;
-    if (command == "PING") return PING;
-    if (command == "USER") return USER;
-    if (command == "MODE") return MODE;
-    return UNKNOWN;
+	if (command == "/help") return HELP;
+	if (command == "/nick" || command == "NICK") return NICK;
+	if (command == "/list" || command == "LIST") return LIST;
+	if (command == "/msg" || command == "PRIVMSG") return PRIVMSG;
+	if (command == "/channel") return CHANNEL;
+	if (command == "/quit") return QUIT;
+	if (command == "/join") return JOIN;
+	if (command == "/part") return PART;
+	if (command == "/topic") return TOPIC;
+	if (command == "/kick") return KICK;
+	if (command == "/invite") return INVITE;
+	if (command == "PING") return PING;
+	if (command == "USER") return USER;
+	if (command == "MODE") return MODE;
+	return UNKNOWN;
 }
 
 void Server::parseClientMsg(const std::string& message, Client& client) {
@@ -46,8 +46,6 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
     }
 
     std::string command = tokens[0];
-    std::string target;
-    std::string msgContent;
 
     // Traitement des commandes après l'initialisation
     CommandType commandType = getCommandType(command);
@@ -70,14 +68,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
             break;
         case PRIVMSG:
             std::cout << "Private message command received" << std::endl;
-            if (tokens.size() < 3) {
-                client.sendClientMsg(client.getClientSocket(), "ERROR: Invalid command format. Usage: /msg <target> <message>");
-                return;
-            }
-            // Reconstituer le message avec tous les tokens après le deuxième
-            target = tokens[1];
-            msgContent = message.substr(message.find(target) + target.length() + 1);
-            privMsgCmdClient(client, target, msgContent);
+            privMsgCmdClient(client, tokens, message);
             break;
         case CHANNEL:
             std::cout << "Channel command received" << std::endl;

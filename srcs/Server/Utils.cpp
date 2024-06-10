@@ -27,13 +27,13 @@ std::string trim(const std::string& str) {
 // }
 
 std::vector<std::string> split(const std::string &str) {
-    std::vector<std::string> tokens;
-    std::istringstream iss(str);
-    std::string token;
+	std::vector<std::string> tokens;
+	std::istringstream iss(str);
+	std::string token;
 
-    while (iss >> token)
-        tokens.push_back(token);
-    return (tokens);
+	while (iss >> token)
+		tokens.push_back(token);
+	return (tokens);
 }
 
 void Server::SignalHandler(int sig) {

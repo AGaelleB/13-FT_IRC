@@ -55,7 +55,7 @@ class Server {
 		bool		checkPasswordirssi(std::string answer, Client& client);
 
 		//privMsg.cpp
-		void		privMsgCmdClient(Client& client, const std::string& target, const std::string& message);
+		void		privMsgCmdClient(Client& client, const std::vector<std::string>& tokens, const std::string& message);
 
 
 		/**************************************************************************/
