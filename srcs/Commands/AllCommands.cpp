@@ -25,7 +25,7 @@ CommandType getCommandType(const std::string& command) {
 }
 
 void Server::parseClientMsg(const std::string& message, Client& client) {
-	// std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
+	std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
 
 	std::vector<std::string> tokens = split(message);
 	if (tokens.empty()) {
@@ -34,7 +34,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 	}
 
 	std::string command = tokens[0];
-	std::cout << "Command received: " << command << std::endl;
+	// std::cout << "Command received: " << command << std::endl;
 
 	// Traitement des commandes après l'initialisation
 	CommandType commandType = getCommandType(command);
@@ -74,8 +74,6 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
 			break;
 	}
-	std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
-
 }
 
 

@@ -8,7 +8,7 @@ void Server::removeNickname(const std::string& nickname) {
 	_nicknames.erase(nickname);
 	
 	if (_nicknames.find(nickname) == _nicknames.end()) {
-		std::cout << MAGENTA << "OLD Nickname " << nickname  << RESET << std::endl;
+		// std::cout << MAGENTA << "OLD Nickname " << nickname  << RESET << std::endl;
 	}
 	else {
 		std::cout << MAGENTA << "Failed to remove nickname: " << nickname << RESET << std::endl;
@@ -17,31 +17,36 @@ void Server::removeNickname(const std::string& nickname) {
 
 void Server::addNickname(const std::string& nickname) {
 	_nicknames.insert(nickname);
-	// std::cout << MAGENTA << "NEW Nickname " << nickname << RESET << std::endl;
 
 }
 
-void	Server::nickCmdClient(std::vector<std::string> tokens, Client& client) {
-	std::string new_nickname = tokens[1];
-	std::cout << new_nickname << std::endl;
-	
-	new_nickname.erase(std::remove(new_nickname.begin(), new_nickname.end(), '\n'), new_nickname.end());
+void Server::nickCmdClient(std::vector<std::string> tokens, Client& client) {
+
+	if (tokens.size() < 2) {
+		client.sendClientMsg(client.getClientSocket(), ERROR_NEW_NICKNAME);
+		return;
+	}
+
+	std::string new_nickname = trim(tokens[1]);
 	if (new_nickname.empty()) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_NEW_NICKNAME);
 		return;
 	}
+
 	if (!client.checkName(new_nickname)) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_NICKNAME);
 		return;
 	}
+
 	if (isNicknameAvailable(new_nickname)) {
-		
 		std::string old_nickname = client.getUser().getNickname();
-		removeNickname(old_nickname);
-		// ici faire une suppression de l'ancien nickname pour le rendre accessible une fois que le client a changer
+		if (!old_nickname.empty())
+			removeNickname(old_nickname);
+
 		client.getUser().setNickname(new_nickname);
 		addNickname(new_nickname);
-		std::cout << MAGENTA << "NEW Nickname " << client.getUser().getNickname() << RESET << std::endl;
+
+		std::cout << MAGENTA << "Changed nickname from " << old_nickname << " to " << new_nickname << RESET << std::endl;
 	}
 	else
 		client.sendClientMsg(client.getClientSocket(), ERROR_NICKNAME_NOT_AVAILABLE);
