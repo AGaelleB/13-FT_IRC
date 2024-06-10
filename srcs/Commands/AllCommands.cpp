@@ -2,11 +2,11 @@
 
 enum CommandType {
 	HELP,
-	CHANNEL,
-	MSG,
-	QUIT,
-	LIST,
 	NICK,
+	LIST,
+	PRIVMSG,
+	CHANNEL,
+	QUIT,
 	JOIN,
 	PART,
 	TOPIC,
@@ -14,18 +14,17 @@ enum CommandType {
 	INVITE,
 	PING,
 	USER,
-	PRIVMSG,
 	MODE,
 	UNKNOWN
 };
 
 CommandType getCommandType(const std::string& command) {
 	if (command == "/help") return HELP;
-	if (command == "/channel") return CHANNEL;
-	if (command == "/msg") return MSG;
-	if (command == "/quit") return QUIT;
-	if (command == "/list") return LIST;
 	if (command == "/nick" || command == "NICK") return NICK;
+	if (command == "/list" || command == "LIST") return LIST;
+	if (command == "/msg" || command == "PRIVMSG") return PRIVMSG;
+	if (command == "/channel") return CHANNEL;
+	if (command == "/quit") return QUIT;
 	if (command == "/join") return JOIN;
 	if (command == "/part") return PART;
 	if (command == "/topic") return TOPIC;
@@ -33,7 +32,6 @@ CommandType getCommandType(const std::string& command) {
 	if (command == "/invite") return INVITE;
 	if (command == "PING") return PING;
 	if (command == "USER") return USER;
-	if (command == "PRIVMSG") return PRIVMSG;
 	if (command == "MODE") return MODE;
 	return UNKNOWN;
 }
@@ -57,27 +55,32 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			std::cout << "/help command received" << std::endl;
 			helpCmdClient(client);
 			break;
-		case CHANNEL:
-			std::cout << "Channel command received" << std::endl;
-			break;
-		case MSG:
-			std::cout << "Private message command received" << std::endl;
-			// Assurez-vous que cela gère bien les messages privés
-			break;
-		case QUIT:
-			std::cout << "Quit command received" << std::endl;
+		case NICK:
+			std::cout << "Nickname change command received" << std::endl;
+			nickCmdClient(tokens, client);
 			break;
 		case LIST:
 			std::cout << "List command received" << std::endl;
 			if (tokens.size() != 2) {
-                client.sendClientMsg(client.getClientSocket(), ERROR_CMD_LIST);
-                return;
-            }
-			witchList(tokens[1], client);
+				client.sendClientMsg(client.getClientSocket(), ERROR_CMD_LIST);
+				return;
+			}
+			listCmdClient(tokens[1], client);
 			break;
-		case NICK:
-			std::cout << "Nickname change command received" << std::endl;
-			nickCmdClient(tokens, client);
+		case PRIVMSG:
+			std::cout << "Private message command received" << std::endl;
+			if (tokens.size() < 3) {
+				client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
+				return;
+			}
+			// privMsgCmdClient(client, tokens[1], tokens[2]); ////////////////////////
+			privMsgCmdClient(client, tokens[1], tokens[2]); // Join the remaining tokens as the message
+			break;
+		case CHANNEL:
+			std::cout << "Channel command received" << std::endl;
+			break;
+		case QUIT:
+			std::cout << "Quit command received" << std::endl;
 			break;
 		case JOIN:
 			std::cout << "JOIN command received" << std::endl;
@@ -103,14 +106,6 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 		// 	client.getUser().setUsername(tokens[1]);
 		// 	std::cout << "Username set to " << tokens[1] << std::endl;
 		// 	break;
-		// case PRIVMSG:
-		// 	std::cout << "PRIVMSG command received" << std::endl;
-		// 	if (tokens.size() < 3) {
-		// 		client.sendClientMsg(client.getClientSocket(), ERROR_PRIVMSG);
-		// 		return;
-		// 	}
-		// 	handlePrivMsg(client, tokens[1], tokens[2]);
-		// 	break;
 		// case MODE:
 		// 	std::cout << "MODE command received" << std::endl;
 		// 	if (tokens.size() < 3) {
@@ -133,11 +128,6 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 	}
 }
 
-// void Server::handlePrivMsg(Client& client, const std::string& target, const std::string& message) {
-// 	// Gérer l'envoi de messages privés
-// 	std::cout << "Sending private message from " << client.getUser().getNickname() << " to " << target << ": " << message << std::endl;
-// 	// Logique pour envoyer le message au client cible
-// }
 
 // void Server::handleMode(Client& client, const std::string& channel, const std::string& mode) {
 // 	// Gérer les changements de mode de canal
@@ -148,3 +138,14 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 
 
 // /connect localhost 6667 1
+
+
+
+/* TO DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+
+	gerer la 1er cmd gaelle msg: MODE gaelle +i pour pqs auelle ne soit  Unknown command ❌
+		=> sera gerer lors du code de la cmd MODE 
+
+	faire la cmd msg
+
+ */

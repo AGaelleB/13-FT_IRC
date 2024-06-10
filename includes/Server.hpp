@@ -31,6 +31,8 @@ class Server {
 		void		stopServer();
 		void		startServer();
 
+		/******************************* COMMANDES ********************************/
+
 		//AllCommands.cpp
 		void		parseClientMsg(const std::string& message, Client& client);
 
@@ -39,7 +41,7 @@ class Server {
 		void		helpCmdServer();
 
 		//list.cpp
-		void		witchList(std::string tokens, Client& client);
+		void		listCmdClient(std::string tokens, Client& client);
 		void		channelList(Client& client);
 		void		UserList(Client& client);
 
@@ -51,6 +53,13 @@ class Server {
 
 		//pass.cpp
 		bool		checkPasswordirssi(std::string answer, Client& client);
+
+		//privMsg.cpp
+		void		privMsgCmdClient(Client& client, const std::string& target, const std::string& message);
+
+
+		/**************************************************************************/
+
 
 		// Authentification.cpp
 		void		checkPassword(Client &client);

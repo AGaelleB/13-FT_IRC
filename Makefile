@@ -15,6 +15,7 @@ SRCS = srcs/main.cpp \
        srcs/Commands/list.cpp \
        srcs/Commands/nick.cpp \
        srcs/Commands/Pass.cpp \
+       srcs/Commands/privMsg.cpp \
        \
        srcs/RPL/RPL.cpp \
        \

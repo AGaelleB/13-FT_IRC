@@ -1,6 +1,6 @@
 #include "../../includes/Server.hpp"
 
-void Server::witchList(std::string token, Client& client) {
+void Server::listCmdClient(std::string token, Client& client) {
 
 	std::string trim_token = trim(token);
 	if (token == "channel")

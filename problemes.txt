@@ -1,3 +1,4 @@
-big warning segfault on ctrl sur password du client
--> Enter Server password: ^C
+warning, si on ctrlC un netclien au moment du password du client, ca stop le server 
+
+
 

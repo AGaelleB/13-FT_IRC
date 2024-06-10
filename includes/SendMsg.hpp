@@ -8,6 +8,7 @@
 # define ERROR_PASSWORD_TOO_LONG RED "Error: password is too long\n\n" RESET
 # define ERROR_PASSWORD RED "Wrong password \n\n" RESET
 # define ERROR_CMD_LIST RED "Error: must be: /list channel OR user\n" RESET
+# define ERROR_CMD_PRIVMSG RED "Error: must be: /msg OR /PRIVMSG <target> <message>\n" RESET
 
 # define MSG_USERNAME BOLD "Enter your username: " RESET
 # define MSG_NICKNAME BOLD "Enter your nickname: " RESET
