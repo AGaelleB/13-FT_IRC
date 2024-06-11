@@ -2,6 +2,7 @@
 
 void Server::handleClientMessage(int client_fd, Client& client) {
 	char buffer[1024];
+	memset(buffer, 0, sizeof(buffer)); //-> clear the buffer
 	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
 	std::cout << "Connected clients:" << std::endl;
@@ -14,8 +15,10 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ ---> client_socket: " << client_fd << RESET << std::endl;
 			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << std::endl;
 		}
-		else
-			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
+		else {
+            std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
+            std::cerr << "recv error: " << strerror(errno) << " (errno: " << errno << ")" << std::endl;
+        }
 		
 		if (!client.getUser().getNickname().empty())
 			removeNickname(client.getUser().getNickname());
@@ -98,17 +101,11 @@ void Server::parsingDataNetcat(Client &client, int new_client_socket) {
 	_clients[new_client_socket] = client; // Ajout du client à la map
 }
 
-void Server::setNonBlocking(int socket) {
-	if (fcntl(socket, F_SETFL, O_NONBLOCK) == -1) {
-		std::cerr << "Error: fcntl F_SETFL failed" << std::endl;
-	}
-}
-
 void Server::detectClient(int client_socket) {
-	setNonBlocking(client_socket);  // socket en mode non-bloquant
 	char buffer[1024] = {0};
 
 	usleep(42);
+	memset(buffer, 0, sizeof(buffer)); //-> clear the buffer
 	ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
 	buffer[bytes_received] = '\0';
 	std::string answer(buffer);
