@@ -41,7 +41,7 @@ class Server {
 		void		helpCmdServer();
 
 		//list.cpp
-		void		listCmdClient(std::string tokens, Client& client);
+		void		listCmdClient(std::vector<std::string> tokens, Client& client);
 		void		channelList(Client& client);
 		void		UserList(Client& client);
 
@@ -53,6 +53,9 @@ class Server {
 
 		//pass.cpp
 		bool		checkPasswordirssi(std::string answer, Client& client);
+
+		//ping.cpp
+		void		pingCmdClient(std::vector<std::string> tokens, Client& client);
 
 		//privMsg.cpp
 		void		privMsgCmdClient(Client& client, const std::vector<std::string>& tokens, const std::string& message);

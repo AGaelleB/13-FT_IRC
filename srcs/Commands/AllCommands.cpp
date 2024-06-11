@@ -37,71 +37,64 @@ CommandType getCommandType(const std::string& command) {
 }
 
 void Server::parseClientMsg(const std::string& message, Client& client) {
-    std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
+	std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
 
-    std::vector<std::string> tokens = split(message);
-    if (tokens.empty()) {
-        client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
-        return;
-    }
+	std::vector<std::string> tokens = split(message);
+	if (tokens.empty()) {
+		client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+		return;
+	}
 
-    std::string command = tokens[0];
+	std::string command = tokens[0];
 
-    // Traitement des commandes après l'initialisation
-    CommandType commandType = getCommandType(command);
-    switch (commandType) {
-        case HELP:
-            std::cout << "/help command received" << std::endl;
-            helpCmdClient(client);
-            break;
-        case NICK:
-            std::cout << "Nickname change command received" << std::endl;
-            nickCmdClient(tokens, client);
-            break;
-        case LIST:
-            std::cout << "List command received" << std::endl;
-            if (tokens.size() != 2) {
-                client.sendClientMsg(client.getClientSocket(), ERROR_CMD_LIST);
-                return;
-            }
-            listCmdClient(tokens[1], client);
-            break;
-        case PRIVMSG:
-            std::cout << "Private message command received" << std::endl;
-            privMsgCmdClient(client, tokens, message);
-            break;
-        case CHANNEL:
-            std::cout << "Channel command received" << std::endl;
-            break;
-        case QUIT:
-            std::cout << "Quit command received" << std::endl;
-            break;
-        case JOIN:
-            std::cout << "JOIN command received" << std::endl;
-            break;
-        case PART:
-            std::cout << "PART command received" << std::endl;
-            break;
-        case TOPIC:
-            std::cout << "TOPIC command received" << std::endl;
-            break;
-        case KICK:
-            std::cout << "KICK command received" << std::endl;
-            break;
-        case INVITE:
-            std::cout << "INVITE command received" << std::endl;
-            break;
-        case PING:
-            if (tokens.size() > 1) {
-                std::string response = RPL_PONG(client.getUser().getNickname(), tokens[1]);
-                client.sendClientMsg(client.getClientSocket(), response.c_str());
-            }
-            break;
-        case UNKNOWN:
-        default:
-            client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
-            break;
-    }
+	// Traitement des commandes après l'initialisation
+	CommandType commandType = getCommandType(command);
+	switch (commandType) {
+		case HELP:
+			std::cout << "/help command received" << std::endl;
+			helpCmdClient(client);
+			break;
+		case NICK:
+			std::cout << "Nickname change command received" << std::endl;
+			nickCmdClient(tokens, client);
+			break;
+		case LIST:
+			std::cout << "List command received" << std::endl;
+			listCmdClient(tokens, client);
+			break;
+		case PRIVMSG:
+			std::cout << "Private message command received" << std::endl;
+			privMsgCmdClient(client, tokens, message);
+			break;
+		case CHANNEL:
+			std::cout << "Channel command received" << std::endl;
+			break;
+		case QUIT:
+			std::cout << "Quit command received" << std::endl;
+			break;
+		case JOIN:
+			std::cout << "JOIN command received" << std::endl;
+			break;
+		case PART:
+			std::cout << "PART command received" << std::endl;
+			break;
+		case TOPIC:
+			std::cout << "TOPIC command received" << std::endl;
+			break;
+		case KICK:
+			std::cout << "KICK command received" << std::endl;
+			break;
+		case INVITE:
+			std::cout << "INVITE command received" << std::endl;
+			break;
+		case PING:
+			pingCmdClient(tokens, client);
+			break;
+		case UNKNOWN:
+		default:
+			client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+			break;
+	}
 }
 
 

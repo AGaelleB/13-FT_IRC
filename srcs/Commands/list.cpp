@@ -1,9 +1,14 @@
 #include "../../includes/Server.hpp"
 
-void Server::listCmdClient(std::string token, Client& client) {
+void Server::listCmdClient(std::vector<std::string> tokens, Client& client) {
 
-	std::string trim_token = trim(token);
-	if (token == "channel")
+	if (tokens.size() != 2) {
+		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_LIST);
+		return;
+	}
+
+	std::string trim_token = trim(tokens[1]);
+	if (tokens[1] == "channel")
 		channelList(client);
 	else if (trim_token == "user")
 		UserList(client);
