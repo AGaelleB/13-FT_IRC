@@ -4,15 +4,25 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 	char buffer[1024];
 	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
+	std::cout << "Connected clients:" << std::endl;
+    for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+        std::cout << "Socket: " << it->first << ", Nickname: " << it->second.getUser().getNickname() << std::endl;
+    }
+
 	if (bytes_received <= 0) {
 		if (bytes_received == 0) {
 			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ ---> client_socket: " << client_fd << RESET << std::endl;
 			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << std::endl;
-		} else {
-			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
 		}
+		else
+			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
+		
+		if (!client.getUser().getNickname().empty())
+			removeNickname(client.getUser().getNickname());
+
 		close(client_fd);
 		_clients.erase(client_fd); // Supprimer le client de la map
+	
 		for (int i = 0; i < nfds; ++i) { // Retirer le client de la structure pollfd
 			if (fds[i].fd == client_fd) {
 				fds[i] = fds[nfds - 1];
@@ -23,7 +33,7 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 	}
 	else {
 		if (static_cast<size_t>(bytes_received) >= sizeof(buffer) - 1) {
-			client.sendClientMsg(client_fd, "Error: Command too long.\n");
+			client.sendClientMsg(client_fd, ERROR_MSG_CLIENT_TOO_LONG);
 			std::cerr << "Error: Command too long, client_fd: " << client_fd << std::endl;
 			return;
 		}
@@ -32,6 +42,7 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 		parseClientMsg(message, client);
 	}
 }
+
 void Server::logRPLirssi(Client& client) {
 
 	client.sendClientMsg(client.getClientSocket(), bannerIRC);

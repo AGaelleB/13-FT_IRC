@@ -1,12 +1,16 @@
 // Server.hpp
 
 #ifndef SERVER_HPP
-#define SERVER_HPP
+# define SERVER_HPP
 
-#include "./Client.hpp"
+# include "./Client.hpp"
+
+# define MAX_SIZE_MSG 150
 
 extern struct pollfd fds[1024];
 extern int nfds;
+
+
 
 class Client;
 

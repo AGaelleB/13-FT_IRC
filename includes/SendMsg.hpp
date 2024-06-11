@@ -11,6 +11,8 @@
 # define ERROR_CMD_PRIVMSG RED "Error: must be: /msg OR /PRIVMSG <target> <message>\n" RESET
 # define ERROR_TARGET_NOT_FOUND RED "Error: Target not found\n" RESET
 # define ERROR_CMD_QUIT RED "Error: /quit doesn't require any additional arguments\n" RESET
+# define ERROR_MSG_TOO_LONG RED "Error: message is too long, must be less than 150 characters\n" RESET
+# define ERROR_MSG_CLIENT_TOO_LONG RED "Error: command is too long\n" RESET
 
 # define MSG_USERNAME BOLD "Enter your username: " RESET
 # define MSG_NICKNAME BOLD "Enter your nickname: " RESET
