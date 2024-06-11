@@ -18,8 +18,8 @@
 # define MSG_HELP_CLIENT BLUE " ~~~ use /help for more informations ~~~ \n\n" RESET
 # define MSG_HELP_SERVER BLUE " ~~~ use /HELP for more informations ~~~ \n\n" RESET
 # define MSG_PASSWORD BOLD "Enter Server password: " RESET
-# define MSG_DISCONNECT BOLD "\nServer is shutting down, you have been disconnected ❌" RESET
-# define MSG_DISCONNECT_CLIENT BOLD "\nYou have been well disconnected ❌" RESET
+# define MSG_DISCONNECT BOLD "\nServer is shutting down, you have been disconnected ❌\n" RESET
+# define MSG_DISCONNECT_CLIENT BOLD "\nYou have been well disconnected ❌\n" RESET
 
 # define MSG_SEND_USER BOLD "\n============= LIST OF USERS ============\n\n" RESET
 # define MSG_END_LIST BOLD "\n========================================\n" RESET

@@ -109,9 +109,8 @@ void Server::startServer() {
 					_clients[new_client_socket] = client;
 					detectClient(new_client_socket);
 				}
-				else {
+				else
 					handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
-				}
 			}
 		}
 	}

@@ -1,7 +1,5 @@
 #include "../../includes/Server.hpp"
 
-
-
 void Server::quitMsgCmdClient(Client& client, std::vector<std::string> tokens) {
 
 	if (tokens.size() != 1) {
@@ -10,6 +8,7 @@ void Server::quitMsgCmdClient(Client& client, std::vector<std::string> tokens) {
 	}
 
 	client.sendClientMsg(client.getClientSocket(), MSG_DISCONNECT_CLIENT);
+	usleep(42);
 	
 	// fermer la socket du client
 	if (client.getClientSocket() != 100)
@@ -22,4 +21,3 @@ void Server::quitMsgCmdClient(Client& client, std::vector<std::string> tokens) {
 
 	std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
 }
-
