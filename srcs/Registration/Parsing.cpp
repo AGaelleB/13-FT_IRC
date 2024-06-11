@@ -8,9 +8,9 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 		if (bytes_received == 0) {
 			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ ---> client_socket: " << client_fd << RESET << std::endl;
 			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << std::endl;
-		}
-		else
+		} else {
 			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
+		}
 		close(client_fd);
 		_clients.erase(client_fd); // Supprimer le client de la map
 		for (int i = 0; i < nfds; ++i) { // Retirer le client de la structure pollfd
@@ -22,12 +22,16 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 		}
 	}
 	else {
+		if (static_cast<size_t>(bytes_received) >= sizeof(buffer) - 1) {
+			client.sendClientMsg(client_fd, "Error: Command too long.\n");
+			std::cerr << "Error: Command too long, client_fd: " << client_fd << std::endl;
+			return;
+		}
 		buffer[bytes_received] = '\0';
 		std::string message(buffer);
 		parseClientMsg(message, client);
 	}
 }
-
 void Server::logRPLirssi(Client& client) {
 
 	client.sendClientMsg(client.getClientSocket(), bannerIRC);

@@ -16,6 +16,11 @@ void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& to
 	else
 		msgContent = message.substr(message.find(target) + target.length() + 1);
 
+	if (msgContent.length() > 150) {
+		client.sendClientMsg(client.getClientSocket(), "Error: Your message exceeds the maximum allowed length of 150 characters.\n");
+		return;
+	}
+
 	int recipientSocket = -1;
 	// Trouver le client destinataire par son surnom
 	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
