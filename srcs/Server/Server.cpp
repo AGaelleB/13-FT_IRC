@@ -60,9 +60,9 @@ Server::~Server() {
 /************************************** FUNCTIONS **************************************/
 
 void Server::sendDisconnectMessageToClients() {
-    for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-        send(it->first, MSG_DISCONNECT, strlen(MSG_DISCONNECT), 0);
-    }
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+		send(it->first, MSG_DISCONNECT, strlen(MSG_DISCONNECT), 0);
+	}
 }
 
 void Server::stopServer() {

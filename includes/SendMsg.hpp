@@ -10,6 +10,7 @@
 # define ERROR_CMD_LIST RED "Error: must be: /list channel OR user\n" RESET
 # define ERROR_CMD_PRIVMSG RED "Error: must be: /msg OR /PRIVMSG <target> <message>\n" RESET
 # define ERROR_TARGET_NOT_FOUND RED "Error: Target not found\n" RESET
+# define ERROR_CMD_QUIT RED "Error: /quit doesn't require any additional arguments\n" RESET
 
 # define MSG_USERNAME BOLD "Enter your username: " RESET
 # define MSG_NICKNAME BOLD "Enter your nickname: " RESET
@@ -18,6 +19,7 @@
 # define MSG_HELP_SERVER BLUE " ~~~ use /HELP for more informations ~~~ \n\n" RESET
 # define MSG_PASSWORD BOLD "Enter Server password: " RESET
 # define MSG_DISCONNECT BOLD "\nServer is shutting down, you have been disconnected ❌" RESET
+# define MSG_DISCONNECT_CLIENT BOLD "\nYou have been well disconnected ❌" RESET
 
 # define MSG_SEND_USER BOLD "\n============= LIST OF USERS ============\n\n" RESET
 # define MSG_END_LIST BOLD "\n========================================\n" RESET

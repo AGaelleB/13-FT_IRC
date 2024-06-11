@@ -10,9 +10,8 @@ void Server::removeNickname(const std::string& nickname) {
 	if (_nicknames.find(nickname) == _nicknames.end()) {
 		// std::cout << MAGENTA << "OLD Nickname " << nickname  << RESET << std::endl;
 	}
-	else {
+	else
 		std::cout << MAGENTA << "Failed to remove nickname: " << nickname << RESET << std::endl;
-	}
 }
 
 void Server::addNickname(const std::string& nickname) {

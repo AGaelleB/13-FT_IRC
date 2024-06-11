@@ -98,7 +98,7 @@ void Server::detectClient(int client_socket) {
 	buffer[bytes_received] = '\0';
 	std::string answer(buffer);
 	   
-	std::cout << YELLOW << "DetectClient received: " << answer << RESET << std::endl; // test
+	// std::cout << YELLOW << "DetectClient received: " << answer << RESET << std::endl; // test
 
 	Client& client = _clients[client_socket]; // Accéder à l'objet client par référence
 	if (findCapLs(answer) == 0) {

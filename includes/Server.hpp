@@ -60,6 +60,8 @@ class Server {
 		//privMsg.cpp
 		void		privMsgCmdClient(Client& client, const std::vector<std::string>& tokens, const std::string& message);
 
+		//quit.cpp
+		void		quitMsgCmdClient(Client& client, std::vector<std::string> tokens);
 
 		/**************************************************************************/
 
