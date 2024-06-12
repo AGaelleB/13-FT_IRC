@@ -76,7 +76,7 @@ std::string Client::setUserName() {
 			else {
 				if (bytes_received == 0) {
 					std::cout << RED << "\nClient disconnected during username entry ❌ [socket: " << this->getClientSocket() << "]" << RESET << std::endl;
-					nfds--;
+					// nfds--;
 					// std::cout << BOLD << "Total client(s) still online: " << RESET << nfds << "/" << _MAX_CLIENTS << RESET << std::endl;
 				}
 				else

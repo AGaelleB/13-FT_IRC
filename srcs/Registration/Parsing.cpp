@@ -13,8 +13,8 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 	if (bytes_received <= 0) {
 		if (bytes_received == 0) {
 			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ [socket: " << client_fd << "]" << RESET << std::endl;
-			nfds--;
-			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 1 << "/" << _MAX_CLIENTS << std::endl;
+			// nfds--;
+			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << "/" << _MAX_CLIENTS << std::endl;
 		}
 		else {
 			std::cerr << "Error: data reception failed [socket: " << client_fd << "]" << std::endl;
@@ -136,7 +136,7 @@ void Server::detectClient(int client_socket) {
 				client.sendClientMsg(client_socket, ERROR_ARGS_IRSSI);
 				close(client_socket);
 				_clients.erase(client_socket);
-				nfds--;
+				// nfds--;
 			}
 		}
 	}
