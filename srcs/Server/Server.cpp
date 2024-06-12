@@ -115,6 +115,7 @@ void Server::stopServer() {
 	std::cout << "Shutting down server..." << std::endl;
 
 	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+		nfds--;
 		send(it->first, MSG_DISCONNECT, strlen(MSG_DISCONNECT), 0);
 		close(it->first);
 	}
