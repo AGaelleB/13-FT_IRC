@@ -5,10 +5,10 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 	memset(buffer, 0, sizeof(buffer)); //-> clear the buffer
 	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
-	std::cout << "Connected clients:" << std::endl;
-	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-		std::cout << "Socket: " << it->first << ", Nickname: " << it->second.getUser().getNickname() << std::endl;
-	}
+	// std::cout << "Connected clients:" << std::endl;
+	// for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+	// 	std::cout << "Socket: " << it->first << ", Nickname: " << it->second.getUser().getNickname() << std::endl;
+	// }
 
 	if (bytes_received <= 0) {
 		if (bytes_received == 0) {

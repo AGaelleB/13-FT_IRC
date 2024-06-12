@@ -1,4 +1,5 @@
 warning, si on ctrlC un netclien au moment du password du client, ca stop le server 
 
 
-
+atttention au message envoye sur le server si on se connecte en irssi mais sans mettre le mdp, en mode 
+/connect localhost 6678

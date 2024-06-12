@@ -6,6 +6,9 @@
 
 class Server;
 
+const int MIN_NAME_SIZE = 3;
+const int MAX_NAME_SIZE = 15;
+
 class Client {
 
 	private:

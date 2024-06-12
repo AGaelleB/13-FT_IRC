@@ -1,10 +1,11 @@
 #include "../../includes/Server.hpp"
 
-// Définition de la variable statique shutdown_signal
-bool Server::shutdown_signal = false;
+// Définition de la variable statique _shutdown_signal
+bool Server::_shutdown_signal = false;
 
 struct pollfd	fds[1024];
 int				nfds = 1;
+const int		_MAX_CLIENTS = 2;
 
 
 /************************************* CONST ET DEST *************************************/
@@ -82,7 +83,7 @@ void Server::startServer() {
 	signal(SIGINT, Server::SignalHandler); // catch the signal (ctrl + c)
 	signal(SIGQUIT, Server::SignalHandler); // catch the signal (ctrl + \)
 
-	while (!shutdown_signal) {
+	while (!_shutdown_signal) {
 		int poll_count = poll(fds, nfds, 1000);
 		if (poll_count == -1) {
 			if (errno == EINTR)
@@ -93,7 +94,17 @@ void Server::startServer() {
 		for (int i = 0; i < nfds; ++i) {
 			if (fds[i].revents & POLLIN) {
 				if (fds[i].fd == _server_socket) {
-					// Nouvelle connexion
+
+					if (_clients.size() >= _MAX_CLIENTS) {
+						std::cerr << ERROR_MAX_CLIENT_SERVER << std::endl;
+						int new_client_socket = accept(_server_socket, NULL, NULL);
+						if (new_client_socket != -1) {
+							Client tempClient;
+							tempClient.sendClientMsg(new_client_socket, ERROR_MAX_CLIENT);							close(new_client_socket);
+						}
+						continue;
+					}
+
 					Client client;
 					socklen_t client_len = sizeof(client.getClientAddr());
 					int new_client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);

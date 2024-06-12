@@ -60,8 +60,8 @@ bool Client::checkName(const std::string& username) {
 }
 
 std::string Client::setUserName() {
-	char	buffer[1024];
-	ssize_t	bytes_received;
+	char buffer[1024];
+	ssize_t bytes_received;
 
 	while (true) {
 		this->sendClientMsg(this->getClientSocket(), MSG_USERNAME);
@@ -70,9 +70,10 @@ std::string Client::setUserName() {
 			if (bytes_received == -1 && errno == EWOULDBLOCK) {
 				usleep(42);
 				continue;
-			} else if (bytes_received > 0) {
+			}
+			else if (bytes_received > 0)
 				break;
-			} else {
+			else {
 				if (bytes_received == 0)
 					std::cout << RED << "\nClient disconnected during username entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
 				else
@@ -82,15 +83,23 @@ std::string Client::setUserName() {
 			}
 		}
 		buffer[bytes_received] = '\0';
-		if (this->checkName(std::string(buffer)) == true)
-			return trim(std::string(buffer));
+		std::string username = trim(std::string(buffer));
+		
+		if (username.length() < MIN_NAME_SIZE || username.length() > MAX_NAME_SIZE) {
+			this->sendClientMsg(this->getClientSocket(), ERROR_USERNAME_LENGHT);
+			continue;
+		}
+
+		if (this->checkName(username) == true)
+			return (username);
+		
 		this->sendClientMsg(this->getClientSocket(), ERROR_USERNAME);
 	}
 }
 
 std::string Client::setNickName(Server& server) {
-	char	buffer[1024];
-	ssize_t	bytes_received;
+	char buffer[1024];
+	ssize_t bytes_received;
 
 	while (true) {
 		this->sendClientMsg(this->getClientSocket(), MSG_NICKNAME);
@@ -113,12 +122,18 @@ std::string Client::setNickName(Server& server) {
 		}
 		buffer[bytes_received] = '\0';
 		std::string nickname = trim(std::string(buffer));
+		
+		if (nickname.length() < MIN_NAME_SIZE || nickname.length() > MAX_NAME_SIZE) {
+			this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_LENGHT);
+			continue;
+		}
+
 		if (!this->checkName(nickname)) {
 			this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME);
 			continue;
 		}
 		if (server.isNicknameAvailable(nickname))
-			return nickname;
+			return (nickname);
 		else
 			this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_NOT_AVAILABLE);
 	}

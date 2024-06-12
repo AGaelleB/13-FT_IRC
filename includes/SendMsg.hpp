@@ -1,8 +1,12 @@
 #ifndef SENDMSG_HPP
 # define SENDMSG_HPP
 
+# define ERROR_MAX_CLIENT_SERVER RED "Error: maximum number of clients reached\n" RESET
+# define ERROR_MAX_CLIENT RED "Error: maximum number of clients reached. Connection refused ❌\n" RESET
 # define ERROR_USERNAME RED "Error: Your username must be less than 15 characters and contain only alphanumeric characters\n" RESET
 # define ERROR_NICKNAME RED "Error: Your nickname must be less than 15 characters and contain only alphanumeric characters\n" RESET
+# define ERROR_USERNAME_LENGHT RED "Error: username must contain between 3 and 15 characters\n" RESET
+# define ERROR_NICKNAME_LENGHT RED "Error: nickname must contain between 3 and 15 characters\n" RESET
 # define ERROR_NEW_NICKNAME RED "Error: must be: /nick [new_nickname]\n" RESET
 # define ERROR_NICKNAME_NOT_AVAILABLE RED "Error: Nickname already taken. Please choose another one\n" RESET
 # define ERROR_PASSWORD_TOO_LONG RED "Error: password is too long\n\n" RESET

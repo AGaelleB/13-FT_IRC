@@ -6,16 +6,16 @@
 # include "./Client.hpp"
 
 # define MAX_SIZE_MSG 150
+# define MAX_CLIENT 15
 
 extern struct pollfd fds[1024];
 extern int nfds;
-
-
 
 class Client;
 
 class Server {
 	private:
+		static const int		_MAX_CLIENTS = 2;		
 		int						_server_socket;
 		struct sockaddr_in		_server_addr;
 		std::string				_password;
@@ -23,7 +23,8 @@ class Server {
 		std::set<std::string>	_nicknames;
 		int						_port;
 		std::string				_irssi_data;
-		static bool				shutdown_signal;
+		static bool				_shutdown_signal;	
+
 
 	public:
 		Server();
