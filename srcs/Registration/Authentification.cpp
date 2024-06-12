@@ -60,7 +60,7 @@ void Server::isRegistered(Client &client) {
 	std::string registeredMsg = ss.str();
 	client.sendClientMsg(client.getClientSocket(), registeredMsg.c_str());
 
-	std::cout << GREEN << "\nClient " << client.getUser().getNickname() << " is registered! ✅ ---> : " << client.getClientSocket() << RESET << std::endl;
+	std::cout << GREEN << "\nClient " << client.getUser().getNickname() << " is registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
 }
 
 void Server::authenticateAndRegister(Client &client) {

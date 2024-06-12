@@ -6,9 +6,9 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
 	std::cout << "Connected clients:" << std::endl;
-    for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-        std::cout << "Socket: " << it->first << ", Nickname: " << it->second.getUser().getNickname() << std::endl;
-    }
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+		std::cout << "Socket: " << it->first << ", Nickname: " << it->second.getUser().getNickname() << std::endl;
+	}
 
 	if (bytes_received <= 0) {
 		if (bytes_received == 0) {
@@ -16,9 +16,9 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << std::endl;
 		}
 		else {
-            std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
-            std::cerr << "recv error: " << strerror(errno) << " (errno: " << errno << ")" << std::endl;
-        }
+			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
+			std::cerr << "recv error: " << strerror(errno) << " (errno: " << errno << ")" << std::endl;
+		}
 		
 		if (!client.getUser().getNickname().empty())
 			removeNickname(client.getUser().getNickname());
@@ -71,6 +71,7 @@ void Server::parsingDataIrssi(Client &client, int new_client_socket) {
 	std::string			nickname;
 	std::string			username;
 
+	client.setClientSocket(new_client_socket);
 	while (std::getline(stream, line)) {
 		if (line.find("NICK ") == 0) {
 			nickname = line.substr(5);
@@ -84,8 +85,6 @@ void Server::parsingDataIrssi(Client &client, int new_client_socket) {
 		}
 	}
 	addUser(client, username, nickname);
-	client.setClientSocket(new_client_socket);
-	
 	logRPLirssi(client);
 
 	std::cout << YELLOW "\nirssi username = " << username << RESET << std::endl;
@@ -102,85 +101,49 @@ void Server::parsingDataNetcat(Client &client, int new_client_socket) {
 }
 
 void Server::detectClient(int client_socket) {
-    char buffer[1024] = {0};
-    bool data_received = false;
-    const int max_attempts = 10;
-    const int delay_between_attempts = 5000; // microseconds
+	char buffer[1024] = {0};
+	bool data_received = false;
+	const int max_attempts = 10;
+	const int delay_between_attempts = 5000;
 
-    for (int attempt = 0; attempt < max_attempts; ++attempt) {
-        usleep(delay_between_attempts);
-        ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
-        if (bytes_received > 0) {
-            buffer[bytes_received] = '\0';
-            data_received = true;
-            break;
-        }
+	for (int attempt = 0; attempt < max_attempts; ++attempt) {
+		usleep(delay_between_attempts);
+		ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
+		if (bytes_received > 0) {
+			buffer[bytes_received] = '\0';
+			data_received = true;
+			break;
+		}
 		else if (bytes_received == -1 && errno != EAGAIN && errno != EWOULDBLOCK) {
-            std::cerr << RED << "Error receiving data\n" << RESET;
-            return;
-        }
-    }
+			std::cerr << RED << "Error receiving data\n" << RESET;
+			return;
+		}
+	}
 
-    Client& client = _clients[client_socket]; // Accéder à l'objet client par référence
-    if (data_received) {
-        std::string answer(buffer);
-        if (findCapLs(answer) == 0) {
-            if (checkPasswordirssi(answer, client) == 1) {
-                std::cerr << ORANGE << "connected with irssi!\n" << RESET;
-                this->_irssi_data = answer;
-                parsingDataIrssi(client, client_socket);
-                isRegistered(client);
-            }
-            else {
-                std::cout << RED << "Error: must be ./Server <port> <password>" << RESET << std::endl;
-                std::string err_needmoreparams = ERR_NEEDMOREPARAMS(client.getUser().getNickname(), "add password");
-                client.sendClientMsg(client.getClientSocket(), err_needmoreparams.c_str());
-            }
-        }
-    }
+	Client& client = _clients[client_socket]; // Accéder à l'objet client par référence
+	if (data_received) {
+		std::string answer(buffer);
+		if (findCapLs(answer) == 0) {
+			if (checkPasswordirssi(answer, client) == 1) {
+				std::cerr << ORANGE << "connected with irssi!\n" << RESET;
+				this->_irssi_data = answer;
+				parsingDataIrssi(client, client_socket);
+				isRegistered(client);
+			}
+			else {
+				std::cout << RED << "Error: must be ./Server <port> <password>" << RESET << std::endl;
+				std::string err_needmoreparams = ERR_NEEDMOREPARAMS(client.getUser().getNickname(), "add password");
+				client.sendClientMsg(client.getClientSocket(), err_needmoreparams.c_str());
+			}
+		}
+	}
 	else {
-        std::cerr << ORANGE << "connected with netcat!\n" << RESET;
-        std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
-        parsingDataNetcat(client, client_socket);
-        isRegistered(client); 
-    }
+		std::cerr << ORANGE << "connected with netcat!\n" << RESET;
+		std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
+		parsingDataNetcat(client, client_socket);
+		isRegistered(client); 
+	}
 }
-
-
-
-// void Server::detectClient(int client_socket) {
-// 	char buffer[1024] = {0};
-
-// 	usleep(42);
-// 	memset(buffer, 0, sizeof(buffer)); //-> clear the buffer
-// 	ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
-// 	buffer[bytes_received] = '\0';
-// 	std::string answer(buffer);
-	   
-// 	// std::cout << YELLOW << "DetectClient received: " << answer << RESET << std::endl; // test
-
-// 	Client& client = _clients[client_socket]; // Accéder à l'objet client par référence
-// 	if (findCapLs(answer) == 0) {
-// 		if (checkPasswordirssi(answer, client) == 1) {
-// 			std::cerr << ORANGE << "connected with irssi!\n" << RESET;
-// 			this->_irssi_data = answer;
-// 			parsingDataIrssi(client, client_socket);
-// 			isRegistered(client);
-// 		}
-// 		else {
-// 			std::cout << RED << "Error: must be ./Server <port> <password>" << RESET << std::endl;
-// 			std::string err_needmoreparams = ERR_NEEDMOREPARAMS(client.getUser().getNickname(), "add password");
-// 			client.sendClientMsg(client.getClientSocket(), err_needmoreparams.c_str());
-// 		}
-// 	}
-// 	else {
-// 		std::cerr << ORANGE << "connected with netcat!\n" << RESET;
-// 		std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
-// 		parsingDataNetcat(client, client_socket);
-// 		isRegistered(client); 
-// 	}
-// }
-
 
 /* 
 /msg gaga coucou

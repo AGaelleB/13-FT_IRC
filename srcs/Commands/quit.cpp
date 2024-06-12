@@ -11,7 +11,7 @@ void Server::quitMsgCmdClient(Client& client, std::vector<std::string> tokens) {
 	usleep(42);
 	
 	// fermer la socket du client
-	if (client.getClientSocket() != 100)
+	if (client.getClientSocket() != -1)
 		close(client.getClientSocket());
 
 	// enlever le nickname de la map
