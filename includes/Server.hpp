@@ -4,6 +4,7 @@
 # define SERVER_HPP
 
 # include "./Client.hpp"
+# include "./Channel.hpp"
 
 # define MAX_SIZE_MSG 150
 
@@ -11,6 +12,7 @@ extern struct pollfd fds[1024];
 extern int nfds;
 
 class Client;
+class Channel;
 
 class Server {
 	private:
@@ -23,6 +25,7 @@ class Server {
 		int						_port;
 		std::string				_irssi_data;
 		static bool				_shutdown_signal;	
+		std::map<std::string, Channel> _channels; // Liste des canaux
 
 	public:
 		Server();
@@ -44,13 +47,24 @@ class Server {
 		//AllCommands.cpp
 		void		parseClientMsg(const std::string& message, Client& client);
 
+		// channel.cpp
+		bool		checkChannelName(const std::string& channelName);
+		void		createChannel(Client& client, const std::vector<std::string>& tokens);
+		
+		// join
+		// void		joinChannel(int clientSocket, const std::string& channelName);
+
+		// leave
+		// void		leaveChannel(int clientSocket, const std::string& channelName);
+
 		//help.cpp
 		void		helpCmdClient(Client& client);
 		void		helpCmdServer();
 
 		//list.cpp
 		void		listCmdClient(std::vector<std::string> tokens, Client& client);
-		void		channelList(Client& client);
+		void		channelList(Client& client);  // A FAIRE
+		void		channelListMembers(int clientSocket, const std::string& channelName); // A FAIRE
 		void		UserList(Client& client);
 
 		//nick.cpp

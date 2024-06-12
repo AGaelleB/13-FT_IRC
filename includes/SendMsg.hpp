@@ -30,6 +30,8 @@
 # define ERROR_CMD_QUIT RED "Error: /quit doesn't require any additional arguments\n" RESET
 # define ERROR_MSG_TOO_LONG RED "Error: message is too long, must be less than 150 characters\n" RESET
 # define ERROR_MSG_CLIENT_TOO_LONG RED "Error: command is too long\n" RESET
+# define ERROR_CMD_CHANNEL RED "Error: must be: /channel OR /join <channelName>\n" RESET
+# define ERROR_CHANNELNAME RED "Error: Your channelName must be between 3 and 15 characters and contain only alphanumeric characters\n" RESET
 
 // server
 # define MSG_WELCOME BLUE "\n ~~~    Welcome on our IRC Server!   ~~~ \n" RESET

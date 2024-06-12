@@ -7,7 +7,6 @@ enum CommandType {
 	PRIVMSG,
 	CHANNEL,
 	QUIT,
-	JOIN,
 	PART,
 	TOPIC,
 	KICK,
@@ -22,9 +21,8 @@ CommandType getCommandType(const std::string& command) {
 	if (command == "/nick" || command == "NICK") return NICK;
 	if (command == "/list" || command == "LIST") return LIST;
 	if (command == "/msg" || command == "PRIVMSG") return PRIVMSG;
-	if (command == "/channel") return CHANNEL;
+	if (command == "/channel" || "/join" || "/JOIN") return CHANNEL; 
 	if (command == "/quit") return QUIT;
-	if (command == "/join") return JOIN;
 	if (command == "/part") return PART;
 	if (command == "/topic") return TOPIC;
 	if (command == "/kick") return KICK;
@@ -66,13 +64,11 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case CHANNEL:
 			std::cout << "Channel command received" << std::endl;
+			createChannel(client, tokens);
 			break;
 		case QUIT:
 			std::cout << "Quit command received" << std::endl;
 			quitMsgCmdClient(client, tokens);
-			break;
-		case JOIN:
-			std::cout << "JOIN command received" << std::endl;
 			break;
 		case PART:
 			std::cout << "PART command received" << std::endl;
