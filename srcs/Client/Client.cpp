@@ -75,9 +75,9 @@ std::string Client::setUserName() {
 				break;
 			else {
 				if (bytes_received == 0)
-					std::cout << RED << "\nClient disconnected during username entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
+					std::cout << RED << "\nClient disconnected during username entry ❌ [socket: " << this->getClientSocket() << "]" << RESET << std::endl;
 				else
-					std::cerr << "Error: reception failed during username entry, client_socket: " << this->getClientSocket() << std::endl;
+					std::cerr << "Error: reception failed during username entry ❌ [socket: " << this->getClientSocket() << "]" << std::endl;
 				close(this->getClientSocket());
 				return "";
 			}
@@ -113,9 +113,9 @@ std::string Client::setNickName(Server& server) {
 				break;
 			else {
 				if (bytes_received == 0)
-					std::cout << RED << "\nClient disconnected during nickname entry ❌ ---> client_socket: " << this->getClientSocket() << RESET << std::endl;
+					std::cout << RED << "\nClient disconnected during nickname entry ❌ [socket: " << this->getClientSocket() << RESET << "]" << std::endl;
 				else
-					std::cerr << "Error: reception failed during nickname entry, client_socket: " << this->getClientSocket() << std::endl;
+					std::cerr << "Error: reception failed during nickname entry, [socket: " << this->getClientSocket() << "]" << std::endl;
 				close(this->getClientSocket());
 				return "";
 			}

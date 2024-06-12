@@ -6,7 +6,6 @@
 # include "./Client.hpp"
 
 # define MAX_SIZE_MSG 150
-# define MAX_CLIENT 15
 
 extern struct pollfd fds[1024];
 extern int nfds;
@@ -25,16 +24,20 @@ class Server {
 		std::string				_irssi_data;
 		static bool				_shutdown_signal;	
 
-
 	public:
 		Server();
 		Server(int _port, const std::string &password);
 		~Server();
 
+		/********************************* SERVER **********************************/
+
 		// Server.cpp
-		void    	sendDisconnectMessageToClients();
+		void		initializeServer();
+		void		acceptNewConnection();
+		void		handlePollEvents();
 		void		stopServer();
 		void		startServer();
+
 
 		/******************************* COMMANDES ********************************/
 
@@ -68,8 +71,9 @@ class Server {
 		//quit.cpp
 		void		quitMsgCmdClient(Client& client, std::vector<std::string> tokens);
 
-		/**************************************************************************/
 
+
+		/******************************* REGISTRATION *******************************/
 
 		// Authentification.cpp
 		void		checkPassword(Client &client);

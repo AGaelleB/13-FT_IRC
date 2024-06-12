@@ -12,11 +12,11 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 
 	if (bytes_received <= 0) {
 		if (bytes_received == 0) {
-			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ ---> client_socket: " << client_fd << RESET << std::endl;
-			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << std::endl;
+			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ [socket: " << client_fd << "]" << RESET << std::endl;
+			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << "/" << _MAX_CLIENTS << std::endl;
 		}
 		else {
-			std::cerr << "Error: data reception failed, client_fd: " << client_fd << std::endl;
+			std::cerr << "Error: data reception failed [socket: " << client_fd << "]" << std::endl;
 			std::cerr << "recv error: " << strerror(errno) << " (errno: " << errno << ")" << std::endl;
 		}
 		
@@ -87,8 +87,8 @@ void Server::parsingDataIrssi(Client &client, int new_client_socket) {
 	addUser(client, username, nickname);
 	logRPLirssi(client);
 
-	std::cout << YELLOW "\nirssi username = " << username << RESET << std::endl;
-	std::cout << YELLOW "irssi nickname = " << nickname << RESET << std::endl;
+	// std::cout << YELLOW "\nirssi username = " << username << RESET << std::endl;
+	// std::cout << YELLOW "irssi nickname = " << nickname << RESET << std::endl;
 }
 
 void Server::parsingDataNetcat(Client &client, int new_client_socket) {
@@ -125,10 +125,11 @@ void Server::detectClient(int client_socket) {
 		std::string answer(buffer);
 		if (findCapLs(answer) == 0) {
 			if (checkPasswordirssi(answer, client) == 1) {
-				std::cerr << ORANGE << "connected with irssi!\n" << RESET;
+				// std::cerr << ORANGE << "connected with irssi!\n" << RESET;
 				this->_irssi_data = answer;
 				parsingDataIrssi(client, client_socket);
 				isRegistered(client);
+				std::cerr << ORANGE << "[" << client.getUser().getNickname() << "] is connected with irssi!\n" << RESET;
 			}
 			else {
 				std::cout << RED << "Error: must be ./Server <port> <password>" << RESET << std::endl;
@@ -138,17 +139,13 @@ void Server::detectClient(int client_socket) {
 		}
 	}
 	else {
-		std::cerr << ORANGE << "connected with netcat!\n" << RESET;
 		std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
 		parsingDataNetcat(client, client_socket);
 		isRegistered(client); 
+		std::cerr << ORANGE << "[" << client.getUser().getNickname() << "] is connected with netcat!\n" << RESET;
 	}
 }
 
-/* 
-/msg gaga coucou
+// /connect localhost 6667
 
-/connect localhost 6667
-nc localhost 6667
- */
 

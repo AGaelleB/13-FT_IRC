@@ -56,11 +56,11 @@ void Server::addUser(Client &client, const std::string &username, const std::str
 
 void Server::isRegistered(Client &client) {
 	std::stringstream ss;
-	ss << GREEN "You are now registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
+	ss << GREEN "You are now registered! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
 	std::string registeredMsg = ss.str();
 	client.sendClientMsg(client.getClientSocket(), registeredMsg.c_str());
 
-	std::cout << GREEN << "\nClient " << client.getUser().getNickname() << " is registered! ✅ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
+	std::cout << GREEN << "\nClient " << client.getUser().getNickname() << " is registered! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
 }
 
 void Server::authenticateAndRegister(Client &client) {
@@ -72,6 +72,6 @@ void Server::authenticateAndRegister(Client &client) {
 	nickname = client.setNickName(*this);
 	addUser(client, username, nickname);
 
-	std::cout << YELLOW "\nnetcat username = " << username << RESET << std::endl;
-	std::cout << YELLOW "netcat nickname = " << nickname << RESET << std::endl;
+	// std::cout << YELLOW "\nnetcat username = " << username << RESET << std::endl;
+	// std::cout << YELLOW "netcat nickname = " << nickname << RESET << std::endl;
 }

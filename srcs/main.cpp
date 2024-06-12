@@ -23,15 +23,3 @@ int main(int ac, char **av) {
 
 	return (0);
 }
-
-
-/* TO DO
-
-ATTENTION AU PARSING DE NICKNAME, lorsque l on se connecte avec irssi, 
-on parse directement tout le message CAP LS etc, et du coup on essaie d affecter directement le NICKNAME
-
-Voir pour envoyer le msg Error: must be ./Server <port> <password> sur irsssi
-
-/connect localhost 6667 1
-
- */

@@ -19,5 +19,5 @@ void Server::quitMsgCmdClient(Client& client, std::vector<std::string> tokens) {
 	if (!old_nickname.empty())
 		removeNickname(old_nickname);
 
-	std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ ---> client_socket: " << client.getClientSocket() << RESET << std::endl;
+	std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
 }
