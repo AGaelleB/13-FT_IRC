@@ -38,6 +38,6 @@ std::vector<std::string> split(const std::string &str) {
 
 void Server::SignalHandler(int sig) {
 	std::cout << std::endl << "Signal Received!" << std::endl;
-	Server::_shutdown_signal = true; // to stop the server
+	Server::shutdown_signal = true; // to stop the server
 	(void)sig;
 }

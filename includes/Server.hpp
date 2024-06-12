@@ -7,7 +7,7 @@
 
 # define MAX_SIZE_MSG 150
 
-extern struct pollfd fds[200];
+extern struct pollfd fds[1024];
 extern int nfds;
 
 
@@ -23,10 +23,10 @@ class Server {
 		std::set<std::string>	_nicknames;
 		int						_port;
 		std::string				_irssi_data;
-		static bool				_shutdown_signal;
+		static bool				shutdown_signal;
 
 	public:
-		// Server();
+		Server();
 		Server(int _port, const std::string &password);
 		~Server();
 
