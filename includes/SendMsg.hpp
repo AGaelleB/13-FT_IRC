@@ -40,4 +40,8 @@
 # define MSG_SEND_USER BOLD "\n============= LIST OF USERS ============\n\n" RESET
 # define MSG_END_LIST BOLD "\n========================================\n" RESET
 
+// irssi
+# define ERROR_ARGS_IRSSI RED "Error: must be /connect <localhost> <port> <password>\n" RESET
+
+
 #endif // SENDMSG_HPP

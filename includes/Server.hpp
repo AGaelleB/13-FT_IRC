@@ -14,7 +14,7 @@ class Client;
 
 class Server {
 	private:
-		static const int		_MAX_CLIENTS = 2;		
+		static const int		_MAX_CLIENTS = 20;		
 		int						_server_socket;
 		struct sockaddr_in		_server_addr;
 		std::string				_password;

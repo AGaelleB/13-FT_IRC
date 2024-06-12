@@ -6,7 +6,7 @@
 
 class Server;
 
-const int MIN_NAME_SIZE = 3;
+const int MIN_NAME_SIZE = 1; // A MODIFIER
 const int MAX_NAME_SIZE = 15;
 
 class Client {

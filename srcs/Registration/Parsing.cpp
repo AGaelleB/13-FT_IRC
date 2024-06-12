@@ -132,9 +132,10 @@ void Server::detectClient(int client_socket) {
 				std::cerr << ORANGE << "[" << client.getUser().getNickname() << "] is connected with irssi!\n" << RESET;
 			}
 			else {
-				std::cout << RED << "Error: must be ./Server <port> <password>" << RESET << std::endl;
-				std::string err_needmoreparams = ERR_NEEDMOREPARAMS(client.getUser().getNickname(), "add password");
-				client.sendClientMsg(client.getClientSocket(), err_needmoreparams.c_str());
+				client.sendClientMsg(client_socket, ERROR_ARGS_IRSSI);
+				close(client_socket);
+				_clients.erase(client_socket);
+				nfds--;
 			}
 		}
 	}

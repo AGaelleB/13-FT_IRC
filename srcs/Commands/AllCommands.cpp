@@ -13,7 +13,6 @@ enum CommandType {
 	KICK,
 	INVITE,
 	PING,
-	USER,
 	MODE,
 	UNKNOWN
 };
@@ -31,7 +30,6 @@ CommandType getCommandType(const std::string& command) {
 	if (command == "/kick") return KICK;
 	if (command == "/invite") return INVITE;
 	if (command == "PING") return PING;
-	if (command == "USER") return USER;
 	if (command == "MODE") return MODE;
 	return UNKNOWN;
 }

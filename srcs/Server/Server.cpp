@@ -3,7 +3,7 @@
 bool			Server::_shutdown_signal = false;
 struct pollfd	fds[1024];
 int				nfds = 1;
-const int		_MAX_CLIENTS = 2;
+const int		_MAX_CLIENTS = 20;
 
 
 /************************************* CONST ET DEST *************************************/
@@ -92,6 +92,7 @@ void Server::acceptNewConnection() {
 
 	fds[nfds].fd = new_client_socket;
 	fds[nfds].events = POLLIN;
+	
 	nfds++;
 	_clients[new_client_socket] = client;
 	detectClient(new_client_socket);
