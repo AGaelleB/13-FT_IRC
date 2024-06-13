@@ -32,6 +32,9 @@
 # define ERROR_MSG_CLIENT_TOO_LONG RED "Error: command is too long\n" RESET
 # define ERROR_CMD_CHANNEL RED "Error: must be: /channel OR /join <channelName>\n" RESET
 # define ERROR_CHANNELNAME RED "Error: Your channelName must be between 3 and 15 characters and contain only alphanumeric characters\n" RESET
+# define ERROR_CHANNEL_ALREADY_EXIST RED "ERROR: Channel already exists\n" RESET
+# define ERROR_CHANNEL_FAILED_CREATE RED "ERROR: Failed to create the channel\n" RESET
+# define ERROR_CHANNEL_NOT_FOUND RED "ERROR: Channel not found\n" RESET
 
 // server
 # define MSG_WELCOME BLUE "\n ~~~    Welcome on our IRC Server!   ~~~ \n" RESET
@@ -39,8 +42,10 @@
 # define MSG_HELP_SERVER BLUE " ~~~ use /HELP for more informations ~~~ \n\n" RESET
 # define MSG_DISCONNECT BOLD "\nServer is shutting down, you have been disconnected ❌\n" RESET
 # define MSG_DISCONNECT_CLIENT BOLD "\nYou have been well disconnected ❌\n" RESET
-# define MSG_SEND_USER BOLD "\n============= LIST OF USERS ============\n\n" RESET
-# define MSG_END_LIST BOLD "\n========================================\n" RESET
+# define MSG_SEND_USER BOLD "\n=============== LIST OF USERS ==============\n\n" RESET
+# define MSG_SEND_CHANNEL BOLD "\n============= LIST OF CHANNELS =============\n\n" RESET
+# define MSG_END_LIST BOLD "\n============================================\n" RESET
+
 
 // irssi
 # define ERROR_ARGS_IRSSI RED "Error: must be /connect <localhost> <port> <password>\n" RESET

@@ -16,16 +16,16 @@ class Channel;
 
 class Server {
 	private:
-		static const int		_MAX_CLIENTS = 20;		
-		int						_server_socket;
-		struct sockaddr_in		_server_addr;
-		std::string				_password;
-		std::map<int, Client>	_clients;
-		std::set<std::string>	_nicknames;
-		int						_port;
-		std::string				_irssi_data;
-		static bool				_shutdown_signal;	
-		std::map<std::string, Channel> _channels; // Liste des canaux
+		static const int				_MAX_CLIENTS = 20;		
+		int								_server_socket;
+		struct sockaddr_in				_server_addr;
+		std::string						_password;
+		std::map<int, Client>			_clients;
+		std::set<std::string>			_nicknames;
+		int								_port;
+		std::string						_irssi_data;
+		static bool						_shutdown_signal;	
+		std::map<std::string, Channel>	_channels; // Liste des canaux
 
 	public:
 		Server();
@@ -50,11 +50,7 @@ class Server {
 		// channel.cpp
 		bool		checkChannelName(const std::string& channelName);
 		void		createChannel(Client& client, const std::vector<std::string>& tokens);
-		
-		// join
-		// void		joinChannel(int clientSocket, const std::string& channelName);
-
-		// leave
+		void		joinChannel(Client& client, const std::vector<std::string>& tokens);
 		// void		leaveChannel(int clientSocket, const std::string& channelName);
 
 		//help.cpp
@@ -63,9 +59,9 @@ class Server {
 
 		//list.cpp
 		void		listCmdClient(std::vector<std::string> tokens, Client& client);
-		void		channelList(Client& client);  // A FAIRE
-		void		channelListMembers(int clientSocket, const std::string& channelName); // A FAIRE
 		void		UserList(Client& client);
+		void		channelList(Client& client);
+		void		channelListMembers(int clientSocket, const std::string& channelName, Client& client);
 
 		//nick.cpp
 		bool		isNicknameAvailable(const std::string& nickname); 

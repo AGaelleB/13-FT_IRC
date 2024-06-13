@@ -64,7 +64,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case CHANNEL:
 			std::cout << "Channel command received" << std::endl;
-			createChannel(client, tokens);
+			joinChannel(client, tokens);
 			break;
 		case QUIT:
 			std::cout << "Quit command received" << std::endl;

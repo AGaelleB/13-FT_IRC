@@ -29,38 +29,29 @@ const std::vector<int>&	Channel::getMembers() const {
 /************************************** FUNCTIONS **************************************/
 
 void Channel::addMember(int clientSocket) {
-	// Vérifie si le client n'est pas déjà membre du canal
-	if (!isMember(clientSocket)) {
-		// Ajoute le client à la liste des membres du canal
+	if (!isMember(clientSocket))
 		_memberSockets.push_back(clientSocket);
-	}
 }
 
+
 void Channel::removeMember(int clientSocket) {
-	// Parcourt la liste des membres du canal
 	std::vector<int>::iterator it;
 	for (it = _memberSockets.begin(); it != _memberSockets.end(); ++it) {
-		// Si le socket du client correspond à celui fourni, le retire du canal
 		if (*it == clientSocket) {
 			_memberSockets.erase(it);
-			break; // Arrête la boucle une fois que le client est retiré
+			break; 
 		}
 	}
 }
 
 bool Channel::isMember(int clientSocket) const {
-	// Parcourt la liste des membres du canal
 	std::vector<int>::const_iterator it;
 	for (it = _memberSockets.begin(); it != _memberSockets.end(); ++it) {
-		// Si le socket du client est trouvé dans la liste, retourne true
-		if (*it == clientSocket) {
-			return true;
-		}
+		if (*it == clientSocket)
+			return (true);
 	}
-	// Si le socket du client n'est pas trouvé, retourne false
-	return false;
+	return (false);
 }
-
 
 bool Server::checkChannelName(const std::string& channelName) {
 	if (channelName.length() < MIN_NAME_CHANNEL_SIZE || channelName.length() > MAX_NAME_CHANNEL_SIZE)
@@ -74,11 +65,6 @@ bool Server::checkChannelName(const std::string& channelName) {
 }
 
 void Server::createChannel(Client& client, const std::vector<std::string>& tokens) {
-
-	if (tokens.size() < 2) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_CHANNEL);
-		return;
-	}
 	
 	std::string	channelName = trim(tokens[1]);
 	
@@ -89,12 +75,50 @@ void Server::createChannel(Client& client, const std::vector<std::string>& token
 	
 	Channel channel(channelName);
 
+	// Ajouter le canal dans le container
+	std::pair<std::map<std::string, Channel>::iterator, bool> result = _channels.insert(std::make_pair(channelName, channel));
+	if (result.second == false) {
+		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_ALREADY_EXIST);
+		return;
+	}
+
+	std::cout << BOLD << "Channel: [" << channelName << "] created successfully! ✅" << RESET << std::endl;
 }
+
+void Server::joinChannel(Client& client, const std::vector<std::string>& tokens) {
+
+	if (tokens.size() < 2) {
+		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_CHANNEL);
+		return;
+	}
+
+	std::string channelName = trim(tokens[1]);
+
+	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
+	if (it == _channels.end()) {
+		createChannel(client, tokens);
+		
+		// Recherche à nouveau le canal après la création
+		it = _channels.find(channelName);
+		if (it == _channels.end()) {
+			client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_CREATE);
+			return;
+		}
+	}
+
+	// Ajoutez le client au canal
+	it->second.addMember(client.getClientSocket());
+
+	std::stringstream ss;
+	ss << GREEN "You are now in the Channel [" << channelName << "]" << RESET << std::endl;
+	std::string channelJoinedMsg = ss.str();
+	client.sendClientMsg(client.getClientSocket(), channelJoinedMsg.c_str());
+}
+
+
 
 /* WARNING TO DO
 
-	gérer correctement les cas où le même client essaie d'être ajouté plusieurs fois
-	ou retiré d'un canal auquel il n'appartient pas.
+	gérer correctement les cas où le même client essaie d'être retiré d'un canal auquel il n'appartient pas.
 
-	nom du canal est unique
  */
