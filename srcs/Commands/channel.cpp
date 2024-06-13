@@ -87,7 +87,7 @@ void Server::createChannel(Client& client, const std::vector<std::string>& token
 
 void Server::joinChannel(Client& client, const std::vector<std::string>& tokens) {
 
-	if (tokens.size() < 2) {
+	if (tokens.size() != 2) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_CHANNEL);
 		return;
 	}

@@ -1,29 +1,13 @@
 #include "../../includes/Server.hpp"
 
-enum CommandType {
-	HELP,
-	NICK,
-	LIST,
-	PRIVMSG,
-	CHANNEL,
-	QUIT,
-	PART,
-	TOPIC,
-	KICK,
-	INVITE,
-	PING,
-	MODE,
-	UNKNOWN
-};
-
-CommandType getCommandType(const std::string& command) {
+CommandType Server::getCommandType(const std::string& command) {
 	if (command == "/help") return HELP;
 	if (command == "/nick" || command == "NICK") return NICK;
 	if (command == "/list" || command == "LIST") return LIST;
 	if (command == "/msg" || command == "PRIVMSG") return PRIVMSG;
-	if (command == "/channel" || command == "/join" || command == "/JOIN") return CHANNEL; 
+	if (command == "/channel" || command == "/join" || command == "JOIN") return CHANNEL; 
 	if (command == "/quit") return QUIT;
-	if (command == "/part") return PART;
+	if (command == "/part" || command == "/leave") return PART;
 	if (command == "/topic") return TOPIC;
 	if (command == "/kick") return KICK;
 	if (command == "/invite") return INVITE;
@@ -72,6 +56,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case PART:
 			std::cout << "PART command received" << std::endl;
+			leaveChannel(client, tokens);
 			break;
 		case TOPIC:
 			std::cout << "TOPIC command received" << std::endl;

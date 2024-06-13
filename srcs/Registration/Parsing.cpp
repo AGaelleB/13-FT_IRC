@@ -38,9 +38,18 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 		buffer[bytes_received] = '\0';
 		std::string message(buffer);
 
-		// Check if the message is a command
+		std::vector<std::string> tokens = split(message);
+		if (tokens.empty()) {
+			client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+			return;
+		}
 
-		if (message[0] != '/') {
+		std::string command = tokens[0];
+
+	
+		CommandType commandType = getCommandType(command);
+
+		if (commandType == UNKNOWN) {
 			for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
 				Channel& channel = it->second;
 				if (channel.isMember(client_fd)) {

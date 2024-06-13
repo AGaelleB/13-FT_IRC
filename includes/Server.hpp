@@ -14,6 +14,22 @@ extern int nfds;
 class Client;
 class Channel;
 
+enum CommandType {
+	HELP,
+	NICK,
+	LIST,
+	PRIVMSG,
+	CHANNEL,
+	QUIT,
+	PART,
+	TOPIC,
+	KICK,
+	INVITE,
+	PING,
+	MODE,
+	UNKNOWN
+};
+
 class Server {
 	private:
 		static const int				_MAX_CLIENTS = 20;		
@@ -45,6 +61,8 @@ class Server {
 		/******************************* COMMANDES ********************************/
 
 		//AllCommands.cpp
+		CommandType	getCommandType(const std::string& command);
+
 		void		parseClientMsg(const std::string& message, Client& client);
 
 		// channel.cpp
@@ -54,14 +72,15 @@ class Server {
 		
 		// channelMsg.cpp
 		void		broadcastMessageToChannel(const std::string& channelName, const std::string& message, int excludeSocket);
-		// void		ChannelMsg(Client& client, const std::vector<std::string>& tokens, const std::string& message);
 		void		ChannelMsg(Client& client);
 				
-		// void		leaveChannel(int clientSocket, const std::string& channelName);
-
 		//help.cpp
 		void		helpCmdClient(Client& client);
 		void		helpCmdServer();
+
+		//leave.cpp
+		void		leaveAllChannels(Client& client);
+		void		leaveChannel(Client& client, std::vector<std::string> tokens);
 
 		//list.cpp
 		void		listCmdClient(std::vector<std::string> tokens, Client& client);
@@ -114,5 +133,6 @@ class Server {
 
 
 };
+
 
 #endif // SERVER_HPP

@@ -15,6 +15,7 @@ void Server::helpCmdClient(Client& client) {
 		"/list channel                   | List all available channels\n"
 		"/nick [new_nickname]            | Change your nickname\n"
 		"/part [channel_name]            | Leave a channel\n"
+		"/leave [channel_name]           | Leave a channel\n"
 		"/topic [channel_name] [topic]   | Set the topic of a channel\n"
 		"/kick [channel_name] [user]     | Kick a user from a channel\n"
 		"/invite [channel_name] [user]   | Invite a user to a channel\n"
