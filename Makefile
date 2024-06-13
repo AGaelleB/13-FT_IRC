@@ -7,28 +7,28 @@ CPP_FLAGS = -Wall -Wextra -Werror -std=c++98 -g3
 OBJ_DIR = objs
 
 SRCS = srcs/main.cpp \
-       srcs/Client/Client.cpp \
-       srcs/Client/User.cpp \
-       \
-       srcs/Commands/AllCommands.cpp \
-       srcs/Commands/channel.cpp \
-       srcs/Commands/channelMsg.cpp \
-       srcs/Commands/help.cpp \
-       srcs/Commands/list.cpp \
-       srcs/Commands/nick.cpp \
-       srcs/Commands/Pass.cpp \
-       srcs/Commands/ping.cpp \
-       srcs/Commands/privMsg.cpp \
-       srcs/Commands/quit.cpp \
-       \
-       srcs/RPL/RPL.cpp \
-       \
-       srcs/Registration/Authentification.cpp \
-       srcs/Registration/Parsing.cpp \
-       \
-       srcs/Server/irssi.cpp \
-       srcs/Server/Server.cpp \
-       srcs/Server/Utils.cpp
+	srcs/Client/Client.cpp \
+	srcs/Client/User.cpp \
+	\
+	srcs/Commands/AllCommands.cpp \
+	srcs/Commands/channel.cpp \
+	srcs/Commands/channelMsg.cpp \
+	srcs/Commands/help.cpp \
+	srcs/Commands/list.cpp \
+	srcs/Commands/nick.cpp \
+	srcs/Commands/Pass.cpp \
+	srcs/Commands/ping.cpp \
+	srcs/Commands/privMsg.cpp \
+	srcs/Commands/quit.cpp \
+	\
+	srcs/RPL/RPL.cpp \
+	\
+	srcs/Registration/Authentification.cpp \
+	srcs/Registration/Parsing.cpp \
+	\
+	srcs/Server/irssi.cpp \
+	srcs/Server/Server.cpp \
+	srcs/Server/Utils.cpp
 
 OBJS = $(SRCS:srcs/%.cpp=$(OBJ_DIR)/%.o)
 
@@ -42,28 +42,52 @@ MAGENTA=\033[1;35m
 CYAN=\033[1;36m
 RESET=\033[0m
 
-all: $(OBJ_DIR) $(NAME)
+all: banner $(NAME)
+	@echo "$(BLUE)██████████████████████ '$(NAME)' is DONE ███████████████████████$(RESET)"
+	@echo "Made with love by : $(GREEN) Batt & Gaelle $(RESET)"
+	@echo "       "
+
+head:
+	@echo "$(BLUE)█████████████████████ Making ft_irc Server █████████████████████$(RESET)"
+
+# Phonebook making rules
+$(NAME): head $(OBJS) $(MAIN_OBJ) $(HEADERS_FILES)
+	@$(CC) $(CPP_FLAGS) $(OBJS) -o $@
 
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 	@mkdir -p $(OBJ_DIR)/Client $(OBJ_DIR)/Commands $(OBJ_DIR)/Registration $(OBJ_DIR)/Server $(OBJ_DIR)/RPL
 
 $(OBJ_DIR)/%.o: srcs/%.cpp
+	@mkdir -p $(dir $@)
+	@printf "$(BLUE)█ $(YELLOW)Compiling$(RESET) $<:\r\t\t\t\t\t\t\t..."
 	@$(CC) $(CPP_FLAGS) -c $< -o $@
+	@echo "\r\t\t\t\t\t\t\t$(GREEN){DONE}$(BLUE) █$(RESET)"
 
-$(NAME): $(OBJS)
-	@$(CC) $(CPP_FLAGS) $(OBJS) -o $(NAME)
-	@echo "$(GREEN)[Make : '$(NAME)' is done ✅]$(RESET)"
-
-clean :
-	@rm -rf $(OBJ_DIR)
+clean:
+	@$(RM) $(OBJ_DIR)
 	@echo "$(BLUE)[clean : .o of $(NAME) have been deleted 🗑️ 🧹]$(RESET)"
 
-fclean:
-	@$(RM) $(OBJ_DIR)
+fclean: clean
 	@$(RM) $(NAME)
 	@echo "$(BLUE)[fclean : '$(NAME)' is done 🗑️ 🧹]$(RESET)"
 
 re: fclean all
 
-.PHONY: fclean all re
+
+
+banner: 
+	@echo "	"
+	@echo " 		┏━━━┓┏━━━━┓    ┏━━┓┏━━━┓┏━━━┓"
+	@echo " 		┃┏━━┛┃┏┓┏┓┃    ┗┫┣┛┃┏━┓┃┃┏━┓┃"
+	@echo " 		┃┗━━┓┗┛┃┃┗┛     ┃┃ ┃┗━┛┃┃┃ ┗┛"
+	@echo " 		┃┏━━┛  ┃┃       ┃┃ ┃┏┓┏┛┃┃ ┏┓"
+	@echo " 		┃┃    ┏┛┗┓┏━━━┓┏┫┣┓┃┃┃┗┓┃┗━┛┃"
+	@echo " 		┗┛    ┗━━┛┗━━━┛┗━━┛┗┛┗━┛┗━━━┛"
+	@echo "	"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "━━━━━━━━━━━━┃ Made with love by : $(GREEN) Batt & Gaelle $(RESET) ┃━━━━━━━━━━━━━"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+
+.PHONY: fclean all re clean

@@ -59,80 +59,85 @@ Server::~Server() {
 /************************************** FUNCTIONS **************************************/
 
 void Server::initializeServer() {
-    std::cout << bannerServer;
-    std::cout << BLUE << ". . . Listening on port " << _port << " . . . " << RESET << std::endl;
+	std::cout << bannerServer;
+	std::cout << BLUE << ". . . Listening on port " << _port << " . . . " << RESET << std::endl;
 
-    signal(SIGINT, Server::SignalHandler); // catch the signal (ctrl + c)
-    signal(SIGQUIT, Server::SignalHandler); // catch the signal (ctrl + \)
+	signal(SIGINT, Server::SignalHandler); // catch the signal (ctrl + c)
+	signal(SIGQUIT, Server::SignalHandler); // catch the signal (ctrl + \)
 }
 
 void Server::acceptNewConnection() {
-    if (_clients.size() >= _MAX_CLIENTS) {
-        std::cerr << ERROR_MAX_CLIENT_SERVER << std::endl;
-        int new_client_socket = accept(_server_socket, NULL, NULL);
-        if (new_client_socket != -1) {
-            Client tempClient;
-            tempClient.sendClientMsg(new_client_socket, ERROR_MAX_CLIENT);
-            close(new_client_socket);
-        }
-        return;
-    }
+	if (_clients.size() >= _MAX_CLIENTS) {
+		std::cerr << ERROR_MAX_CLIENT_SERVER << std::endl;
+		int new_client_socket = accept(_server_socket, NULL, NULL);
+		if (new_client_socket != -1) {
+			Client tempClient;
+			tempClient.sendClientMsg(new_client_socket, ERROR_MAX_CLIENT);
+			close(new_client_socket);
+		}
+		return;
+	}
 
-    Client client;
-    socklen_t client_len = sizeof(client.getClientAddr());
-    int new_client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
-    if (new_client_socket == -1) {
-        std::cerr << "Error: connection not accepted" << std::endl;
-        return;
-    }
+	Client client;
+	socklen_t client_len = sizeof(client.getClientAddr());
+	int new_client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
+	if (new_client_socket == -1) {
+		std::cerr << "Error: connection not accepted" << std::endl;
+		return;
+	}
 
-    std::cout << GREEN << "\nNew connection accepted! ✅ [socket: " << new_client_socket << "]" << RESET << std::endl;
-    std::cout << BOLD << "Total client(s) online: " << RESET << nfds << "/" << _MAX_CLIENTS << std::endl;
+	std::cout << GREEN << "\nNew connection accepted! ✅ [socket: " << new_client_socket << "]" << RESET << std::endl;
+	std::cout << BOLD << "Total client(s) online: " << RESET << nfds << "/" << _MAX_CLIENTS << std::endl;
 
-    fds[nfds].fd = new_client_socket;
-    fds[nfds].events = POLLIN;
-    
-    nfds++;
-    _clients[new_client_socket] = client;
-    detectClient(new_client_socket);
+	fds[nfds].fd = new_client_socket;
+	fds[nfds].events = POLLIN;
+	
+	nfds++;
+	_clients[new_client_socket] = client;
+	detectClient(new_client_socket);
 }
 
 
 
 void Server::handlePollEvents() {
-    for (int i = 0; i < nfds; ++i) {
-        if (fds[i].revents & POLLIN) {
-            if (fds[i].fd == _server_socket)
-                acceptNewConnection();
-            else
-                handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
-        }
-    }
+	for (int i = 0; i < nfds; ++i) {
+		if (fds[i].revents & POLLIN) {
+			if (fds[i].fd == _server_socket)
+				acceptNewConnection();
+			else
+				handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
+		}
+	}
 }
 
 void Server::stopServer() {
-    std::cout << "Shutting down server..." << std::endl;
+	std::cout << "Shutting down server..." << std::endl;
 
-    for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-        send(it->first, MSG_DISCONNECT, strlen(MSG_DISCONNECT), 0);
-        close(it->first);
-    }
-    close(_server_socket);
-    std::cout << "Server stopped" << std::endl;
+	for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+		send(it->first, MSG_DISCONNECT, strlen(MSG_DISCONNECT), 0);
+		close(it->first);
+	}
+	close(_server_socket);
+	std::cout << "Server stopped" << std::endl;
 }
 
 void Server::startServer() {
-    initializeServer();
+	initializeServer();
 
-    while (!_shutdown_signal) {
-        int poll_count = poll(fds, nfds, 1000);
-        if (poll_count == -1) {
-            if (errno == EINTR)
-                continue; // Interrompu par un signal
-            std::cerr << "Error: poll failed" << std::endl;
-            break;
-        }
-        handlePollEvents();
-    }
-    stopServer();
+	while (!_shutdown_signal) {
+		int poll_count = poll(fds, nfds, 1000);
+		if (poll_count == -1) {
+			if (errno == EINTR)
+				continue; // Interrompu par un signal
+			std::cerr << "Error: poll failed" << std::endl;
+			break;
+		}
+		handlePollEvents();
+	}
+	stopServer();
 }
+
+
+
+
+

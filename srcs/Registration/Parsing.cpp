@@ -109,9 +109,9 @@ void Server::parsingDataIrssi(Client &client, int new_client_socket) {
 
 void Server::parsingDataNetcat(Client &client, int new_client_socket) {
 	client.setClientSocket(new_client_socket);
-	client.sendClientMsg(new_client_socket, bannerIRC);
-	client.sendClientMsg(new_client_socket, MSG_WELCOME);
-	client.sendClientMsg(new_client_socket, MSG_HELP_CLIENT);
+	// client.sendClientMsg(new_client_socket, bannerIRC);
+	// client.sendClientMsg(new_client_socket, MSG_WELCOME);
+	// client.sendClientMsg(new_client_socket, MSG_HELP_CLIENT);
 	authenticateAndRegister(client);
 	_clients[new_client_socket] = client; // Ajout du client à la map
 }

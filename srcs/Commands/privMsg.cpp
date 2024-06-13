@@ -38,3 +38,10 @@ void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& to
 
 
 // /connect localhost 6667 1
+
+
+/* 
+	il peut aussi privmsg plusieurs users en même temps
+	genre /privmsg user1, user2,#channel coucou
+
+ */
