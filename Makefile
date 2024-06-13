@@ -44,7 +44,6 @@ RESET=\033[0m
 
 all: banner $(NAME)
 	@echo "$(BLUE)██████████████████████ '$(NAME)' is DONE ███████████████████████$(RESET)"
-	@echo "Made with love by : $(GREEN) Batt & Gaelle $(RESET)"
 	@echo "       "
 
 head:
