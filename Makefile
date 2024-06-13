@@ -12,6 +12,7 @@ SRCS = srcs/main.cpp \
        \
        srcs/Commands/AllCommands.cpp \
        srcs/Commands/channel.cpp \
+       srcs/Commands/channelMsg.cpp \
        srcs/Commands/help.cpp \
        srcs/Commands/list.cpp \
        srcs/Commands/nick.cpp \

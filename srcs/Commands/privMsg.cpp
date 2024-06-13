@@ -32,7 +32,7 @@ void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& to
 		client.sendClientMsg(client.getClientSocket(), ERROR_TARGET_NOT_FOUND);
 		return;
 	}
-	std::string fullMessage = std::string(BOLD) + "Msg from " + client.getUser().getNickname() + ": " + std::string(RESET) + msgContent + "\n";
+	std::string fullMessage = std::string(BOLD) + "PrivMsg from " + client.getUser().getNickname() + ": " + std::string(RESET) + msgContent;
 	client.sendClientMsg(recipientSocket, fullMessage.c_str());
 }
 

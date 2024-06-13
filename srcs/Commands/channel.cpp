@@ -91,9 +91,7 @@ void Server::joinChannel(Client& client, const std::vector<std::string>& tokens)
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_CHANNEL);
 		return;
 	}
-
 	std::string channelName = trim(tokens[1]);
-
 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
 	if (it == _channels.end()) {
 		createChannel(client, tokens);
@@ -105,14 +103,17 @@ void Server::joinChannel(Client& client, const std::vector<std::string>& tokens)
 			return;
 		}
 	}
-
 	// Ajoutez le client au canal
 	it->second.addMember(client.getClientSocket());
 
 	std::stringstream ss;
-	ss << GREEN "You are now in the Channel [" << channelName << "]" << RESET << std::endl;
+	ss << GREEN "You are now in the Channel #" << channelName << RESET << std::endl << std::endl;
 	std::string channelJoinedMsg = ss.str();
 	client.sendClientMsg(client.getClientSocket(), channelJoinedMsg.c_str());
+
+    std::string joinMsg = BOLD "<" + client.getUser().getNickname() + "> has joined the channel #" + channelName + "\n" RESET;
+	broadcastMessageToChannel(channelName, joinMsg, client.getClientSocket());
+
 }
 
 
@@ -121,4 +122,9 @@ void Server::joinChannel(Client& client, const std::vector<std::string>& tokens)
 
 	gérer correctement les cas où le même client essaie d'être retiré d'un canal auquel il n'appartient pas.
 
+
+	WARNING
+	si on met 2 slash la cmd marche quand meme aie aie aie 
+	//join random
+	You are now in the Channel #random
  */

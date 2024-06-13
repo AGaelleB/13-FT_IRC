@@ -2,18 +2,12 @@
 
 void Server::handleClientMessage(int client_fd, Client& client) {
 	char buffer[1024];
-	memset(buffer, 0, sizeof(buffer)); //-> clear the buffer
+	memset(buffer, 0, sizeof(buffer)); // clear the buffer
 	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
-
-	// std::cout << "Connected clients:" << std::endl;
-	// for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-	// 	std::cout << "Socket: " << it->first << ", Nickname: " << it->second.getUser().getNickname() << std::endl;
-	// }
 
 	if (bytes_received <= 0) {
 		if (bytes_received == 0) {
 			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ [socket: " << client_fd << "]" << RESET << std::endl;
-			// nfds--;
 			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << "/" << _MAX_CLIENTS << std::endl;
 		}
 		else {
@@ -43,7 +37,28 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 		}
 		buffer[bytes_received] = '\0';
 		std::string message(buffer);
-		parseClientMsg(message, client);
+
+		// Check if the message is a command
+		if (message[0] == '/')
+			parseClientMsg(message, client);
+
+		else {
+			// Check if client is part of a channel and broadcast the message
+			bool messageSent = false;
+			for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+				Channel& channel = it->second;
+				if (channel.isMember(client_fd)) {
+					std::string fullMessage = "<" + client.getUser().getNickname() + "> " + message;
+					broadcastMessageToChannel(it->first, fullMessage, client_fd);
+					messageSent = true;
+					break;
+				}
+			}
+
+			if (!messageSent) {
+				client.sendClientMsg(client_fd, "You are not in a channel. Join a channel to send messages.");
+			}
+		}
 	}
 }
 

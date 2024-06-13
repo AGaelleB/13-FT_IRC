@@ -51,6 +51,12 @@ class Server {
 		bool		checkChannelName(const std::string& channelName);
 		void		createChannel(Client& client, const std::vector<std::string>& tokens);
 		void		joinChannel(Client& client, const std::vector<std::string>& tokens);
+		
+		// channelMsg.cpp
+		void		broadcastMessageToChannel(const std::string& channelName, const std::string& message, int excludeSocket);
+		// void		ChannelMsg(Client& client, const std::vector<std::string>& tokens, const std::string& message);
+		void		ChannelMsg(Client& client);
+				
 		// void		leaveChannel(int clientSocket, const std::string& channelName);
 
 		//help.cpp

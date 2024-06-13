@@ -46,7 +46,6 @@
 # define MSG_SEND_CHANNEL BOLD "\n============= LIST OF CHANNELS =============\n\n" RESET
 # define MSG_END_LIST BOLD "\n============================================\n" RESET
 
-
 // irssi
 # define ERROR_ARGS_IRSSI RED "Error: must be /connect <localhost> <port> <password>\n" RESET
 

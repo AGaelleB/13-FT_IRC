@@ -62,7 +62,7 @@ void Server::channelList(Client& client) {
 
 	std::map<std::string, Channel>::iterator it;
 	for (it = _channels.begin(); it != _channels.end(); ++it) {
-		std::string message = "Channel: #" + it->first;
+		std::string message = "\nChannel: #" + it->first;
 		client.sendClientMsg(client.getClientSocket(), message.c_str());
 		channelListMembers(client.getClientSocket(), it->first, client);
 	}
