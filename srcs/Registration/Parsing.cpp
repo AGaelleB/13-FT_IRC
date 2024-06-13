@@ -39,25 +39,19 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 		std::string message(buffer);
 
 		// Check if the message is a command
-		if (message[0] == '/')
-			parseClientMsg(message, client);
 
-		else {
-			// Check if client is part of a channel and broadcast the message
-			bool messageSent = false;
+		if (message[0] != '/') {
 			for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
 				Channel& channel = it->second;
 				if (channel.isMember(client_fd)) {
 					std::string fullMessage = "<" + client.getUser().getNickname() + "> " + message;
 					broadcastMessageToChannel(it->first, fullMessage, client_fd);
-					messageSent = true;
 					break;
 				}
 			}
-
-			if (!messageSent) {
-				client.sendClientMsg(client_fd, "You are not in a channel. Join a channel to send messages.");
-			}
+		}
+		else {
+			parseClientMsg(message, client);
 		}
 	}
 }
@@ -109,9 +103,9 @@ void Server::parsingDataIrssi(Client &client, int new_client_socket) {
 
 void Server::parsingDataNetcat(Client &client, int new_client_socket) {
 	client.setClientSocket(new_client_socket);
-	// client.sendClientMsg(new_client_socket, bannerIRC);
-	// client.sendClientMsg(new_client_socket, MSG_WELCOME);
-	// client.sendClientMsg(new_client_socket, MSG_HELP_CLIENT);
+	client.sendClientMsg(new_client_socket, bannerIRC);
+	client.sendClientMsg(new_client_socket, MSG_WELCOME);
+	client.sendClientMsg(new_client_socket, MSG_HELP_CLIENT);
 	authenticateAndRegister(client);
 	_clients[new_client_socket] = client; // Ajout du client à la map
 }

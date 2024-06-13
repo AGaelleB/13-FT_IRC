@@ -21,7 +21,7 @@ CommandType getCommandType(const std::string& command) {
 	if (command == "/nick" || command == "NICK") return NICK;
 	if (command == "/list" || command == "LIST") return LIST;
 	if (command == "/msg" || command == "PRIVMSG") return PRIVMSG;
-	if (command == "/channel" || "/join" || "/JOIN") return CHANNEL; 
+	if (command == "/channel" || command == "/join" || command == "/JOIN") return CHANNEL; 
 	if (command == "/quit") return QUIT;
 	if (command == "/part") return PART;
 	if (command == "/topic") return TOPIC;
