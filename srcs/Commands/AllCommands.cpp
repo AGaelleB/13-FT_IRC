@@ -17,7 +17,7 @@ CommandType Server::getCommandType(const std::string& command) {
 }
 
 void Server::parseClientMsg(const std::string& message, Client& client) {
-	std::cout << BOLD << "\n" << client.getUser().getNickname() << " msg: " << RESET << message << std::endl;
+	std::cout << BOLD << "\n<" << client.getUser().getNickname() << ">: " << RESET << message << std::endl;
 
 	std::vector<std::string> tokens = split(message);
 	if (tokens.empty()) {
