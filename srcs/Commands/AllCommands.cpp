@@ -7,7 +7,7 @@ CommandType Server::getCommandType(const std::string& command) {
 	if (command == "/msg" || command == "PRIVMSG" || command == "/PRIVMSG") return PRIVMSG;
 	if (command == "/channel" || command == "/join" || command == "JOIN") return CHANNEL; 
 	if (command == "/quit") return QUIT;
-	if (command == "/part" || command == "/leave") return PART;
+	if (command == "/part" || command == "/leave" || command == "PART") return PART;
 	if (command == "/topic") return TOPIC;
 	if (command == "/kick") return KICK;
 	if (command == "/invite") return INVITE;

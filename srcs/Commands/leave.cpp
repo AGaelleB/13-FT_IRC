@@ -1,6 +1,8 @@
 #include "../../includes/Server.hpp"
 
 void Server::leaveAllChannels(Client& client) {
+	std::cout << YELLOW << "leaveAllChannels START" << RESET << std::endl;
+
 	int clientSocket = client.getClientSocket();
 	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
 		Channel& channel = it->second;
@@ -14,6 +16,9 @@ void Server::leaveAllChannels(Client& client) {
 
 void Server::leaveChannel(Client& client, std::vector<std::string> tokens) {
 	
+	// std::cout << YELLOW << "leaveChannel START" << RESET << std::endl;
+
+
 	if (tokens.size() != 2) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_LEAVE);
 		return;
@@ -24,25 +29,38 @@ void Server::leaveChannel(Client& client, std::vector<std::string> tokens) {
 	if (channelName[0] != '#')
 		channelName = "#" + channelName;
 
-	std::cout << YELLOW << "BEFORE channelName =" << channelName << RESET << std::endl;
+	// std::cout << YELLOW << "BEFORE channelName =" << channelName << RESET << std::endl;
 
 	// Remove trailing colon if it exists
 	if (!channelName.empty() && channelName[channelName.size() - 1] == ':') {
 		channelName.erase(channelName.size() - 1);
 	}
 
-	std::cout << YELLOW << "AFTER channelName =" << channelName << RESET << std::endl;
+	// std::cout << YELLOW << "AFTER channelName =" << channelName << RESET << std::endl;
 
 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
-	if (it != _channels.end() && it->second.isMember(client.getClientSocket()))
+	if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
 		it->second.removeMember(client.getClientSocket());
+
+		if (client.isIrssi) {
+			std::string to_send = RPL_PART(client.getUser().getNickname(), client.getUser().getUsername(), channelName, "reason");
+			client.sendClientMsg(client.getClientSocket(), to_send.c_str());
+
+			// // IRSSI refresh
+			// std::string irssi_refresh = RPL_IRSSI_REFRESH(client.getUser().getNickname(), channelName);
+			// client.sendClientMsg(client.getClientSocket(), irssi_refresh.c_str());
+
+
+		}
+
+	}
 	else {
-		std::cout << YELLOW << "FAILED !!!!!!!!!!!1" << RESET << std::endl;
+		// std::cout << YELLOW << "FAILED !!!!!!!!!!!1" << RESET << std::endl;
 		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_LEAVE);
 		return;
 	}
 
-	std::cout << YELLOW << "END channelName =" << channelName << RESET << std::endl;
+	// std::cout << YELLOW << "END channelName =" << channelName << RESET << std::endl;
 
 	std::stringstream ss;
 	ss << GREEN "You have leave the channel " << channelName << RESET << std::endl << std::endl;
@@ -51,7 +69,6 @@ void Server::leaveChannel(Client& client, std::vector<std::string> tokens) {
 
 	std::string joinMsg = BOLD "<" + client.getUser().getNickname() + "> has left the channel " + channelName + "\n" RESET;
 	broadcastMessageToChannel(channelName, joinMsg, client.getClientSocket());
-	
 }
 
 
@@ -62,5 +79,8 @@ void Server::leaveChannel(Client& client, std::vector<std::string> tokens) {
 	/connect localhost 6667 1
 	/join server
 	/leave #server
+	/part #server
+	/part
+
 
  */

@@ -1,0 +1,60 @@
+
+!!!!!!!!!!! BIG BIG BIG BIG WARNING PENSER A UTILISER LES FUCKING RPL POUR IRSSI SINON CA BUG !!!!!!!!!!!
+
+En cours: 
+1. Commande privMsg
+    sur le client irssi, on affiche lorsque lon est dans un channel, si un nouveau client arrive sur le channel -> Voir si un RPL doit etre mis en place
+    on veut un truc genre "gaga has joined the channel"
+
+    WARNING MSG multiusers
+	un truc bizarre avec les privmsg, en gros si au debut irssi essaie d envoyer un msg a client_nc_1 et client_nc_2 en meme temps :
+	/msg client_nc_1,client_nc_2 Coucou les amis
+	personne ne recoit de message
+	par contre si client_nc_1 ou client_nc_2 envoi un msg en mettant irssi en premier destinataire ensuite ca marche :
+	/msg irssi,client_nc_1 OK LES AMIS
+	en revanche si on met en 1er 
+	/msg client_nc_1,irssi OK LES AMIS
+	la ca n aurait pas marche  
+
+	prendre en compte les channels dans PRIVMSG
+		- verifier que le client soit dans le channel
+		- utiliser la fonction broadcastMessageToChannel pour envoyer le msg a toutes les clients presents dans le channel
+        irssi ne voit pas les msg envoyes par netcat si on ne passe pas la cmd /msg. On devrait juste pourvoir ecrire notre msg sans "/cmd" dans un channel
+
+
+    il peut aussi privmsg plusieurs users en même temps
+	genre /privmsg user1, user2,#channel coucou
+
+coucou
+    voir si l ont doit parser le fait de join plusieurs channels en une commande
+    ex: /join channel1,channel2
+
+!!!!!!!!!!! BIG BIG BIG BIG WARNING PENSER A UTILISER LES FUCKING RPL POUR IRSSI SINON CA BUG !!!!!!!!!!!
+
+
+
+
+
+2. Commande leave
+    les RPL on ete mis en place pour le client irssi
+    on arrive a rejoindre des chamnnel et a les quitter 
+    par contre on les quitte en tirroirs, c a d que dernier channel ouvert = 1er channel quitte
+    donc implementer la possibilite de quitter plusieurs channel en meme temps en parsant comme privmsg + implementer la raison du depart
+        /part channel1,channel2 pause repas
+    -> cette commande devra affochier "pause repas" a tous les clients des channels quittes
+
+
+
+
+3. A faire au complet : 
+    commande topic
+    commande mode
+    commande leave
+    commande kick
+
+
+
+
+/connect localhost 6667 1
+/join server
+/msg #server coucou a tous

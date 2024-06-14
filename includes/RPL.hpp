@@ -10,6 +10,9 @@
 #define CONTINUE 3
 
 
+std::string RPL_IRSSI_REFRESH(const std::string &client, const std::string &channel);
+
+
 // User ID
 std::string user_id(const std::string &nickname, const std::string &username);
 

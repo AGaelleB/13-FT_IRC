@@ -72,28 +72,3 @@ void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& to
 // /join server
 // /msg #server coucou a tous
 
-/* 
-	il peut aussi privmsg plusieurs users en même temps
-	genre /privmsg user1, user2,#channel coucou
-
-
-	WARNING MSG multiusers
-		un truc bizarre avec les privmsg, en gros si au debut irssi essaie d envoyer un msg a client_nc_1 et client_nc_2 en meme temps :
-		/msg client_nc_1,client_nc_2 Coucou les amis
-		personne ne recoit de message
-		par contre si client_nc_1 ou client_nc_2 envoi un msg en mettant irssi en premier destinataire ensuite ca marche :
-		/msg irssi,client_nc_1 OK LES AMIS
-		en revanche si on met en 1er 
-		/msg client_nc_1,irssi OK LES AMIS
-		la ca n aurait pas marche  
-
-
-	prendre en compte les channels dans PRIVMSG
-		- verifier que le client soit dans le channel
-		- utiliser la fonction broadcastMessageToChannel pour envoyer le msg a toutes les clients presents dans le channel
-
-	prendre en compte PRIVMSG dans les channels
-		- faire en sorte que les msg soit envoyes comme irssi vers un channel :
-		<irssi_client>: PRIVMSG #random :cc
-
- */

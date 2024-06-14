@@ -3,8 +3,6 @@
 bool			Server::_shutdown_signal = false;
 struct pollfd	fds[1024];
 int				nfds = 1;
-const int		_MAX_CLIENTS = 20;
-
 
 /************************************* CONST ET DEST *************************************/
 

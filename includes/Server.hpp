@@ -87,6 +87,8 @@ class Server {
 		void		UserList(Client& client);
 		void		channelList(Client& client);
 		void		channelListMembers(int clientSocket, const std::string& channelName, Client& client);
+		std::string	PrintChannelListMembers(const std::string& channelName);
+
 
 		//nick.cpp
 		bool		isNicknameAvailable(const std::string& nickname); 

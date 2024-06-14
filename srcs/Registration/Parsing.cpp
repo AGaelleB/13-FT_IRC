@@ -146,6 +146,7 @@ void Server::detectClient(int client_socket) {
 				parsingDataIrssi(client, client_socket);
 				isRegistered(client);
 				std::cerr << ORANGE << "[" << client.getUser().getNickname() << "] is connected with irssi!\n" << RESET;
+				client.isIrssi = true;
 			}
 			else {
 				client.sendClientMsg(client_socket, ERROR_ARGS_IRSSI);

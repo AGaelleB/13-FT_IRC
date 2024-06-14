@@ -63,7 +63,7 @@ bool Server::checkChannelName(const std::string& channelName) {
 
 	bool hasAlnum = false;
 
-	std::cout << YELLOW << "1 checkChannelName channelName =" << channelName <<  RESET << std::endl; 
+	// std::cout << YELLOW << "1 checkChannelName channelName =" << channelName <<  RESET << std::endl; 
 
 	for (size_t i = 1; i < channelName.length(); ++i) {
 		if (channelName[i] == '#')
@@ -73,7 +73,7 @@ bool Server::checkChannelName(const std::string& channelName) {
 		if (!std::isalnum(channelName[i]) && channelName[i] != '_' && channelName[i] != '-' && channelName[i] != ':')
 			return (false);
 	}
-	std::cout << YELLOW << "2 checkChannelName channelName =" << channelName <<  RESET << std::endl; 
+	// std::cout << YELLOW << "2 checkChannelName channelName =" << channelName <<  RESET << std::endl; 
 
 	return (hasAlnum);
 }
@@ -83,8 +83,8 @@ void Server::createChannel(Client& client, std::string channelName) {
 	std::cout << YELLOW << "START createChannel" << RESET << std::endl; 
 
 	if (!checkChannelName(channelName)) {
-		std::cout << YELLOW << "createChannel ERROR_CHANNELNAME" << RESET << std::endl; 
-		std::cout << YELLOW << "createChannel channelName =" << channelName <<  RESET << std::endl; 
+		// std::cout << YELLOW << "createChannel ERROR_CHANNELNAME" << RESET << std::endl; 
+		// std::cout << YELLOW << "createChannel channelName =" << channelName <<  RESET << std::endl; 
 		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNELNAME);
 		return;
 	}
@@ -93,7 +93,7 @@ void Server::createChannel(Client& client, std::string channelName) {
 	// Ajouter le canal dans le container
 	std::pair<std::map<std::string, Channel>::iterator, bool> result = _channels.insert(std::make_pair(channelName, channel));
 	if (result.second == false) {
-		std::cout << YELLOW << "createChannel ERROR_CHANNEL_ALREADY_EXIST" << RESET << std::endl; 
+		// std::cout << YELLOW << "createChannel ERROR_CHANNEL_ALREADY_EXIST" << RESET << std::endl; 
 		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_ALREADY_EXIST);
 		return;
 	}
@@ -101,47 +101,65 @@ void Server::createChannel(Client& client, std::string channelName) {
 	std::cout << BOLD << "Channel: [" << channelName << "] created successfully! ✅" << RESET << std::endl;
 }
 
+
 void Server::joinChannel(Client& client, const std::vector<std::string>& tokens) {
 
-	if (tokens.size() != 2) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_CHANNEL);
-		return;
-	}
-	std::string channelName = trim(tokens[1]);
-	
-	// Ajoute un # au début du nom du canal s'il n'y en a pas déjà un
-	if (channelName[0] != '#')
-		channelName = "#" + channelName;
-	
-	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
-	if (it == _channels.end()) {
-		createChannel(client, channelName);
-		
-		usleep(42);
+    if (tokens.size() != 2) {
+        client.sendClientMsg(client.getClientSocket(), ERROR_CMD_CHANNEL);
+        return;
+    }
 
-		std::cout << YELLOW << "joinChannel channelName = " << channelName << RESET << std::endl; 
-		
-		// Recherche à nouveau le canal après la création
-		it = _channels.find(channelName);
-		if (it == _channels.end()) {
-			std::cout << YELLOW << "joinChannel ERROR FAILED CREATE - channelName = " << channelName << RESET << std::endl; 
-			client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_CREATE); //
-			return;
-		}
+    std::string channelName = trim(tokens[1]);
 
-	}
-	// Ajoutez le client au canal
-	it->second.addMember(client.getClientSocket());
+    // Ajoute un # au début du nom du canal s'il n'y en a pas déjà un
+    if (channelName[0] != '#')
+        channelName = "#" + channelName;
 
-	std::stringstream ss;
-	ss << GREEN "You are now in the Channel " << channelName << RESET << std::endl << std::endl;
-	std::string channelJoinedMsg = ss.str();
-	client.sendClientMsg(client.getClientSocket(), channelJoinedMsg.c_str());
+    std::map<std::string, Channel>::iterator it = _channels.find(channelName);
+    if (it == _channels.end()) {
+        createChannel(client, channelName);
 
-	std::string joinMsg = BOLD "<" + client.getUser().getNickname() + "> has joined the channel " + channelName + "\n" RESET;
-	broadcastMessageToChannel(channelName, joinMsg, client.getClientSocket());
+        usleep(42); // C'est peut-être une attente délibérée, assurez-vous de sa nécessité
 
+        // std::cout << YELLOW << "joinChannel channelName = " << channelName << RESET << std::endl;
+
+        // Recherche à nouveau le canal après la création
+        it = _channels.find(channelName);
+        if (it == _channels.end()) {
+            // std::cout << YELLOW << "joinChannel ERROR FAILED CREATE - channelName = " << channelName << RESET << std::endl;
+            client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_CREATE); // Envoyer un message d'erreur approprié
+            return;
+        }
+    }
+
+    // Ajoutez le client au canal
+    it->second.addMember(client.getClientSocket());
+
+    if (client.isIrssi) {
+        std::string RPL_MsgJoin = RPL_JOIN(user_id(client.getUser().getNickname(), client.getUser().getUsername()), channelName);
+        client.sendClientMsg(client.getClientSocket(), RPL_MsgJoin.c_str());
+
+        // Obtenez la liste des membres du canal
+        std::string channelMembers = PrintChannelListMembers(channelName);
+        
+        std::string RPL_PRIVMsg = RPL_PRIVMSG(client.getUser().getNickname(), client.getUser().getUsername(), channelName, channelMembers);
+        client.sendClientMsg(client.getClientSocket(), RPL_PRIVMsg.c_str());
+    }
+
+    // Envoyer des messages de confirmation au client
+    std::stringstream ss;
+    ss << GREEN "You are now in the Channel " << channelName << RESET << std::endl << std::endl;
+    std::string channelJoinedMsg = ss.str();
+    client.sendClientMsg(client.getClientSocket(), channelJoinedMsg.c_str());
+
+    std::string joinMsg = BOLD "<" + client.getUser().getNickname() + "> has joined the channel " + channelName + "\n" RESET;
+    broadcastMessageToChannel(channelName, joinMsg, client.getClientSocket());
 }
+
+
+
+
+
 
 // /connect localhost 6667 1
 

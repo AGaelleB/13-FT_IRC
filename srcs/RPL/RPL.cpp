@@ -135,6 +135,11 @@ std::string RPL_PART(const std::string &nickname, const std::string &username, c
 	return ":" + nickname + "!" + username + "@localhost PART " + channel + " " + (reason.empty() ? "." : reason) + "\r\n";
 }
 
+std::string RPL_IRSSI_REFRESH(const std::string &client, const std::string &channel) {
+    return ":localhost 999 " + client + " " + channel + " :IRSSI_REFRESH\r\n";
+}
+
+
 // Quit messages
 std::string RPL_QUIT(const std::string &user_id, const std::string &reason) {
 	return user_id + " QUIT :Quit: " + reason + "\r\n";
