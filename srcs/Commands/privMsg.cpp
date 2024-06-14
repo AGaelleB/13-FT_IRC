@@ -1,26 +1,5 @@
 #include "../../includes/Server.hpp"
 
-// parcourir les tokens pour identifier si le nmessage est privmsg ou si ca concerne un channel
-//ex: <Gaga>: PRIVMSG #random :cc
-
-
-/* 
-je veux adapter ma fonction privMsgCmdClient pour qu elle ait le comportement suivant 
- /msg popo,pipi vous allez bien ?
-
-Gaga msg: PRIVMSG popo :vous allez bien ?
-
-Private message command received
-
-Gaga msg: PRIVMSG pipi :vous allez bien ?
-
-Private message command received
-
-
-ici je veux faire un split sur la "," pour qu'elle duplique la commande a chaque clients, soit ravoir 2 commandes : PRIVMSG pipi et PRIVMSG popo 
- */
-
-
 void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& tokens, const std::string& message) {
 	if (tokens.size() < 3) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
@@ -76,14 +55,23 @@ void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& to
 	genre /privmsg user1, user2,#channel coucou
 
 
-	WARNING
-	un truc bizarre avec les privmsg, en gros si au debut irssi essaie d envoyer un msg a client_nc_1 et client_nc_2 en meme temps :
-	/msg client_nc_1,client_nc_2 Coucou les amis
-	personne ne recoit de message
-	par contre si client_nc_1 ou client_nc_2 envoi un msg en mettant irssi en premier destinataire ensuite ca marche :
-	/msg irssi,client_nc_1 OK LES AMIS
-	en revanche si on met en 1er 
-	/msg client_nc_1,irssi OK LES AMIS
-	la ca n aurait pas marche  
+	WARNING MSG multiusers
+		un truc bizarre avec les privmsg, en gros si au debut irssi essaie d envoyer un msg a client_nc_1 et client_nc_2 en meme temps :
+		/msg client_nc_1,client_nc_2 Coucou les amis
+		personne ne recoit de message
+		par contre si client_nc_1 ou client_nc_2 envoi un msg en mettant irssi en premier destinataire ensuite ca marche :
+		/msg irssi,client_nc_1 OK LES AMIS
+		en revanche si on met en 1er 
+		/msg client_nc_1,irssi OK LES AMIS
+		la ca n aurait pas marche  
+
+
+	prendre en compte les channels dans PRIVMSG
+		- verifier que le client soit dans le channel
+		- utiliser la fonction broadcastMessageToChannel pour envoyer le msg a toutes les clients presents dans le channel
+
+	prendre en compte PRIVMSG dans les channels
+		- faire en sorte que les msg soit envoyes comme irssi vers un channel :
+		<irssi_client>: PRIVMSG #random :cc
 
  */

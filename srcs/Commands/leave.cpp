@@ -41,3 +41,9 @@ void Server::leaveChannel(Client& client, std::vector<std::string> tokens) {
 	broadcastMessageToChannel(channelName, joinMsg, client.getClientSocket());
 	
 }
+
+
+/* 
+	leave ne fonctionne pas avec irssi
+
+ */
