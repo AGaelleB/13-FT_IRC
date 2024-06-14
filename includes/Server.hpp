@@ -67,7 +67,7 @@ class Server {
 
 		// channel.cpp
 		bool		checkChannelName(const std::string& channelName);
-		void		createChannel(Client& client, const std::vector<std::string>& tokens);
+		void		createChannel(Client& client, std::string channelName);
 		void		joinChannel(Client& client, const std::vector<std::string>& tokens);
 		
 		// channelMsg.cpp
@@ -107,7 +107,6 @@ class Server {
 		void		quitMsgCmdClient(Client& client, std::vector<std::string> tokens);
 
 
-
 		/******************************* REGISTRATION *******************************/
 
 		// Authentification.cpp
@@ -129,9 +128,6 @@ class Server {
 		
 		// Utils.cpp
 		static void	SignalHandler(int sig);
-
-
-
 };
 
 

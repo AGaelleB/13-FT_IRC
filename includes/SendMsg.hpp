@@ -24,19 +24,19 @@
 
 // commands
 # define UNKNOWN_CMD "Unknown command\n"
-# define ERROR_CMD_LIST RED "Error: must be: /list channel OR user\n" RESET
-# define ERROR_CMD_PRIVMSG RED "Error: must be: /msg OR /PRIVMSG <target> <message>\n" RESET
+# define ERROR_CMD_LIST RED "Error: Must be: /list channel OR user\n" RESET
+# define ERROR_CMD_PRIVMSG RED "Error: Must be: /msg OR /PRIVMSG <target> <message>\n" RESET
 # define ERROR_TARGET_NOT_FOUND RED "Error: Target not found\n" RESET
 # define ERROR_CMD_QUIT RED "Error: /quit doesn't require any additional arguments\n" RESET
-# define ERROR_MSG_TOO_LONG RED "Error: message is too long, must be less than 150 characters\n" RESET
-# define ERROR_MSG_CLIENT_TOO_LONG RED "Error: command is too long\n" RESET
-# define ERROR_CMD_CHANNEL RED "Error: must be: /channel OR /join <channelName>\n" RESET
+# define ERROR_MSG_TOO_LONG RED "Error: Message is too long, must be less than 150 characters\n" RESET
+# define ERROR_MSG_CLIENT_TOO_LONG RED "Error: Command is too long\n" RESET
+# define ERROR_CMD_CHANNEL RED "Error: Must be: /channel OR /join <channelName>\n" RESET
 # define ERROR_CHANNELNAME RED "Error: Your channelName must be between 3 and 15 characters and contain only alphanumeric characters\n" RESET
 # define ERROR_CHANNEL_ALREADY_EXIST RED "ERROR: Channel already exists\n" RESET
 # define ERROR_CHANNEL_FAILED_CREATE RED "ERROR: Failed to create the channel\n" RESET
 # define ERROR_CHANNEL_NOT_FOUND RED "ERROR: Channel not found\n" RESET
-# define ERROR_CMD_LEAVE RED "Error: must be: /leave OR /part <channelName>\n" RESET
-# define ERROR_CHANNEL_FAILED_NAME RED "ERROR: bad channel name\n" RESET
+# define ERROR_CMD_LEAVE RED "Error: Must be: /leave OR /part <channelName>\n" RESET
+# define ERROR_CHANNEL_FAILED_LEAVE RED "ERROR: Failled to leave the channel\n" RESET
 
 // server
 # define MSG_WELCOME BLUE "\n ~~~    Welcome on our IRC Server!   ~~~ \n" RESET

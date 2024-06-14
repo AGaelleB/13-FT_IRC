@@ -57,22 +57,28 @@ bool Server::checkChannelName(const std::string& channelName) {
 	if (channelName.length() < MIN_NAME_CHANNEL_SIZE || channelName.length() > MAX_NAME_CHANNEL_SIZE)
 		return (false);
 
-	for (size_t i = 0; i < channelName.length(); ++i) {
+	if (channelName[0] != '#')
+		return (false);
+
+	bool hasAlnum = false;
+
+	for (size_t i = 1; i < channelName.length(); ++i) {
+		if (channelName[i] == '#')
+			return (false);
+		if (std::isalnum(channelName[i]))
+			hasAlnum = true;
 		if (!std::isalnum(channelName[i]) && channelName[i] != '_' && channelName[i] != '-')
 			return (false);
 	}
-	return (true);
-}
 
-void Server::createChannel(Client& client, const std::vector<std::string>& tokens) {
-	
-	std::string	channelName = trim(tokens[1]);
+	return (hasAlnum);
+}
+void Server::createChannel(Client& client, std::string channelName) {
 	
 	if (!checkChannelName(channelName)) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNELNAME);
 		return;
 	}
-	
 	Channel channel(channelName);
 
 	// Ajouter le canal dans le container
@@ -92,14 +98,22 @@ void Server::joinChannel(Client& client, const std::vector<std::string>& tokens)
 		return;
 	}
 	std::string channelName = trim(tokens[1]);
+	
+	// Ajoute un # au début du nom du canal s'il n'y en a pas déjà un
+	if (channelName[0] != '#')
+		channelName = "#" + channelName;
+	
 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
 	if (it == _channels.end()) {
-		createChannel(client, tokens);
+		createChannel(client, channelName);
 		
+		usleep(42);
+
+		std::cout << YELLOW << "channelName = " << channelName << RESET << std::endl; 
 		// Recherche à nouveau le canal après la création
 		it = _channels.find(channelName);
 		if (it == _channels.end()) {
-			client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_CREATE);
+			client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_CREATE); //
 			return;
 		}
 	}
@@ -107,24 +121,19 @@ void Server::joinChannel(Client& client, const std::vector<std::string>& tokens)
 	it->second.addMember(client.getClientSocket());
 
 	std::stringstream ss;
-	ss << GREEN "You are now in the Channel #" << channelName << RESET << std::endl << std::endl;
+	ss << GREEN "You are now in the Channel " << channelName << RESET << std::endl << std::endl;
 	std::string channelJoinedMsg = ss.str();
 	client.sendClientMsg(client.getClientSocket(), channelJoinedMsg.c_str());
 
-    std::string joinMsg = BOLD "<" + client.getUser().getNickname() + "> has joined the channel #" + channelName + "\n" RESET;
+	std::string joinMsg = BOLD "<" + client.getUser().getNickname() + "> has joined the channel " + channelName + "\n" RESET;
 	broadcastMessageToChannel(channelName, joinMsg, client.getClientSocket());
 
 }
 
-
+// /connect localhost 6667 1
 
 /* WARNING TO DO
 
 	gérer correctement les cas où le même client essaie d'être retiré d'un canal auquel il n'appartient pas.
 
-
-	WARNING
-	si on met 2 slash la cmd marche quand meme aie aie aie 
-	//join random
-	You are now in the Channel #random
  */
