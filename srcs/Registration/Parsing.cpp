@@ -44,24 +44,21 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 			return;
 		}
 
-		std::string command = tokens[0];
-
-	
-		CommandType commandType = getCommandType(command);
-
-		if (commandType == UNKNOWN) {
-			for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-				Channel& channel = it->second;
-				if (channel.isMember(client_fd)) {
-					std::string fullMessage = "<" + client.getUser().getNickname() + "> " + message;
-					broadcastMessageToChannel(it->first, fullMessage, client_fd);
-					break;
-				}
-			}
-		}
-		else {
+		// std::string command = tokens[0];
+		// CommandType commandType = getCommandType(command);
+		// if (commandType == UNKNOWN) {
+		// 	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+		// 		Channel& channel = it->second;
+		// 		if (channel.isMember(client_fd)) {
+		// 			std::string fullMessage = "<" + client.getUser().getNickname() + "> " + message;
+		// 			broadcastMessageToChannel(it->first, fullMessage, client_fd);
+		// 			break;
+		// 		}
+		// 	}
+		// }
+		// else {
 			parseClientMsg(message, client);
-		}
+		// }
 	}
 }
 
@@ -166,6 +163,6 @@ void Server::detectClient(int client_socket) {
 	}
 }
 
-// /connect localhost 6667
+// /connect localhost 6667 1
 
 

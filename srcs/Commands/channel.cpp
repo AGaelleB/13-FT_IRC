@@ -54,6 +54,7 @@ bool Channel::isMember(int clientSocket) const {
 }
 
 bool Server::checkChannelName(const std::string& channelName) {
+
 	if (channelName.length() < MIN_NAME_CHANNEL_SIZE || channelName.length() > MAX_NAME_CHANNEL_SIZE)
 		return (false);
 
@@ -62,20 +63,28 @@ bool Server::checkChannelName(const std::string& channelName) {
 
 	bool hasAlnum = false;
 
+	std::cout << YELLOW << "1 checkChannelName channelName =" << channelName <<  RESET << std::endl; 
+
 	for (size_t i = 1; i < channelName.length(); ++i) {
 		if (channelName[i] == '#')
 			return (false);
 		if (std::isalnum(channelName[i]))
 			hasAlnum = true;
-		if (!std::isalnum(channelName[i]) && channelName[i] != '_' && channelName[i] != '-')
+		if (!std::isalnum(channelName[i]) && channelName[i] != '_' && channelName[i] != '-' && channelName[i] != ':')
 			return (false);
 	}
+	std::cout << YELLOW << "2 checkChannelName channelName =" << channelName <<  RESET << std::endl; 
 
 	return (hasAlnum);
 }
+
 void Server::createChannel(Client& client, std::string channelName) {
 	
+	std::cout << YELLOW << "START createChannel" << RESET << std::endl; 
+
 	if (!checkChannelName(channelName)) {
+		std::cout << YELLOW << "createChannel ERROR_CHANNELNAME" << RESET << std::endl; 
+		std::cout << YELLOW << "createChannel channelName =" << channelName <<  RESET << std::endl; 
 		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNELNAME);
 		return;
 	}
@@ -84,6 +93,7 @@ void Server::createChannel(Client& client, std::string channelName) {
 	// Ajouter le canal dans le container
 	std::pair<std::map<std::string, Channel>::iterator, bool> result = _channels.insert(std::make_pair(channelName, channel));
 	if (result.second == false) {
+		std::cout << YELLOW << "createChannel ERROR_CHANNEL_ALREADY_EXIST" << RESET << std::endl; 
 		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_ALREADY_EXIST);
 		return;
 	}
@@ -109,13 +119,16 @@ void Server::joinChannel(Client& client, const std::vector<std::string>& tokens)
 		
 		usleep(42);
 
-		std::cout << YELLOW << "channelName = " << channelName << RESET << std::endl; 
+		std::cout << YELLOW << "joinChannel channelName = " << channelName << RESET << std::endl; 
+		
 		// Recherche à nouveau le canal après la création
 		it = _channels.find(channelName);
 		if (it == _channels.end()) {
+			std::cout << YELLOW << "joinChannel ERROR FAILED CREATE - channelName = " << channelName << RESET << std::endl; 
 			client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_CREATE); //
 			return;
 		}
+
 	}
 	// Ajoutez le client au canal
 	it->second.addMember(client.getClientSocket());
