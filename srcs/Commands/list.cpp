@@ -70,19 +70,48 @@ void Server::channelList(Client& client) {
 	client.sendClientMsg(client.getClientSocket(), MSG_END_LIST);
 }
 
+// A REUTILISER POUR L AFFICHAGE DES MEMBRES DE CHANNEL
 
-std::string Server::PrintChannelListMembers(const std::string& channelName) {
+
+// //J AVAIS CE CODE
+// std::string Server::PrintChannelListMembers(const std::string& channelName) {
+// 	std::string membersList;
+
+// 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
+// 	if (it != _channels.end()) {
+// 		const std::vector<int>& members = it->second.getMembers();
+// 		for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
+// 			std::map<int, Client>::iterator clientIt = _clients.find(*memberIt);
+// 			if (clientIt != _clients.end()) {
+// 				membersList += "    -> " + clientIt->second.getUser().getNickname() + "\n";
+// 			}
+// 		}
+// 	}
+// 	return (membersList);
+// }
+
+
+// J AI CHANGE AVEC CE CODE ET J AI DES ERREURS DE COMPILATION
+std::string Server::PrintChannelListMembers(const std::string& channelName, const std::map<std::string, Channel>& channels) {
+   
+    std::map<std::string, Channel>::const_iterator it = channels.find(channelName);
+    if (it == channels.end()) {
+        return "";
+    }
+
+    const std::vector<int>& members = it->second.getMembers();
     std::string membersList;
 
-    std::map<std::string, Channel>::iterator it = _channels.find(channelName);
-    if (it != _channels.end()) {
-        const std::vector<int>& members = it->second.getMembers();
-        for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
-            std::map<int, Client>::iterator clientIt = _clients.find(*memberIt);
-            if (clientIt != _clients.end()) {
-                membersList += "    -> " + clientIt->second.getUser().getNickname() + "\n";
-            }
+    for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
+        std::map<int, Client>::const_iterator clientIt = _clients.find(*memberIt);
+        if (clientIt != _clients.end()) {
+            membersList += clientIt->second.getUser().getNickname() + " ";
         }
+    }
+
+    // Supprimer le dernier espace
+    if (!membersList.empty()) {
+        membersList.erase(membersList.size() - 1);
     }
 
     return membersList;

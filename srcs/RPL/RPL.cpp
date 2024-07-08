@@ -87,12 +87,13 @@ std::string ERR_CHANNELISFULL(const std::string &client, const std::string &chan
 
 // Names messages
 std::string RPL_NAMREPLY(const std::string &client, const std::string &channel, const std::string &list_of_nicks) {
-	return ":localhost 353 " + client + " " + channel + " :" + list_of_nicks + "\r\n";
+    return ":localhost 353 " + client + " = " + channel + " :" + list_of_nicks + "\r\n";
 }
 
 std::string RPL_ENDOFNAMES(const std::string &client, const std::string &channel) {
-	return ":localhost 366 " + client + " " + channel + " :End of /NAMES list.\r\n";
+    return ":localhost 366 " + client + " " + channel + " :End of /NAMES list.\r\n";
 }
+
 
 // Kick messages
 std::string ERR_USERNOTINCHANNEL(const std::string &client, const std::string &nickname, const std::string &channel) {

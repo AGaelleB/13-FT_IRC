@@ -87,7 +87,8 @@ class Server {
 		void		UserList(Client& client);
 		void		channelList(Client& client);
 		void		channelListMembers(int clientSocket, const std::string& channelName, Client& client);
-		std::string	PrintChannelListMembers(const std::string& channelName);
+		// std::string	PrintChannelListMembers(const std::string& channelName);
+		std::string PrintChannelListMembers(const std::string& channelName, const std::map<std::string, Channel>& channels);
 
 
 		//nick.cpp

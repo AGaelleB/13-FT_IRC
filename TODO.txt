@@ -2,6 +2,7 @@
 !!!!!!!!!!! BIG BIG BIG BIG WARNING PENSER A UTILISER LES FUCKING RPL POUR IRSSI SINON CA BUG !!!!!!!!!!!
 
 En cours: 
+
 1. Commande privMsg
     sur le client irssi, on affiche lorsque lon est dans un channel, si un nouveau client arrive sur le channel -> Voir si un RPL doit etre mis en place
     on veut un truc genre "gaga has joined the channel"
@@ -20,7 +21,7 @@ En cours:
 		- verifier que le client soit dans le channel
 		- utiliser la fonction broadcastMessageToChannel pour envoyer le msg a toutes les clients presents dans le channel
         irssi ne voit pas les msg envoyes par netcat si on ne passe pas la cmd /msg. On devrait juste pourvoir ecrire notre msg sans "/cmd" dans un channel
-
+        => faire un bool pour detecter si on est dans un channel, et en fonction afficher ou non /cmd
 
     il peut aussi privmsg plusieurs users en même temps
 	genre /privmsg user1, user2,#channel coucou

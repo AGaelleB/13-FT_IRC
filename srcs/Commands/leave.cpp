@@ -49,8 +49,6 @@ void Server::leaveChannel(Client& client, std::vector<std::string> tokens) {
 			// // IRSSI refresh
 			// std::string irssi_refresh = RPL_IRSSI_REFRESH(client.getUser().getNickname(), channelName);
 			// client.sendClientMsg(client.getClientSocket(), irssi_refresh.c_str());
-
-
 		}
 
 	}

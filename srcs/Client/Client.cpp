@@ -16,13 +16,19 @@ int Client::getClientSocket() const {
 	return (_client_socket);
 }
 
-struct sockaddr_in& Client::getClientAddr() {
+const struct sockaddr_in& Client::getClientAddr() const {
 	return (_client_addr);
+}
+
+const User& Client::getUser() const {
+	return (_user);
 }
 
 User& Client::getUser() {
 	return (_user);
 }
+
+
 
 /*************************************** SETTERS ***************************************/
 

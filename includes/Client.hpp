@@ -6,8 +6,8 @@
 
 class Server;
 
-const int MIN_NAME_SIZE = 1; // A MODIFIER
-const int MAX_NAME_SIZE = 15;
+const int MIN_NAME_SIZE = 1;
+const int MAX_NAME_SIZE = 9;
 
 class Client {
 
@@ -22,9 +22,10 @@ class Client {
 		bool isIrssi; //////
 
 		// Getters
-		struct sockaddr_in&	getClientAddr();
-		int					getClientSocket() const;
-		User&				getUser();
+		const struct sockaddr_in&	getClientAddr() const;
+		int							getClientSocket() const;
+		const User&					getUser() const;
+		User&						getUser();
 
 		// Setters
 		void				setClientSocket(int socket);

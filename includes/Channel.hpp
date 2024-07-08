@@ -3,8 +3,8 @@
 
 # include "./Server.hpp"
 
-const int MIN_NAME_CHANNEL_SIZE = 3; // A MODIFIER
-const int MAX_NAME_CHANNEL_SIZE = 15;
+const int MIN_NAME_CHANNEL_SIZE = 1;
+const int MAX_NAME_CHANNEL_SIZE = 32;
 
 class Channel {
 	private:

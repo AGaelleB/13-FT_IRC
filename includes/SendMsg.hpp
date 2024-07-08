@@ -13,7 +13,7 @@
 // nickname
 # define MSG_NICKNAME BOLD "Enter your nickname: " RESET
 # define ERROR_NICKNAME RED "Error: Your nickname must be less than 15 characters and contain only alphanumeric characters\n" RESET
-# define ERROR_NICKNAME_LENGHT RED "Error: nickname must contain between 3 and 15 characters\n" RESET
+# define ERROR_NICKNAME_LENGHT RED "Error: nickname must contain between 1 and 9 characters\n" RESET
 # define ERROR_NEW_NICKNAME RED "Error: must be: /nick [new_nickname]\n" RESET
 # define ERROR_NICKNAME_NOT_AVAILABLE RED "Error: Nickname already taken. Please choose another one\n" RESET
 
@@ -31,7 +31,7 @@
 # define ERROR_MSG_TOO_LONG RED "Error: Message is too long, must be less than 150 characters\n" RESET
 # define ERROR_MSG_CLIENT_TOO_LONG RED "Error: Command is too long\n" RESET
 # define ERROR_CMD_CHANNEL RED "Error: Must be: /channel OR /join <channelName>\n" RESET
-# define ERROR_CHANNELNAME RED "Error: Your channelName must be between 3 and 15 characters and contain only alphanumeric characters\n" RESET
+# define ERROR_CHANNELNAME RED "Error: Your channelName must be between 1 and 32 characters and contain only alphanumeric characters\n" RESET
 # define ERROR_CHANNEL_ALREADY_EXIST RED "ERROR: Channel already exists\n" RESET
 # define ERROR_CHANNEL_FAILED_CREATE RED "ERROR: Failed to create the channel\n" RESET
 # define ERROR_CHANNEL_NOT_FOUND RED "ERROR: Channel not found\n" RESET
