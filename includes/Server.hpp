@@ -63,7 +63,7 @@ class Server {
 		//AllCommands.cpp
 		CommandType	getCommandType(const std::string& command);
 		void		parseClientMsg(const std::string& message, Client& client);
-		void		checkUnknownCmd(Client& client, std::vector<std::string> tokens);
+		void		checkUnknownCmd(Client& client, const std::vector<std::string>& tokens);
 
 		// channel.cpp
 		bool		checkChannelName(const std::string& channelName);

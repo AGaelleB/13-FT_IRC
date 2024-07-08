@@ -103,29 +103,35 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 	}
 }
 
-void Server::checkUnknownCmd(Client& client, std::vector<std::string> tokens) {
-	//verif taille tokens
-    if (tokens.size() < 1) {
-        client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
-        return;
-    }
+void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tokens) {
+	if (tokens.empty()) {
+		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
+		return;
+	}
 
-	if (tokens[0] == "/") {
+	// Vérifier si la première commande commence par '/'
+	if (tokens[0][0] == '/') {
 		client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
 		return;
 	}
-	// if (ChannelMsg(client)) {
-		ChannelMsg(client);
-	// }
-		//ajouter /PRIVMSG un # et chanel name
-	
-	// else {
-	// 	client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
-	// 	return;
-	// }
 
+	// Reconstituer le message complet
+	std::string message = tokens[0];
+	for (size_t i = 1; i < tokens.size(); ++i) {
+		message += " " + tokens[i];
+	}
 
+	// Check if the client is part of a channel and send the message
+	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+		Channel& channel = it->second;
+		if (channel.isMember(client.getClientSocket())) {
+			std::string fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PRIVMSG " + it->first + " :" + message + "\r\n";
+			broadcastMessageToChannel(it->first, fullMessage, -1);
+			break;
+		}
+	}
 }
+
 
 
 // /connect localhost 6667 1
