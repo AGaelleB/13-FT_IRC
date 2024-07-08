@@ -95,11 +95,37 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case UNKNOWN:
 		default:
-			client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+			// si la commande ne commence pas par un slash 
+			// et que lutilisateur est present dans un channel le message senvoie dans le dernier chanel rejoint
+			checkUnknownCmd(client, tokens);
+			// client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
 			break;
 	}
 }
 
+void Server::checkUnknownCmd(Client& client, std::vector<std::string> tokens) {
+	//verif taille tokens
+    if (tokens.size() < 1) {
+        client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
+        return;
+    }
+
+	if (tokens[0] == "/") {
+		client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+		return;
+	}
+	// if (ChannelMsg(client)) {
+		ChannelMsg(client);
+	// }
+		//ajouter /PRIVMSG un # et chanel name
+	
+	// else {
+	// 	client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+	// 	return;
+	// }
+
+
+}
 
 
 // /connect localhost 6667 1
