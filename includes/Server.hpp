@@ -80,15 +80,21 @@ class Server {
 
 		//leave.cpp
 		void		leaveAllChannels(Client& client);
+		// void		leaveChannel(Client& client, std::vector<std::string> tokens);
+
+		void		leaveChannelIRSSI(Client& client, std::vector<std::string> tokens);
+		void		leaveChannelNC(Client& client, std::vector<std::string> tokens);
+		void		leaveChannelCommon(Client& client, const std::string& channelName, const std::string& reason);
 		void		leaveChannel(Client& client, std::vector<std::string> tokens);
+		std::string	joinTokens(const std::vector<std::string>& tokens, size_t startIndex);
+
 
 		//list.cpp
 		void		listCmdClient(std::vector<std::string> tokens, Client& client);
 		void		UserList(Client& client);
 		void		channelList(Client& client);
 		void		channelListMembers(int clientSocket, const std::string& channelName, Client& client);
-		// std::string	PrintChannelListMembers(const std::string& channelName);
-		std::string PrintChannelListMembers(const std::string& channelName, const std::map<std::string, Channel>& channels);
+		std::string	PrintChannelListMembers(const std::string& channelName, const std::map<std::string, Channel>& channels);
 
 
 		//nick.cpp

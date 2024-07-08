@@ -80,7 +80,7 @@ bool Server::checkChannelName(const std::string& channelName) {
 
 void Server::createChannel(Client& client, std::string channelName) {
 	
-	std::cout << YELLOW << "START createChannel" << RESET << std::endl; 
+	// std::cout << YELLOW << "START createChannel" << RESET << std::endl; 
 
 	if (!checkChannelName(channelName)) {
 		// std::cout << YELLOW << "createChannel ERROR_CHANNELNAME" << RESET << std::endl; 
@@ -136,6 +136,9 @@ void Server::joinChannel(Client& client, const std::vector<std::string>& tokens)
 
     // Si le client est irssi, envoyer les RPL appropriés
     if (client.isIrssi) {
+		// std::cout << YELLOW << "client.isIrssi =" << client.isIrssi << RESET << std::endl;
+		// std::cout << YELLOW << "IN THE IF client.isIrssi" << RESET << std::endl;
+	
         std::string membersList = PrintChannelListMembers(channelName, _channels);
         std::string RPL_MsgNames = RPL_NAMREPLY(client.getUser().getNickname(), channelName, membersList);
         client.sendClientMsg(client.getClientSocket(), RPL_MsgNames.c_str());
@@ -153,7 +156,7 @@ void Server::joinChannel(Client& client, const std::vector<std::string>& tokens)
 
 
 
-
+// PARSER LA REASON DU LEAVE
 
 // /connect localhost 6667 1
 

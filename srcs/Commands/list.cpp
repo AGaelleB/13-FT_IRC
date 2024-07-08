@@ -71,9 +71,6 @@ void Server::channelList(Client& client) {
 }
 
 // A REUTILISER POUR L AFFICHAGE DES MEMBRES DE CHANNEL
-
-
-// //J AVAIS CE CODE
 // std::string Server::PrintChannelListMembers(const std::string& channelName) {
 // 	std::string membersList;
 
@@ -91,7 +88,6 @@ void Server::channelList(Client& client) {
 // }
 
 
-// J AI CHANGE AVEC CE CODE ET J AI DES ERREURS DE COMPILATION
 std::string Server::PrintChannelListMembers(const std::string& channelName, const std::map<std::string, Channel>& channels) {
    
     std::map<std::string, Channel>::const_iterator it = channels.find(channelName);

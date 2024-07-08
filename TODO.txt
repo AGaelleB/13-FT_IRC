@@ -4,8 +4,6 @@
 En cours: 
 
 1. Commande privMsg
-    sur le client irssi, on affiche lorsque lon est dans un channel, si un nouveau client arrive sur le channel -> Voir si un RPL doit etre mis en place
-    on veut un truc genre "gaga has joined the channel"
 
     WARNING MSG multiusers
 	un truc bizarre avec les privmsg, en gros si au debut irssi essaie d envoyer un msg a client_nc_1 et client_nc_2 en meme temps :
