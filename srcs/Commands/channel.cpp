@@ -25,6 +25,9 @@ const std::vector<int>&	Channel::getMembers() const {
 	return (_memberSockets);
 }
 
+int Channel::getMembersCount() const {
+        return (_memberSockets.size());
+}
 
 /************************************** FUNCTIONS **************************************/
 

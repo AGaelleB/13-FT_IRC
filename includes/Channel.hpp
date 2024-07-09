@@ -18,9 +18,12 @@ class Channel {
 
 		const std::string&		getName() const;
 		const std::vector<int>&	getMembers() const;
+		int						getMembersCount() const;
 
 		void					addMember(int clientSocket);
 		void					removeMember(int clientSocket);
 		bool					isMember(int clientSocket) const;
+
+
 };
 #endif //CHANNEL_HPP
