@@ -110,7 +110,15 @@ class Server {
 		void		pingCmdClient(std::vector<std::string> tokens, Client& client);
 
 		//privMsg.cpp
+		// void		privMsgCmdClient(Client& client, const std::vector<std::string>& tokens, const std::string& message);
+
+		bool		validateTokens(Client& client, const std::vector<std::string>& tokens);
+		std::string	extractMessageContent(const std::string& message, const std::string& targets);
+		void		sendMessageToChannel(Server& server, Client& client, const std::string& target, const std::string& msgContent);
+		void		sendMessageToUser(Server& server, Client& client, const std::string& target, const std::string& msgContent);
+		void		handleTarget(Server& server, Client& client, const std::string& target, const std::string& msgContent);
 		void		privMsgCmdClient(Client& client, const std::vector<std::string>& tokens, const std::string& message);
+
 
 		//quit.cpp
 		void		quitMsgCmdClient(Client& client, std::vector<std::string> tokens);

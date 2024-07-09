@@ -102,61 +102,57 @@ void Server::createChannel(Client& client, std::string channelName) {
 }
 
 void Server::joinChannel(Client& client, const std::vector<std::string>& tokens) {
-    if (tokens.size() != 2) {
-        client.sendClientMsg(client.getClientSocket(), ERROR_CMD_CHANNEL);
-        return;
-    }
+	if (tokens.size() != 2) {
+		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_CHANNEL);
+		return;
+	}
 
-    std::string channelName = trim(tokens[1]);
+	std::string channelName = trim(tokens[1]);
 
-    // Ajoute un # au début du nom du canal s'il n'y en a pas déjà un
-    if (channelName[0] != '#')
-        channelName = "#" + channelName;
+	// Ajoute un # au début du nom du canal s'il n'y en a pas déjà un
+	if (channelName[0] != '#')
+		channelName = "#" + channelName;
 
-    std::map<std::string, Channel>::iterator it = _channels.find(channelName);
-    if (it == _channels.end()) {
-        createChannel(client, channelName);
+	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
+	if (it == _channels.end()) {
+		createChannel(client, channelName);
 
-        usleep(42); // C'est peut-être une attente délibérée, assurez-vous de sa nécessité
+		usleep(42); // C'est peut-être une attente délibérée, assurez-vous de sa nécessité
 
-        // Recherche à nouveau le canal après la création
-        it = _channels.find(channelName);
-        if (it == _channels.end()) {
-            client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_CREATE);
-            return;
-        }
-    }
+		// Recherche à nouveau le canal après la création
+		it = _channels.find(channelName);
+		if (it == _channels.end()) {
+			client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_CREATE);
+			return;
+		}
+	}
 
-    // Ajoutez le client au canal
-    it->second.addMember(client.getClientSocket());
+	// Ajoutez le client au canal
+	it->second.addMember(client.getClientSocket());
 
-    // Envoyer un message JOIN à tous les membres du canal
-    std::string joinMsg = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname JOIN " + channelName + "\r\n";
-    broadcastMessageToChannel(channelName, joinMsg, -1); // -1 pour envoyer à tous les clients, y compris le client actuel
+	// Envoyer un message JOIN à tous les membres du canal
+	std::string joinMsg = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname JOIN " + channelName + "\r\n";
+	broadcastMessageToChannel(channelName, joinMsg, -1); // -1 pour envoyer à tous les clients, y compris le client actuel
 
-    // Si le client est irssi, envoyer les RPL appropriés
-    if (client.isIrssi) {
-		// std::cout << YELLOW << "client.isIrssi =" << client.isIrssi << RESET << std::endl;
-		// std::cout << YELLOW << "IN THE IF client.isIrssi" << RESET << std::endl;
-	
-        std::string membersList = PrintChannelListMembers(channelName, _channels);
-        std::string RPL_MsgNames = RPL_NAMREPLY(client.getUser().getNickname(), channelName, membersList);
-        client.sendClientMsg(client.getClientSocket(), RPL_MsgNames.c_str());
+	// Si le client est irssi, envoyer les RPL appropriés
+	if (client.isIrssi) {
+		std::string membersList = PrintChannelListMembers(channelName, _channels);
+		std::string RPL_MsgNames = RPL_NAMREPLY(client.getUser().getNickname(), channelName, membersList);
+		client.sendClientMsg(client.getClientSocket(), RPL_MsgNames.c_str());
 
-        std::string RPL_MsgEndOfNames = RPL_ENDOFNAMES(client.getUser().getNickname(), channelName);
-        client.sendClientMsg(client.getClientSocket(), RPL_MsgEndOfNames.c_str());
-    }
+		std::string RPL_MsgEndOfNames = RPL_ENDOFNAMES(client.getUser().getNickname(), channelName);
+		client.sendClientMsg(client.getClientSocket(), RPL_MsgEndOfNames.c_str());
+	}
 
-    // Envoyer des messages de confirmation au client
-    std::stringstream ss;
-    ss << "You are now in the Channel " << channelName << std::endl << std::endl;
-    std::string channelJoinedMsg = ss.str();
-    client.sendClientMsg(client.getClientSocket(), channelJoinedMsg.c_str());
+	// Envoyer des messages de confirmation au client
+	std::stringstream ss;
+	ss << "You are now in the Channel " << channelName << std::endl << std::endl;
+	std::string channelJoinedMsg = ss.str();
+	client.sendClientMsg(client.getClientSocket(), channelJoinedMsg.c_str());
 }
 
 
 
-// PARSER LA REASON DU LEAVE
 
 // /connect localhost 6667 1
 
