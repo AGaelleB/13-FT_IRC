@@ -35,7 +35,7 @@
 # define ERROR_CHANNEL_ALREADY_EXIST RED "ERROR: Channel already exists\n" RESET
 # define ERROR_CHANNEL_FAILED_CREATE RED "ERROR: Failed to create the channel\n" RESET
 # define ERROR_CHANNEL_NOT_FOUND RED "ERROR: Channel not found\n" RESET
-# define ERROR_CMD_LEAVE RED "Error: Must be: /leave OR /part <channelName>\n" RESET
+# define ERROR_CMD_LEAVE RED "Error: Must be: [/leave OR /part] + <channelName>\n" RESET
 # define ERROR_CHANNEL_FAILED_LEAVE RED "ERROR: Failled to leave the channel\n" RESET
 
 // server

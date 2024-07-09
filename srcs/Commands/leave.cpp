@@ -63,10 +63,11 @@ void Server::leaveChannelCommon(Client& client, const std::string& channelName, 
 		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_LEAVE);
 		return;
 	}
+	
 }
 
 void Server::leaveChannel(Client& client, std::vector<std::string> tokens) {
-	if (tokens.size() < 1) {
+	if (tokens.size() <= 1) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_LEAVE);
 		return;
 	}
@@ -86,11 +87,6 @@ std::string Server::joinTokens(const std::vector<std::string>& tokens, size_t st
 	}
 	return (result);
 }
-
-
-
-
-
 
 
 

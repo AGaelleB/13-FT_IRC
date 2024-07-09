@@ -3,37 +3,12 @@
 
 En cours: 
 
-1. Commande privMsg
-
-coucou
-    voir si l ont doit parser le fait de join plusieurs channels en une commande
-    ex: /join channel1,channel2
-
-!!!!!!!!!!! BIG BIG BIG BIG WARNING PENSER A UTILISER LES FUCKING RPL POUR IRSSI SINON CA BUG !!!!!!!!!!!
-
-
-
-
-
-2. Commande leave
-    les RPL on ete mis en place pour le client irssi
-    on arrive a rejoindre des chamnnel et a les quitter 
-    par contre on les quitte en tirroirs, c a d que dernier channel ouvert = 1er channel quitte
-    donc implementer la possibilite de quitter plusieurs channel en meme temps en parsant comme privmsg + implementer la raison du depart
-        /part channel1,channel2 pause repas
-    -> cette commande devra affochier "pause repas" a tous les clients des channels quittes
-
-
-
+mettre en beau les username pour pas avoir !popo@localhost
 
 3. A faire au complet : 
-    commande topic
     commande mode
-    commande leave
+    commande topic
     commande kick
-
-
-
 
 /connect localhost 6667 1
 /join server

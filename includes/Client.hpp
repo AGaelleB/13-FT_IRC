@@ -19,7 +19,7 @@ class Client {
 	public:
 		Client();
 		~Client();
-		bool isIrssi; //////
+		bool isIrssi; 
 
 		// Getters
 		const struct sockaddr_in&	getClientAddr() const;

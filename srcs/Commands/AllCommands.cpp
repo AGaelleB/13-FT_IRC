@@ -109,26 +109,24 @@ void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tok
 		return;
 	}
 
-	// Vérifier si la première commande commence par '/'
 	if (tokens[0][0] == '/') {
 		client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
 		return;
 	}
 
-	// Reconstituer le message complet
 	std::string message = tokens[0];
 	for (size_t i = 1; i < tokens.size(); ++i) {
 		message += " " + tokens[i];
 	}
 
-	// Check if the client is part of a channel and send the message
-	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-		Channel& channel = it->second;
-		if (channel.isMember(client.getClientSocket())) {
-			std::string fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PRIVMSG " + it->first + " :" + message + "\r\n";
-			broadcastMessageToChannel(it->first, fullMessage, -1);
-			break;
-		}
+    // Utilisation d'itérateurs inverses pour parcourir la map de end à begin
+    for (std::map<std::string, Channel>::reverse_iterator rit = _channels.rbegin(); rit != _channels.rend(); ++rit) {
+        Channel& channel = rit->second;
+        if (channel.isMember(client.getClientSocket())) {
+            std::string fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PRIVMSG " + rit->first + " :" + message + "\r\n";
+            broadcastMessageToChannel(rit->first, fullMessage, -1);
+            break;
+        }
 	}
 }
 
