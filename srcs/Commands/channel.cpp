@@ -75,20 +75,21 @@ bool Server::checkChannelName(const std::string& channelName) {
 }
 
 void Server::createChannel(Client& client, std::string channelName) {
-	
-	if (!checkChannelName(channelName)) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNELNAME);
-		return;
-	}
-	Channel channel(channelName);
+    if (!checkChannelName(channelName)) {
+        client.sendClientMsg(client.getClientSocket(), ERROR_CHANNELNAME);
+        return;
+    }
+    Channel channel(channelName);
 
-	std::pair<std::map<std::string, Channel>::iterator, bool> result = _channels.insert(std::make_pair(channelName, channel));
-	if (result.second == false) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_ALREADY_EXIST);
-		return;
-	}
+    std::pair<std::map<std::string, Channel>::iterator, bool> result = _channels.insert(std::make_pair(channelName, channel));
+    if (result.second == false) {
+        client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_ALREADY_EXIST);
+        return;
+    }
 
-	std::cout << BOLD << "Channel: [" << channelName << "] created successfully! ✅" << RESET << std::endl;
+    _channelOrder.push_back(channelName); // Ajouter le nom du channel à la liste dans l'ordre de création
+
+    std::cout << BOLD << "Channel: [" << channelName << "] created successfully! ✅" << RESET << std::endl;
 }
 
 bool Server::validateTokensJoin(Client& client, const std::vector<std::string>& tokens) {

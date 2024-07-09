@@ -58,16 +58,16 @@ void Server::channelListMembers(int clientSocket, const std::string& channelName
 }
 
 void Server::channelList(Client& client) {
-	client.sendClientMsg(client.getClientSocket(), MSG_SEND_CHANNEL);
+    client.sendClientMsg(client.getClientSocket(), MSG_SEND_CHANNEL);
 
-	std::map<std::string, Channel>::iterator it;
-	for (it = _channels.begin(); it != _channels.end(); ++it) {
-		std::string message = "\nChannel: " + it->first;
-		client.sendClientMsg(client.getClientSocket(), message.c_str());
-		channelListMembers(client.getClientSocket(), it->first, client);
-	}
+    // Utiliser _channelOrder pour l'ordre d'affichage des canaux
+    for (std::vector<std::string>::iterator it = _channelOrder.begin(); it != _channelOrder.end(); ++it) {
+        std::string message = "\nChannel: " + *it;
+        client.sendClientMsg(client.getClientSocket(), message.c_str());
+        channelListMembers(client.getClientSocket(), *it, client);
+    }
 
-	client.sendClientMsg(client.getClientSocket(), MSG_END_LIST);
+    client.sendClientMsg(client.getClientSocket(), MSG_END_LIST);
 }
 
 // A REUTILISER POUR L AFFICHAGE DES MEMBRES DE CHANNEL

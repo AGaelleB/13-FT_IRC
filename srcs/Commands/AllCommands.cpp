@@ -103,34 +103,63 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 	}
 }
 
+// void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tokens) {
+// 	if (tokens.empty()) {
+// 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
+// 		return;
+// 	}
+
+// 	if (tokens[0][0] == '/') {
+// 		client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+// 		return;
+// 	}
+
+// 	std::string message = tokens[0];
+// 	for (size_t i = 1; i < tokens.size(); ++i) {
+// 		message += " " + tokens[i];
+// 	}
+
+//     // Utilisation d'itérateurs inverses pour parcourir la map de end à begin
+//     for (std::map<std::string, Channel>::reverse_iterator rit = _channels.rbegin(); rit != _channels.rend(); ++rit) {
+//         Channel& channel = rit->second;
+//         if (channel.isMember(client.getClientSocket())) {
+//             std::string fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PRIVMSG " + rit->first + " :" + message + "\r\n";
+//             broadcastMessageToChannel(rit->first, fullMessage, -1);
+//             break;
+//         }
+// 	}
+// }
+
 void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tokens) {
-	if (tokens.empty()) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
-		return;
-	}
+    if (tokens.empty()) {
+        client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
+        return;
+    }
 
-	if (tokens[0][0] == '/') {
-		client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
-		return;
-	}
+    if (tokens[0][0] == '/') {
+        client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+        return;
+    }
 
-	std::string message = tokens[0];
-	for (size_t i = 1; i < tokens.size(); ++i) {
-		message += " " + tokens[i];
-	}
+    std::string message = tokens[0];
+    for (size_t i = 1; i < tokens.size(); ++i) {
+        message += " " + tokens[i];
+    }
 
-    // Utilisation d'itérateurs inverses pour parcourir la map de end à begin
-    for (std::map<std::string, Channel>::reverse_iterator rit = _channels.rbegin(); rit != _channels.rend(); ++rit) {
-        Channel& channel = rit->second;
-        if (channel.isMember(client.getClientSocket())) {
-            std::string fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PRIVMSG " + rit->first + " :" + message + "\r\n";
-            broadcastMessageToChannel(rit->first, fullMessage, -1);
-            break;
+    // Utilisation d'itérateurs inverses pour parcourir la map de _channelOrder
+    for (std::vector<std::string>::reverse_iterator rit = _channelOrder.rbegin(); rit != _channelOrder.rend(); ++rit) {
+        const std::string& channelName = *rit;
+        std::map<std::string, Channel>::iterator it = _channels.find(channelName);
+        if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
+            std::string fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PRIVMSG " + channelName + " :" + message + "\r\n";
+            broadcastMessageToChannel(channelName, fullMessage, -1);
+            return; // Exit after sending the message to the first channel found
         }
-	}
+    }
+
+    // Si le client n'est dans aucun canal, vous pouvez gérer cela ici
+    client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD); // erreur a modifier ERROR_NOT_IN_CHANNEL
 }
-
-
 
 // /connect localhost 6667 1
 

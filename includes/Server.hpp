@@ -41,7 +41,8 @@ class Server {
 		int								_port;
 		std::string						_irssi_data;
 		static bool						_shutdown_signal;	
-		std::map<std::string, Channel>	_channels; // Liste des canaux
+		std::map<std::string, Channel> _channels; // Accès rapide par nom
+		std::vector<std::string> _channelOrder;   // Maintenir l'ordre de création
 
 	public:
 		Server();
