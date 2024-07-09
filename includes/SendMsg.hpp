@@ -48,6 +48,10 @@
 # define MSG_SEND_CHANNEL BOLD "\n============= LIST OF CHANNELS =============\n\n" RESET
 # define MSG_END_LIST BOLD "\n============================================\n" RESET
 
+# define MSG_JOIN_CHAN BOLD "You are now in the Channel: " RESET
+# define MSG_LEFT_CHAN BOLD "You have left the Channel: " RESET
+# define MSG_ALREADY_CHAN BOLD "You are already in the Channel: " RESET
+
 // irssi
 # define ERROR_ARGS_IRSSI RED "Error: must be /connect <localhost> <port> <password>\n" RESET
 

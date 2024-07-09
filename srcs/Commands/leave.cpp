@@ -44,22 +44,18 @@ void Server::leaveChannelCommon(Client& client, const std::string& channelName, 
 	if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
 		it->second.removeMember(client.getClientSocket());
 
-		// Notify other members about the client leaving
 		std::string leaveMsg = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PART " + channelName + " :" + reason + "\r\n";
 		broadcastMessageToChannel(channelName, leaveMsg, client.getClientSocket());
 
-		// Send the PART message to the client itself
 		client.sendClientMsg(client.getClientSocket(), leaveMsg.c_str());
 
-		// Send the end of names list message to ensure Irssi updates properly
 		if (client.isIrssi) {
 			std::string endOfNamesMsg = RPL_ENDOFNAMES(client.getUser().getNickname(), channelName);
 			client.sendClientMsg(client.getClientSocket(), endOfNamesMsg.c_str());
 		}
 
-		// Send confirmation to the client
 		std::stringstream ss;
-		ss << GREEN << "You have left the channel " << channelName << RESET << std::endl << std::endl;
+		ss << GREEN << MSG_LEFT_CHAN << channelName << RESET << std::endl << std::endl;
 		std::string channelLeavedMsg = ss.str();
 		client.sendClientMsg(client.getClientSocket(), channelLeavedMsg.c_str());
 	}

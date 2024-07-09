@@ -1,9 +1,9 @@
 #include "../../includes/Server.hpp"
 
-bool Server::validateTokens(Client& client, const std::vector<std::string>& tokens) {
+bool Server::validateTokensPrivMsg(Client& client, const std::vector<std::string>& tokens) {
 	if (tokens.size() < 3) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
-		return false;
+		return (false);
 	}
 	return (true);
 }
@@ -63,7 +63,7 @@ void Server::handleTarget(Server& server, Client& client, const std::string& tar
 }
 
 void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& tokens, const std::string& message) {
-	if (!validateTokens(client, tokens))
+	if (!validateTokensPrivMsg(client, tokens))
 		return;
 
 	std::string targets = tokens[1];
