@@ -161,8 +161,3 @@ void Server::joinChannel(Client& client, const std::vector<std::string>& tokens)
 
 // /connect localhost 6667 1
 
-/* WARNING TO DO
-
-	gérer correctement les cas où le même client essaie d'être retiré d'un canal auquel il n'appartient pas.
-	et essayer de rejoindre a nouveau un canal ou il est deja 
- */
