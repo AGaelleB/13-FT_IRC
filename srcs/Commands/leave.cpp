@@ -53,37 +53,51 @@ void Server::leaveChannelNC(Client& client, std::vector<std::string> tokens) {
 	leaveChannelCommon(client, channelName, reason);
 }
 
+void Server::sendPartMessage(Client& client, Channel& channel, const std::string& reason) {
+    std::string nick = client.getUser().getNickname();
+    std::string user = client.getUser().getUsername();
+    std::string toSend;
+
+    for (size_t i = 0; i < channel.getMembers().size(); ++i) {
+        int memberSocket = channel.getMembers()[i];
+        Client& member = _clients[memberSocket];
+        toSend.clear();
+
+        if (member.isIrssi) {
+            toSend = ":" + nick + "!" + user + "@hostname PART " + channel.getName() + " :" + reason + "\r\n";
+        } else {
+            toSend = "\e[0;36m -!- " + nick + " [" + user + "\e[0m@hostname] has left " + channel.getName() + " [" + reason + "]\r\n";
+        }
+
+        send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+    }
+}
+
 void Server::leaveChannelCommon(Client& client, const std::string& channelName, const std::string& reason) {
-	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
-	if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
-		it->second.removeMember(client.getClientSocket());
+    std::map<std::string, Channel>::iterator it = _channels.find(channelName);
+    if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
+        it->second.removeMember(client.getClientSocket());
 
-		std::string leaveMsg = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PART " + channelName + " :" + reason + "\r\n";
-		// std::string leaveMsg = client.getUser().getNickname() + " [" + client.getUser().getUsername() + "@hostname] has left " + channelName + " [" + reason + "]\r\n";		broadcastMessageToChannel(channelName, leaveMsg, client.getClientSocket());
- 		broadcastMessageToChannel(channelName, leaveMsg, -1);
-		client.sendClientMsg(client.getClientSocket(), leaveMsg.c_str());
+        sendPartMessage(client, it->second, reason);
 
-		if (client.isIrssi) {
-			std::string endOfNamesMsg = RPL_ENDOFNAMES(client.getUser().getNickname(), channelName);
-			client.sendClientMsg(client.getClientSocket(), endOfNamesMsg.c_str());
-		}
+        if (client.isIrssi) {
+            std::string endOfNamesMsg = RPL_ENDOFNAMES(client.getUser().getNickname(), channelName);
+            client.sendClientMsg(client.getClientSocket(), endOfNamesMsg.c_str());
+        }
 
-		std::stringstream ss;
-		ss << GREEN << MSG_LEFT_CHAN << channelName << RESET << std::endl << std::endl;
-		std::string channelLeavedMsg = ss.str();
-		client.sendClientMsg(client.getClientSocket(), channelLeavedMsg.c_str());
+        std::stringstream ss;
+        ss << GREEN << MSG_LEFT_CHAN << channelName << RESET << std::endl << std::endl;
+        std::string channelLeavedMsg = ss.str();
+        client.sendClientMsg(client.getClientSocket(), channelLeavedMsg.c_str());
 
-
- 		if (it->second.isMember(client.getClientSocket()) == false && it->second.getMembersCount() == 0) {
+        if (it->second.getMembersCount() == 0) {
             _channels.erase(it);
             _channelOrder.erase(std::remove(_channelOrder.begin(), _channelOrder.end(), channelName), _channelOrder.end());
             std::cout << BOLD << "Channel: [" << channelName << "] destroyed successfully! ❌" << RESET << std::endl;
         }
-	}
-	else {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_LEAVE);
-		return;
-	}
+    } else {
+        client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_LEAVE);
+    }
 }
 
 void Server::leaveChannel(Client& client, std::vector<std::string> tokens) {
@@ -107,8 +121,6 @@ std::string Server::joinTokens(const std::vector<std::string>& tokens, size_t st
 	}
 	return (result);
 }
-
-
 
 /* 
 

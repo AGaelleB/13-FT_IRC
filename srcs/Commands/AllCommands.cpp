@@ -118,7 +118,7 @@ void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tok
     for (size_t i = 1; i < tokens.size(); ++i) {
         message += " " + tokens[i];
     }
-
+	
     std::vector<std::string>::reverse_iterator rit;
     for (rit = _channelOrder.rbegin(); rit != _channelOrder.rend(); ++rit) {
         const std::string& channelName = *rit;
@@ -132,6 +132,7 @@ void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tok
     }
     client.sendClientMsg(client.getClientSocket(), ERROR_NOT_IN_CHANNEL);
 }
+
 
 
 // /connect localhost 6667 1

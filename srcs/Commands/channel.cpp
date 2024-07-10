@@ -104,14 +104,12 @@ bool Server::validateTokensJoin(Client& client, const std::vector<std::string>& 
 }
 
 void Server::handleChannel(Client& client, std::string& channelName) {
-
 	if (channelName[0] != '#')
 		channelName = "#" + channelName;
 
 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
 	if (it == _channels.end()) {
 		createChannel(client, channelName);
-
 		usleep(42);
 
 		it = _channels.find(channelName);
@@ -123,25 +121,7 @@ void Server::handleChannel(Client& client, std::string& channelName) {
 
 	if (!it->second.isMember(client.getClientSocket())) {
 		it->second.addMember(client.getClientSocket());
-
-		std::string joinMsg = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname JOIN " + channelName + "\r\n";
-		// std::string joinMsg = client.getUser().getNickname() + " [" + client.getUser().getUsername() + "@hostname] has joined " + channelName + "\r\n";
-		
-		broadcastMessageToChannel(channelName, joinMsg, -1);
-		
-		if (client.isIrssi) {
-			std::string membersList = PrintChannelListMembers(channelName, _channels);
-			std::string RPL_MsgNames = RPL_NAMREPLY(client.getUser().getNickname(), channelName, membersList);
-			client.sendClientMsg(client.getClientSocket(), RPL_MsgNames.c_str());
-
-			std::string RPL_MsgEndOfNames = RPL_ENDOFNAMES(client.getUser().getNickname(), channelName);
-			client.sendClientMsg(client.getClientSocket(), RPL_MsgEndOfNames.c_str());
-		}
-
-        std::stringstream ss;
-        ss << MSG_JOIN_CHAN << channelName << std::endl << std::endl;
-        std::string channelJoinedMsg = ss.str();
-        client.sendClientMsg(client.getClientSocket(), channelJoinedMsg.c_str());
+		sendChannelJoinInfo(it->second, channelName, client);
 	}
 	else {
         std::stringstream ss;
@@ -150,6 +130,57 @@ void Server::handleChannel(Client& client, std::string& channelName) {
         client.sendClientMsg(client.getClientSocket(), channelMsg.c_str());
 	}
 }
+
+void Server::sendChannelJoinInfo(Channel& channel, const std::string& channelName, Client& client) {
+	std::string nick = client.getUser().getNickname();
+	std::string username = client.getUser().getUsername();
+	std::string listOfMembers = PrintChannelListMembers(channelName, _channels);
+	std::string toSend;
+
+	for (size_t i = 0; i < channel.getMembers().size(); ++i) {
+		int memberSocket = channel.getMembers()[i];
+		Client& member = _clients[memberSocket];
+		toSend.clear();
+
+		if (member.isIrssi) {
+			toSend = ":" + nick + "!" + username + "@hostname JOIN " + channelName + "\r\n";
+			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+
+			toSend = ":" + nick + "!" + username + "@hostname PRIVMSG " + channelName + " :" + listOfMembers + "\r\n";
+			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+
+			// if (!channel.getTopic().empty()) {
+			// 	toSend = RPL_TOPIC(nick, channelName, channel.getTopic());
+			// 	send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+			// } else {
+			// 	toSend = RPL_NOTOPIC(nick, channelName);
+			// 	send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+			// }
+		}
+		else {
+			toSend = "\e[0;36m -!- " + nick + " [" + username + "\e[0m@hostname] has joined " + channelName + "\r\n";
+			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+
+			toSend = "\e[0;36m -!- [users list] " + listOfMembers + "\e[0m\r\n"; // list of user
+			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+
+			// if (!channel.getTopic().empty()) {
+			// 	toSend = "[topic : " + channel.getTopic() + "]\r\n";
+			// 	send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+			// } else {
+			// 	toSend = "[no topic set]\r\n";
+			// 	send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+			// }
+		}
+	}
+
+	std::stringstream ss;
+	ss << MSG_JOIN_CHAN << channelName << std::endl << std::endl;
+	std::string channelJoinedMsg = ss.str();
+	client.sendClientMsg(client.getClientSocket(), channelJoinedMsg.c_str());
+}
+
+
 
 void Server::joinChannel(Client& client, const std::vector<std::string>& tokens) {
 	if (!validateTokensJoin(client, tokens))

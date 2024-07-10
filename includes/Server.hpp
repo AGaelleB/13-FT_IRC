@@ -66,12 +66,19 @@ class Server {
 		void		parseClientMsg(const std::string& message, Client& client);
 		void		checkUnknownCmd(Client& client, const std::vector<std::string>& tokens);
 
+		//test
+		void formatAndBroadcastMessage(Client& client, const std::string& channelName, const std::string& message);
+
+
 		// channel.cpp
 		bool		checkChannelName(const std::string& channelName);
 		void		createChannel(Client& client, std::string channelName);
 		bool		validateTokensJoin(Client& client, const std::vector<std::string>& tokens);
 		void		handleChannel(Client& client, std::string& channelName);
 		void		joinChannel(Client& client, const std::vector<std::string>& tokens);
+
+		//test
+		void		sendChannelJoinInfo(Channel& channel, const std::string& channelName, Client& client);
 		
 		// channelMsg.cpp
 		void		broadcastMessageToChannel(const std::string& channelName, const std::string& message, int excludeSocket);
@@ -84,6 +91,10 @@ class Server {
 		//leave.cpp
 		void		leaveAllChannels(Client& client);
 		// void		leaveChannel(Client& client, std::vector<std::string> tokens);
+
+		// test
+		void		sendPartMessage(Client& client, Channel& channel, const std::string& reason);
+
 
 		void		leaveChannelIRSSI(Client& client, std::vector<std::string> tokens);
 		void		leaveChannelNC(Client& client, std::vector<std::string> tokens);
