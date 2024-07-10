@@ -11,3 +11,25 @@ ex:
 /join a,b,c
 /part b
     => ca fonctionne alors que irssi ne fait partir que du "c"
+
+
+
+petit warning, probleme de commande si tu commences a taper une commande et qu un autre utilisateur fait une action en meme temps sur un autre terminal. 
+exemple : rejoindre, quitter ou ecrire un message
+ca fait un melanges des message et du coup des unknown command
+
+
+
+warning, client 1 cree a,b,c et client 2 rejoin q,e,c => le client 2 se retoruvera dans le channel e, car c etait deja existant 
+<Gaga>: JOIN #a,#b,#c:
+Channel command received
+Channel: [#a] created successfully! ✅
+Channel: [#b] created successfully! ✅
+Channel: [#c] created successfully! ✅
+
+<Gaga>: MODE #a:
+
+<po>: /join q,e,c:
+Channel command received
+Channel: [#q] created successfully! ✅
+Channel: [#e] created successfully! ✅

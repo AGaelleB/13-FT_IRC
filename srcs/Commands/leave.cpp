@@ -1,35 +1,32 @@
 #include "../../includes/Server.hpp"
 
 void Server::leaveAllChannels(Client& client) {
-	std::cout << YELLOW << "leaveAllChannels START" << RESET << std::endl;
 
-	int clientSocket = client.getClientSocket();
-	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-		Channel& channel = it->second;
-		if (channel.isMember(clientSocket)) {
-			channel.removeMember(clientSocket);
-			std::string leaveMsg = BOLD "<" + client.getUser().getNickname() + "> has left the channel " + it->first + "\n" RESET;
-			broadcastMessageToChannel(it->first, leaveMsg, clientSocket);
+    // std::cout << YELLOW << "leaveAllChannels START" << RESET << std::endl;
 
- 		// if (it->second.isMember(client.getClientSocket()) == false && it->second.getMembersCount() == 0) {
-        //     _channels.erase(it);
-        //     _channelOrder.erase(std::remove(_channelOrder.begin(), _channelOrder.end(), it->first), _channelOrder.end());
-        //     std::cout << BOLD << "Channel: [" << it->first << "] destroyed successfully! ❌" << RESET << std::endl;
-        // }
+    int clientSocket = client.getClientSocket();
 
-		}
-	}
+    std::vector<std::string> channelsToRemove;
+
+    for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+        Channel& channel = it->second;
+
+        if (channel.isMember(clientSocket)) {
+            channel.removeMember(clientSocket);
+            std::string leaveMsg = BOLD "<" + client.getUser().getNickname() + "> has left the channel " + it->first + "\n" RESET;
+            broadcastMessageToChannel(it->first, leaveMsg, clientSocket);
+
+            if (channel.getMembersCount() == 0)
+                channelsToRemove.push_back(it->first);
+        }
+    }
+
+    for (std::vector<std::string>::iterator it = channelsToRemove.begin(); it != channelsToRemove.end(); ++it) {
+        _channels.erase(*it);
+        _channelOrder.erase(std::remove(_channelOrder.begin(), _channelOrder.end(), *it), _channelOrder.end());
+        std::cout << BOLD << "Channel: [" << *it << "] destroyed successfully! ❌" << RESET << std::endl;
+    }
 }
-
-
-/* 
-
-	MORNONG TO DO LIST
-
-	Faire surpprimer les channels s ils sont vides dans leaveAllChannels
-
-
- */
 
 void Server::leaveChannelIRSSI(Client& client, std::vector<std::string> tokens) {
 	std::string reason = "Left the channel";
@@ -82,8 +79,6 @@ void Server::leaveChannelCommon(Client& client, const std::string& channelName, 
             _channelOrder.erase(std::remove(_channelOrder.begin(), _channelOrder.end(), channelName), _channelOrder.end());
             std::cout << BOLD << "Channel: [" << channelName << "] destroyed successfully! ❌" << RESET << std::endl;
         }
-
-
 	}
 	else {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_LEAVE);
