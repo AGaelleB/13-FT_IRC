@@ -59,8 +59,8 @@ void Server::leaveChannelCommon(Client& client, const std::string& channelName, 
 		it->second.removeMember(client.getClientSocket());
 
 		std::string leaveMsg = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PART " + channelName + " :" + reason + "\r\n";
-		broadcastMessageToChannel(channelName, leaveMsg, client.getClientSocket());
-
+		// std::string leaveMsg = client.getUser().getNickname() + " [" + client.getUser().getUsername() + "@hostname] has left " + channelName + " [" + reason + "]\r\n";		broadcastMessageToChannel(channelName, leaveMsg, client.getClientSocket());
+ 		broadcastMessageToChannel(channelName, leaveMsg, -1);
 		client.sendClientMsg(client.getClientSocket(), leaveMsg.c_str());
 
 		if (client.isIrssi) {

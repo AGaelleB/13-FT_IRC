@@ -119,27 +119,19 @@ void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tok
         message += " " + tokens[i];
     }
 
-    // Utilisation d'itérateurs inverses pour parcourir la map de _channelOrder
-    for (std::vector<std::string>::reverse_iterator rit = _channelOrder.rbegin(); rit != _channelOrder.rend(); ++rit) {
+    std::vector<std::string>::reverse_iterator rit;
+    for (rit = _channelOrder.rbegin(); rit != _channelOrder.rend(); ++rit) {
         const std::string& channelName = *rit;
         std::map<std::string, Channel>::iterator it = _channels.find(channelName);
         if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
-            std::string fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PRIVMSG " + channelName + " :" + message + "\r\n";
+			std::string fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PRIVMSG " + channelName + " :" + message + "\r\n";
+		    // std::string fullMessage = "[" + channelName + "] " + "< " + client.getUser().getNickname() + "> " + message + "\r\n";
             broadcastMessageToChannel(channelName, fullMessage, -1);
-            return; // Exit after sending the message to the first channel found
+            return;
         }
     }
-
-    // Si le client n'est dans aucun canal, vous pouvez gérer cela ici
-    client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD); // erreur a modifier ERROR_NOT_IN_CHANNEL
+    client.sendClientMsg(client.getClientSocket(), ERROR_NOT_IN_CHANNEL);
 }
 
+
 // /connect localhost 6667 1
-
-
-/* TO DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-
-	gerer la 1er cmd gaelle msg: MODE gaelle +i pour pqs auelle ne soit  Unknown command ❌
-		=> sera gerer lors du code de la cmd MODE 
-
-*/

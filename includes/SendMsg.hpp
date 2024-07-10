@@ -37,6 +37,7 @@
 # define ERROR_CHANNEL_NOT_FOUND RED "ERROR: Channel not found\n" RESET
 # define ERROR_CMD_LEAVE RED "Error: Must be: [/leave OR /part] + <channelName>\n" RESET
 # define ERROR_CHANNEL_FAILED_LEAVE RED "ERROR: Failled to leave the channel\n" RESET
+# define ERROR_NOT_IN_CHANNEL RED "ERROR: Failled to send message, the client must join a channel\n" RESET
 
 // server
 # define MSG_WELCOME BLUE "\n ~~~    Welcome on our IRC Server!   ~~~ \n" RESET

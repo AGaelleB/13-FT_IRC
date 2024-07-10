@@ -125,6 +125,8 @@ void Server::handleChannel(Client& client, std::string& channelName) {
 		it->second.addMember(client.getClientSocket());
 
 		std::string joinMsg = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname JOIN " + channelName + "\r\n";
+		// std::string joinMsg = client.getUser().getNickname() + " [" + client.getUser().getUsername() + "@hostname] has joined " + channelName + "\r\n";
+		
 		broadcastMessageToChannel(channelName, joinMsg, -1);
 		
 		if (client.isIrssi) {
