@@ -58,16 +58,16 @@ void Server::channelListMembers(int clientSocket, const std::string& channelName
 }
 
 void Server::channelList(Client& client) {
-    client.sendClientMsg(client.getClientSocket(), MSG_SEND_CHANNEL);
+	client.sendClientMsg(client.getClientSocket(), MSG_SEND_CHANNEL);
 
-    // Utiliser _channelOrder pour l'ordre d'affichage des canaux
-    for (std::vector<std::string>::iterator it = _channelOrder.begin(); it != _channelOrder.end(); ++it) {
-        std::string message = "\nChannel: " + *it;
-        client.sendClientMsg(client.getClientSocket(), message.c_str());
-        channelListMembers(client.getClientSocket(), *it, client);
-    }
+	// Utiliser _channelOrder pour l'ordre d'affichage des canaux
+	for (std::vector<std::string>::iterator it = _channelOrder.begin(); it != _channelOrder.end(); ++it) {
+		std::string message = "\nChannel: " + *it;
+		client.sendClientMsg(client.getClientSocket(), message.c_str());
+		channelListMembers(client.getClientSocket(), *it, client);
+	}
 
-    client.sendClientMsg(client.getClientSocket(), MSG_END_LIST);
+	client.sendClientMsg(client.getClientSocket(), MSG_END_LIST);
 }
 
 // A REUTILISER POUR L AFFICHAGE DES MEMBRES DE CHANNEL
@@ -90,25 +90,28 @@ void Server::channelList(Client& client) {
 
 std::string Server::PrintChannelListMembers(const std::string& channelName, const std::map<std::string, Channel>& channels) {
    
-    std::map<std::string, Channel>::const_iterator it = channels.find(channelName);
-    if (it == channels.end()) {
-        return "";
-    }
+	std::map<std::string, Channel>::const_iterator it = channels.find(channelName);
+	if (it == channels.end()) {
+		return "";
+	}
 
-    const std::vector<int>& members = it->second.getMembers();
-    std::string membersList;
+	const std::vector<int>& members = it->second.getMembers();
+	std::string membersList;
 
-    for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
-        std::map<int, Client>::const_iterator clientIt = _clients.find(*memberIt);
-        if (clientIt != _clients.end()) {
-            membersList += clientIt->second.getUser().getNickname() + " ";
-        }
-    }
+	for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
+		std::map<int, Client>::const_iterator clientIt = _clients.find(*memberIt);
+		if (clientIt != _clients.end()) {
+			membersList += clientIt->second.getUser().getNickname() + " ";
+		}
+	}
 
-    // Supprimer le dernier espace
-    if (!membersList.empty()) {
-        membersList.erase(membersList.size() - 1);
-    }
-
-    return membersList;
+	// Supprimer le dernier espace
+	if (!membersList.empty()) {
+		membersList.erase(membersList.size() - 1);
+	}
+	membersList = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "-" + std::string(RESET) + " [" + std::string(CYAN_IRSSI) + "users list" + std::string(RESET) + "] " + std::string(CYAN_IRSSI) + membersList + std::string(RESET) + "\r\n";
+	return (membersList);
 }
+
+// /connect localhost 6667 1
+

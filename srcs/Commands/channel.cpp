@@ -158,16 +158,20 @@ void Server::sendChannelJoinInfo(Channel& channel, const std::string& channelNam
 			// }
 		} 
 		else {
-			toSend = "\e[0;36m -!- " + nick + " [" + username + "\e[0m@localhost] has joined " + channelName + "\r\n";
+			// toSend = nick + " [" + username + "\e[0m@localhost] has joined " + channelName + std::string(RESET) + "\r\n";
+			toSend = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + std::string(CYAN_IRSSI) + nick + std::string(RESET) + " [" + std::string(CYAN_IRSSI) + username + "@localhost" + std::string(RESET) + "]" + " has joined " + std::string(BOLD) + channelName + std::string(RESET) + "\r\n";
+			
+			
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 
-			toSend = "\e[0;36m -!- [users list] " + listOfMembers + "\e[0m\r\n";
+			toSend = listOfMembers;
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 
 			// if (!channel.getTopic().empty()) {
 			// 	toSend = "[topic : " + channel.getTopic() + "]\r\n";
 			// 	send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
-			// } else {
+			// }
+			// else {
 				toSend = "[no topic set]\r\n";
 				send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 			// }
@@ -179,8 +183,6 @@ void Server::sendChannelJoinInfo(Channel& channel, const std::string& channelNam
 	std::string channelJoinedMsg = ss.str();
 	client.sendClientMsg(client.getClientSocket(), channelJoinedMsg.c_str());
 }
-
-
 
 void Server::joinChannel(Client& client, const std::vector<std::string>& tokens) {
 	if (!validateTokensJoin(client, tokens))
