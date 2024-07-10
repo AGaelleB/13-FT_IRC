@@ -20,20 +20,34 @@ std::string Server::extractMessageContent(const std::string& message, const std:
 	return (msgContent);
 }
 
-void Server::sendMessageToChannel(Server& server, Client& client, const std::string& target, const std::string& msgContent) {
-	std::map<std::string, Channel>::iterator it = server._channels.find(target);
-	if (it == server._channels.end()) {
-		client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: Channel " + target + " not found\n" + RESET).c_str());
-		return;
-	}
+void Server::sendMessageToChannel(Server& server, Client& client, const std::string& channelName, const std::string& msgContent) {
+    std::map<std::string, Channel>::iterator it = server._channels.find(channelName);
+    if (it == server._channels.end()) {
+        client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: Channel " + channelName + " not found\n" + RESET).c_str());
+        return;
+    }
 
-	if (!it->second.isMember(client.getClientSocket())) {
-		client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: You are not a member of the channel " + target + "\n" + RESET).c_str());
-		return;
-	}
+    if (!it->second.isMember(client.getClientSocket())) {
+        client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: You are not a member of the channel " + channelName + "\n" + RESET).c_str());
+        return;
+    }
 
-	std::string fullMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + target + " :" + msgContent + "\r\n";
-	server.broadcastMessageToChannel(target, fullMessage, client.getClientSocket());
+    Channel& channel = it->second;
+    const std::vector<int>& members = channel.getMembers();
+    for (size_t i = 0; i < members.size(); ++i) {
+        int memberSocket = members[i];
+        Client& memberClient = server._clients[memberSocket];
+
+        std::string fullMessage;
+        if (memberClient.isIrssi && client.getClientSocket() != memberClient.getClientSocket())
+            fullMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + channelName + " :" + msgContent + "\r\n";
+		else if (client.getClientSocket() == memberClient.getClientSocket())
+			fullMessage = "[" + channelName + "] < " + std::string(BOLD) + client.getUser().getNickname() + std::string(RESET) + "> " + msgContent + "\r\n";
+        else
+            fullMessage = "[" + channelName + "] < " + client.getUser().getNickname() + "> " + msgContent + "\r\n";
+		
+        ::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
+    }
 }
 
 void Server::sendMessageToUser(Server& server, Client& client, const std::string& target, const std::string& msgContent) {
@@ -49,8 +63,16 @@ void Server::sendMessageToUser(Server& server, Client& client, const std::string
 		return;
 	}
 
-	std::string fullMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + target + " :" + msgContent + "\r\n";
+	Client& recipientClient = server._clients[recipientSocket];
+
+	std::string fullMessage;
+	if (recipientClient.isIrssi)
+		fullMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + target + " :" + msgContent + "\r\n";
+	else
+		fullMessage = "< " + client.getUser().getNickname() + "> " + msgContent + "\r\n";
+
 	client.sendClientMsg(recipientSocket, fullMessage.c_str());
+
 	std::string logMessage = std::string(BOLD) + "<" + client.getUser().getNickname() + ">:" + std::string(RESET) + " PRIVMSG " + target + ":" + msgContent;
 	std::cout << logMessage << std::endl;
 }

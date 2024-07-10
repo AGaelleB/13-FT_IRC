@@ -26,7 +26,7 @@ const std::vector<int>&	Channel::getMembers() const {
 }
 
 int Channel::getMembersCount() const {
-        return (_memberSockets.size());
+		return (_memberSockets.size());
 }
 
 /************************************** FUNCTIONS **************************************/
@@ -78,21 +78,21 @@ bool Server::checkChannelName(const std::string& channelName) {
 }
 
 void Server::createChannel(Client& client, std::string channelName) {
-    if (!checkChannelName(channelName)) {
-        client.sendClientMsg(client.getClientSocket(), ERROR_CHANNELNAME);
-        return;
-    }
-    Channel channel(channelName);
+	if (!checkChannelName(channelName)) {
+		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNELNAME);
+		return;
+	}
+	Channel channel(channelName);
 
-    std::pair<std::map<std::string, Channel>::iterator, bool> result = _channels.insert(std::make_pair(channelName, channel));
-    if (result.second == false) {
-        client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_ALREADY_EXIST);
-        return;
-    }
+	std::pair<std::map<std::string, Channel>::iterator, bool> result = _channels.insert(std::make_pair(channelName, channel));
+	if (result.second == false) {
+		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_ALREADY_EXIST);
+		return;
+	}
 
-    _channelOrder.push_back(channelName); // Ajouter le nom du channel à la liste dans l'ordre de création
+	_channelOrder.push_back(channelName); // Ajouter le nom du channel à la liste dans l'ordre de création
 
-    std::cout << BOLD << "Channel: [" << channelName << "] created successfully! ✅" << RESET << std::endl;
+	std::cout << BOLD << "Channel: [" << channelName << "] created successfully! ✅" << RESET << std::endl;
 }
 
 bool Server::validateTokensJoin(Client& client, const std::vector<std::string>& tokens) {
@@ -124,10 +124,10 @@ void Server::handleChannel(Client& client, std::string& channelName) {
 		sendChannelJoinInfo(it->second, channelName, client);
 	}
 	else {
-        std::stringstream ss;
-        ss << MSG_ALREADY_CHAN << channelName << std::endl << std::endl;
-        std::string channelMsg = ss.str();
-        client.sendClientMsg(client.getClientSocket(), channelMsg.c_str());
+		std::stringstream ss;
+		ss << MSG_ALREADY_CHAN << channelName << std::endl << std::endl;
+		std::string channelMsg = ss.str();
+		client.sendClientMsg(client.getClientSocket(), channelMsg.c_str());
 	}
 }
 
@@ -142,34 +142,34 @@ void Server::sendChannelJoinInfo(Channel& channel, const std::string& channelNam
 		Client& member = _clients[memberSocket];
 		toSend.clear();
 
-		if (member.isIrssi) {
-			toSend = ":" + nick + "!" + username + "@hostname JOIN " + channelName + "\r\n";
+ 		if (member.isIrssi) {
+			toSend = RPL_JOIN(user_id(nick, username), channelName);
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
-
-			toSend = ":" + nick + "!" + username + "@hostname PRIVMSG " + channelName + " :" + listOfMembers + "\r\n";
+			toSend = RPL_PRIVMSG(nick, username, channel.getName(), listOfMembers);
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
-
-			// if (!channel.getTopic().empty()) {
-			// 	toSend = RPL_TOPIC(nick, channelName, channel.getTopic());
-			// 	send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
-			// } else {
-			// 	toSend = RPL_NOTOPIC(nick, channelName);
-			// 	send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+			
+			// if (!channel.getDescription().empty()) {
+			//     toSend = RPL_TOPIC(nick, channelName, channel.getDescription());
+			//     send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 			// }
-		}
+			// else {
+			    toSend = RPL_NOTOPIC(nick, channelName);
+			    send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+			// }
+		} 
 		else {
-			toSend = "\e[0;36m -!- " + nick + " [" + username + "\e[0m@hostname] has joined " + channelName + "\r\n";
+			toSend = "\e[0;36m -!- " + nick + " [" + username + "\e[0m@localhost] has joined " + channelName + "\r\n";
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 
-			toSend = "\e[0;36m -!- [users list] " + listOfMembers + "\e[0m\r\n"; // list of user
+			toSend = "\e[0;36m -!- [users list] " + listOfMembers + "\e[0m\r\n";
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 
 			// if (!channel.getTopic().empty()) {
 			// 	toSend = "[topic : " + channel.getTopic() + "]\r\n";
 			// 	send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 			// } else {
-			// 	toSend = "[no topic set]\r\n";
-			// 	send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+				toSend = "[no topic set]\r\n";
+				send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 			// }
 		}
 	}

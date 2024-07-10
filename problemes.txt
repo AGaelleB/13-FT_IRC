@@ -33,3 +33,9 @@ Channel: [#c] created successfully! ✅
 Channel command received
 Channel: [#q] created successfully! ✅
 Channel: [#e] created successfully! ✅
+
+
+
+
+
+litlle truc a faire si on a le courrage, => afficher leur des messages lors des envois 

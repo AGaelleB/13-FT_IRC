@@ -137,7 +137,7 @@ std::string RPL_PONG(const std::string &client, const std::string &token) {
 // }
 
 std::string RPL_PART(const std::string &nickname, const std::string &username, const std::string &channel, const std::string &reason) {
-    return ":" + nickname + "!" + username + "@hostname PART " + channel + " :" + reason + "\r\n";
+    return ":" + nickname + "!" + username + "@localhost PART " + channel + " :" + reason + "\r\n";
 }
 
 std::string RPL_IRSSI_REFRESH(const std::string &client, const std::string &channel) {

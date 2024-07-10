@@ -50,7 +50,6 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 	// Print le message reconstitué avec ':' collé au message proprement dit
 	std::cout << BOLD << "\n<" << client.getUser().getNickname() << ">: " << RESET << reconstructedMessage << std::endl;
 
-	// Traitement des commandes après l'initialisation
 	CommandType commandType = getCommandType(command);
 	switch (commandType) {
 		case HELP:
@@ -98,57 +97,53 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			// si la commande ne commence pas par un slash 
 			// et que lutilisateur est present dans un channel le message senvoie dans le dernier chanel rejoint
 			checkUnknownCmd(client, tokens);
-			// client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
 			break;
 	}
 }
 
 void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tokens) {
-    if (tokens.empty()) {
-        client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
-        return;
-    }
+	if (tokens.empty()) {
+		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
+		return;
+	}
 
-    if (tokens[0][0] == '/') {
-        client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
-        return;
-    }
+	if (tokens[0][0] == '/') {
+		client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+		return;
+	}
 
-    std::string message = tokens[0];
-    for (size_t i = 1; i < tokens.size(); ++i) {
-        message += " " + tokens[i];
-    }
+	std::string message = tokens[0];
+	for (size_t i = 1; i < tokens.size(); ++i) {
+		message += " " + tokens[i];
+	}
 
-    std::vector<std::string>::reverse_iterator rit;
-    for (rit = _channelOrder.rbegin(); rit != _channelOrder.rend(); ++rit) {
-        const std::string& channelName = *rit;
-        std::map<std::string, Channel>::iterator it = _channels.find(channelName);
-        if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
-            Channel& channel = it->second;
+	std::vector<std::string>::reverse_iterator rit;
+	for (rit = _channelOrder.rbegin(); rit != _channelOrder.rend(); ++rit) {
+		const std::string& channelName = *rit;
+		std::map<std::string, Channel>::iterator it = _channels.find(channelName);
+		if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
+			Channel& channel = it->second;
 
-            // Utiliser une référence non-constante pour les membres
-            const std::vector<int>& members = channel.getMembers();
-            std::vector<int>::const_iterator memberIt;
-            for (memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
-                int memberSocket = *memberIt;
-                Client& memberClient = _clients[memberSocket];
+			// Utiliser une référence non-constante pour les membres
+			const std::vector<int>& members = channel.getMembers();
+			std::vector<int>::const_iterator memberIt;
+			for (memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
+				int memberSocket = *memberIt;
+				Client& memberClient = _clients[memberSocket];
 
-                std::string fullMessage;
-                if (memberClient.isIrssi) {
-                    fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PRIVMSG " + channelName + " :" + message + "\r\n";
-                } else {
-                    fullMessage = "[" + channelName + "] <" + client.getUser().getNickname() + "> " + message + "\r\n";
-                }
+				std::string fullMessage;
+				if (memberClient.isIrssi)
+					fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@localhost PRIVMSG " + channelName + " :" + message + "\r\n";
+				else
+					fullMessage = "[" + channelName + "] < " + std::string(BOLD) + client.getUser().getNickname() + std::string(RESET) + "> " + message + "\r\n";
 
-                // Envoyer le message au client
-                send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
-            }
-            return;
-        }
-    }
+				send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
+			}
+			return;
+		}
+	}
 
-    client.sendClientMsg(client.getClientSocket(), ERROR_NOT_IN_CHANNEL);
+	client.sendClientMsg(client.getClientSocket(), ERROR_NOT_IN_CHANNEL);
 }
-
 
 // /connect localhost 6667 1
