@@ -118,21 +118,37 @@ void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tok
     for (size_t i = 1; i < tokens.size(); ++i) {
         message += " " + tokens[i];
     }
-	
+
     std::vector<std::string>::reverse_iterator rit;
     for (rit = _channelOrder.rbegin(); rit != _channelOrder.rend(); ++rit) {
         const std::string& channelName = *rit;
         std::map<std::string, Channel>::iterator it = _channels.find(channelName);
         if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
-			std::string fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PRIVMSG " + channelName + " :" + message + "\r\n";
-		    // std::string fullMessage = "[" + channelName + "] " + "< " + client.getUser().getNickname() + "> " + message + "\r\n";
-            broadcastMessageToChannel(channelName, fullMessage, -1);
+            Channel& channel = it->second;
+
+            // Utiliser une référence non-constante pour les membres
+            const std::vector<int>& members = channel.getMembers();
+            std::vector<int>::const_iterator memberIt;
+            for (memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
+                int memberSocket = *memberIt;
+                Client& memberClient = _clients[memberSocket];
+
+                std::string fullMessage;
+                if (memberClient.isIrssi) {
+                    fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname PRIVMSG " + channelName + " :" + message + "\r\n";
+                } else {
+                    fullMessage = "[" + channelName + "] <" + client.getUser().getNickname() + "> " + message + "\r\n";
+                }
+
+                // Envoyer le message au client
+                send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
+            }
             return;
         }
     }
+
     client.sendClientMsg(client.getClientSocket(), ERROR_NOT_IN_CHANNEL);
 }
-
 
 
 // /connect localhost 6667 1
