@@ -12,6 +12,7 @@ class Channel {
 		std::string				_channelName;
 		std::vector<int>		_memberSockets; // Liste des sockets des membres du canal
 		Topic					_topic;
+		std::string				_mode;
 
 	public:
 		Channel();
@@ -23,6 +24,9 @@ class Channel {
 		int						getMembersCount() const;
 		const Topic&			getTopic() const;
 		Topic&					getTopic();
+		std::string	getMode() const;
+
+		void		setMode(const std::string& mode);
 
 		void					addMember(int clientSocket);
 		void					removeMember(int clientSocket);

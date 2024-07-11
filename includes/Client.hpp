@@ -12,9 +12,9 @@ const int MAX_NAME_SIZE = 9;
 class Client {
 
 	private:
-		int					_client_socket;
-		struct sockaddr_in	_client_addr;
-		User				_user;
+		int							_client_socket;
+		struct sockaddr_in			_client_addr;
+		User						_user;
 
 	public:
 		Client();
@@ -28,15 +28,15 @@ class Client {
 		User&						getUser();
 
 		// Setters
-		void				setClientSocket(int socket);
-		void				setClientAddr(const struct sockaddr_in& addr);
-		void				setUser(const User& user);
+		void						setClientSocket(int socket);
+		void						setClientAddr(const struct sockaddr_in& addr);
+		void						setUser(const User& user);
 
 		// Functions
-		void				sendClientMsg(int client_socket, const char* message);
-		bool				checkName(const std::string& username);
-		std::string			setUserName();
-		std::string			setNickName(Server& server);
+		void						sendClientMsg(int client_socket, const char* message);
+		bool						checkName(const std::string& username);
+		std::string					setUserName();
+		std::string					setNickName(Server& server);
 
 };
 

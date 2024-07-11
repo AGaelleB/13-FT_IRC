@@ -8,6 +8,7 @@ Channel::Channel() {
 
 Channel::Channel(const std::string& channelName) {
 	_channelName = channelName;
+
 }
 
 Channel::~Channel() {
@@ -35,6 +36,16 @@ const Topic& Channel::getTopic() const {
 
 Topic& Channel::getTopic() {
 	return (_topic);
+}
+
+std::string	Channel::getMode() const {
+	return (_mode);
+}
+
+/*************************************** SETTERS ***************************************/
+
+void Channel::setMode(const std::string& mode) {
+	_mode = mode;
 }
 
 /************************************** FUNCTIONS **************************************/

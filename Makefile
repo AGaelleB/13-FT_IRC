@@ -23,6 +23,13 @@ SRCS = srcs/main.cpp \
 	srcs/Commands/quit.cpp \
 	srcs/Commands/topic.cpp \
 	\
+	srcs/Commands/mode/mode_i.cpp \
+	srcs/Commands/mode/mode_k.cpp \
+	srcs/Commands/mode/mode_l.cpp \
+	srcs/Commands/mode/mode_o.cpp \
+	srcs/Commands/mode/mode_t.cpp \
+	srcs/Commands/mode/mode.cpp \
+	\
 	srcs/RPL/RPL.cpp \
 	\
 	srcs/Registration/Authentification.cpp \

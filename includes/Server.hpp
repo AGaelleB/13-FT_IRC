@@ -58,10 +58,12 @@ class Server {
 		void		stopServer();
 		void		startServer();
 
-
 		/******************************* COMMANDES ********************************/
 
-		//AllCommands.cpp
+		// Mode
+
+
+		// AllCommands.cpp
 		CommandType	getCommandType(const std::string& command);
 		void		parseClientMsg(const std::string& message, Client& client);
 		void		checkUnknownCmd(Client& client, const std::vector<std::string>& tokens);
@@ -78,11 +80,11 @@ class Server {
 		void		broadcastMessageToChannel(const std::string& channelName, const std::string& message, int excludeSocket);
 		void		ChannelMsg(Client& client);
 				
-		//help.cpp
+		// help.cpp
 		void		helpCmdClient(Client& client);
 		void		helpCmdServer();
 
-		//leave.cpp
+		// leave.cpp
 		void		leaveAllChannels(Client& client);
 		void		leaveChannelIRSSI(Client& client, std::vector<std::string> tokens);
 		void		leaveChannelNC(Client& client, std::vector<std::string> tokens);
@@ -90,26 +92,26 @@ class Server {
 		void		leaveChannel(Client& client, std::vector<std::string> tokens);
 		std::string	joinTokens(const std::vector<std::string>& tokens, size_t startIndex);
 
-		//list.cpp
+		// list.cpp
 		void		listCmdClient(std::vector<std::string> tokens, Client& client);
 		void		UserList(Client& client);
 		void		channelList(Client& client);
 		void		channelListMembers(int clientSocket, const std::string& channelName, Client& client);
 		std::string	PrintChannelListMembers(const std::string& channelName, const std::map<std::string, Channel>& channels);
 
-		//nick.cpp
+		// nick.cpp
 		bool		isNicknameAvailable(const std::string& nickname); 
 		void		removeNickname(const std::string& nickname);
 		void		addNickname(const std::string& nickname);
 		void		nickCmdClient(std::vector<std::string> tokens, Client& client);
 
-		//pass.cpp
+		// pass.cpp
 		bool		checkPasswordirssi(std::string answer, Client& client);
 
-		//ping.cpp
+		// ping.cpp
 		void		pingCmdClient(std::vector<std::string> tokens, Client& client);
 
-		//privMsg.cpp
+		// privMsg.cpp
 		bool		validateTokensPrivMsg(Client& client, const std::vector<std::string>& tokens);
 		std::string	extractMessageContent(const std::string& message, const std::string& targets);
 		void		sendMessageToChannel(Server& server, Client& client, const std::string& target, const std::string& msgContent);
@@ -117,15 +119,14 @@ class Server {
 		void		handleTarget(Server& server, Client& client, const std::string& target, const std::string& msgContent);
 		void		privMsgCmdClient(Client& client, const std::vector<std::string>& tokens, const std::string& message);
 
-		//quit.cpp
+		// quit.cpp
 		void		quitCmdClient(Client& client, std::vector<std::string> tokens);
 
-		//topic.cpp
+		// topic.cpp
 		bool		validateTokensTopic(Client& client, const std::vector<std::string>& tokens);
 		void		topicInfo(Client& client, Channel& channel, std::string channelName);
 		void		topicSetUp(Client& client, Channel& channel, std::string channelName, std::vector<std::string> tokens);
 		void		topicCmdClient(Client& client, std::vector<std::string> tokens);
-
 
 		/******************************* REGISTRATION *******************************/
 

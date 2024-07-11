@@ -3,12 +3,11 @@
 
 En cours: 
 
-mettre en beau les username pour pas avoir !popo@localhost
-
 3. A faire au complet : 
     commande mode
-    commande topic
     commande kick
+
+    Faire tous les tests avec valgrind 
 
 /connect localhost 6667 1
 /join server
