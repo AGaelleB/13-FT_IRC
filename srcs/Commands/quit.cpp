@@ -1,6 +1,6 @@
 #include "../../includes/Server.hpp"
 
-void Server::quitMsgCmdClient(Client& client, std::vector<std::string> tokens) {
+void Server::quitCmdClient(Client& client, std::vector<std::string> tokens) {
 
 	if (tokens.size() != 1 && tokens.size() != 2) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_QUIT);

@@ -41,8 +41,8 @@ class Server {
 		int								_port;
 		std::string						_irssi_data;
 		static bool						_shutdown_signal;	
-		std::map<std::string, Channel> _channels; // Accès rapide par nom
-		std::vector<std::string> _channelOrder;   // Maintenir l'ordre de création
+		std::map<std::string, Channel>	_channels; // Accès rapide par nom
+		std::vector<std::string>		_channelOrder;   // Maintenir l'ordre de création
 
 	public:
 		Server();
@@ -66,18 +66,12 @@ class Server {
 		void		parseClientMsg(const std::string& message, Client& client);
 		void		checkUnknownCmd(Client& client, const std::vector<std::string>& tokens);
 
-		//test
-		void formatAndBroadcastMessage(Client& client, const std::string& channelName, const std::string& message);
-
-
 		// channel.cpp
 		bool		checkChannelName(const std::string& channelName);
 		void		createChannel(Client& client, std::string channelName);
 		bool		validateTokensJoin(Client& client, const std::vector<std::string>& tokens);
 		void		handleChannel(Client& client, std::string& channelName);
 		void		joinChannel(Client& client, const std::vector<std::string>& tokens);
-
-		//test
 		void		sendChannelJoinInfo(Channel& channel, const std::string& channelName, Client& client);
 		
 		// channelMsg.cpp
@@ -90,18 +84,11 @@ class Server {
 
 		//leave.cpp
 		void		leaveAllChannels(Client& client);
-		// void		leaveChannel(Client& client, std::vector<std::string> tokens);
-
-		// test
-		void		sendPartMessage(Client& client, Channel& channel, const std::string& reason);
-
-
 		void		leaveChannelIRSSI(Client& client, std::vector<std::string> tokens);
 		void		leaveChannelNC(Client& client, std::vector<std::string> tokens);
 		void		leaveChannelCommon(Client& client, const std::string& channelName, const std::string& reason);
 		void		leaveChannel(Client& client, std::vector<std::string> tokens);
 		std::string	joinTokens(const std::vector<std::string>& tokens, size_t startIndex);
-
 
 		//list.cpp
 		void		listCmdClient(std::vector<std::string> tokens, Client& client);
@@ -109,7 +96,6 @@ class Server {
 		void		channelList(Client& client);
 		void		channelListMembers(int clientSocket, const std::string& channelName, Client& client);
 		std::string	PrintChannelListMembers(const std::string& channelName, const std::map<std::string, Channel>& channels);
-
 
 		//nick.cpp
 		bool		isNicknameAvailable(const std::string& nickname); 
@@ -131,9 +117,14 @@ class Server {
 		void		handleTarget(Server& server, Client& client, const std::string& target, const std::string& msgContent);
 		void		privMsgCmdClient(Client& client, const std::vector<std::string>& tokens, const std::string& message);
 
-
 		//quit.cpp
-		void		quitMsgCmdClient(Client& client, std::vector<std::string> tokens);
+		void		quitCmdClient(Client& client, std::vector<std::string> tokens);
+
+		//topic.cpp
+		bool		validateTokensTopic(Client& client, const std::vector<std::string>& tokens);
+		void		topicInfo(Client& client, Channel& channel, std::string channelName);
+		void		topicSetUp(Client& client, Channel& channel, std::string channelName, std::vector<std::string> tokens);
+		void		topicCmdClient(Client& client, std::vector<std::string> tokens);
 
 
 		/******************************* REGISTRATION *******************************/

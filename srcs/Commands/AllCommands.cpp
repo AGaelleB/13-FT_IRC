@@ -4,11 +4,11 @@ CommandType Server::getCommandType(const std::string& command) {
 	if (command == "/help") return HELP;
 	if (command == "/nick" || command == "NICK") return NICK;
 	if (command == "/list" || command == "LIST") return LIST;
-	if (command == "/msg" || command == "PRIVMSG" || command == "/PRIVMSG" || command == "/privmsg") return PRIVMSG;
+	if (command == "/msg" || command == "/PRIVMSG" || command == "PRIVMSG" || command == "/privmsg") return PRIVMSG;
 	if (command == "/channel" || command == "/join" || command == "JOIN") return CHANNEL; 
 	if (command == "/quit" || command == "/QUIT" || command == "QUIT") return QUIT;
 	if (command == "/part" || command == "/leave" || command == "PART") return PART;
-	if (command == "/topic") return TOPIC;
+	if (command == "/topic" || command == "/TOPIC" || command == "TOPIC") return TOPIC;
 	if (command == "/kick") return KICK;
 	if (command == "/invite") return INVITE;
 	if (command == "PING") return PING;
@@ -74,7 +74,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case QUIT:
 			std::cout << "Quit command received" << std::endl;
-			quitMsgCmdClient(client, tokens);
+			quitCmdClient(client, tokens);
 			break;
 		case PART:
 			std::cout << "PART command received" << std::endl;
@@ -82,6 +82,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case TOPIC:
 			std::cout << "TOPIC command received" << std::endl;
+			topicCmdClient(client, tokens);
 			break;
 		case KICK:
 			std::cout << "KICK command received" << std::endl;
@@ -101,6 +102,8 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 	}
 }
 
+
+// a decouper pour plus de clarete 
 void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tokens) {
 	if (tokens.empty()) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
@@ -142,7 +145,6 @@ void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tok
 			return;
 		}
 	}
-
 	client.sendClientMsg(client.getClientSocket(), ERROR_NOT_IN_CHANNEL);
 }
 

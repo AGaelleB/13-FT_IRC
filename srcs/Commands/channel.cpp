@@ -29,6 +29,14 @@ int Channel::getMembersCount() const {
 		return (_memberSockets.size());
 }
 
+const Topic& Channel::getTopic() const {
+	return (_topic);
+}
+
+Topic& Channel::getTopic() {
+	return (_topic);
+}
+
 /************************************** FUNCTIONS **************************************/
 
 void Channel::addMember(int clientSocket) {

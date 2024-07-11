@@ -21,6 +21,7 @@ SRCS = srcs/main.cpp \
 	srcs/Commands/ping.cpp \
 	srcs/Commands/privMsg.cpp \
 	srcs/Commands/quit.cpp \
+	srcs/Commands/topic.cpp \
 	\
 	srcs/RPL/RPL.cpp \
 	\
