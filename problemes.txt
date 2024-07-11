@@ -35,7 +35,11 @@ Channel: [#q] created successfully! ✅
 Channel: [#e] created successfully! ✅
 
 
-
-
-
 litlle truc a faire si on a le courrage, => afficher leur des messages lors des envois 
+
+
+a mettre sous le tapis je pense :
+si on veut join plusieurs channel en une commande et que l un deux a un mdp, mettre une erreur 
+ex #protected a un mdp et je veux faire :
+/join a,b,c,protected,d
+solution : verifier s il y a des virgules, si oui parcourir les channels et check si l un d eux est protected => return

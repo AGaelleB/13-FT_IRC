@@ -61,7 +61,8 @@ class Server {
 		/******************************* COMMANDES ********************************/
 
 		// Mode
-
+		bool	validateTokensMode(Client& client, const std::vector<std::string>& tokens);
+		void	modeCmdClient(Client& client, std::vector<std::string> tokens);
 
 		// AllCommands.cpp
 		CommandType	getCommandType(const std::string& command);
@@ -72,7 +73,7 @@ class Server {
 		bool		checkChannelName(const std::string& channelName);
 		void		createChannel(Client& client, std::string channelName);
 		bool		validateTokensJoin(Client& client, const std::vector<std::string>& tokens);
-		void		handleChannel(Client& client, std::string& channelName);
+		void		handleChannel(Client& client, std::string& channelName, const std::vector<std::string>& tokens);
 		void		joinChannel(Client& client, const std::vector<std::string>& tokens);
 		void		sendChannelJoinInfo(Channel& channel, const std::string& channelName, Client& client);
 		

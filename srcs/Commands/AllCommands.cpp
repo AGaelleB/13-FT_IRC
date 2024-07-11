@@ -12,7 +12,7 @@ CommandType Server::getCommandType(const std::string& command) {
 	if (command == "/kick") return KICK;
 	if (command == "/invite") return INVITE;
 	if (command == "PING") return PING;
-	if (command == "MODE") return MODE;
+	if (command == "/mode" || command == "/MODE" ||command == "MODE") return MODE;
 	return UNKNOWN;
 }
 
@@ -89,6 +89,10 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case INVITE:
 			std::cout << "INVITE command received" << std::endl;
+			break;
+		case MODE:
+			std::cout << "MODE command received" << std::endl;
+			modeCmdClient(client, tokens);
 			break;
 		case PING:
 			pingCmdClient(tokens, client);

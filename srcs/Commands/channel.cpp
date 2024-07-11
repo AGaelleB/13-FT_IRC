@@ -8,7 +8,8 @@ Channel::Channel() {
 
 Channel::Channel(const std::string& channelName) {
 	_channelName = channelName;
-
+	_password = "";
+	_keypass_set = false;
 }
 
 Channel::~Channel() {
@@ -42,10 +43,26 @@ std::string	Channel::getMode() const {
 	return (_mode);
 }
 
+bool	Channel::getTopicRestricted() const {
+	return (_keypass_set);
+}
+
+const std::string&		Channel::getChannelKey() const {
+	return (_password);
+}
+
 /*************************************** SETTERS ***************************************/
 
 void Channel::setMode(const std::string& mode) {
 	_mode = mode;
+}
+
+void	Channel::setTopicRestricted(bool keypass_set) {
+	_keypass_set = keypass_set;
+}
+
+void Channel::setChannelKey(std::string password) {
+	_password = password;
 }
 
 /************************************** FUNCTIONS **************************************/
@@ -115,14 +132,14 @@ void Server::createChannel(Client& client, std::string channelName) {
 }
 
 bool Server::validateTokensJoin(Client& client, const std::vector<std::string>& tokens) {
-	if (tokens.size() != 2) {
+	if (tokens.size() < 2 && tokens.size() > 3) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_CHANNEL);
 		return (false);
 	}
 	return (true);
 }
 
-void Server::handleChannel(Client& client, std::string& channelName) {
+void Server::handleChannel(Client& client, std::string& channelName, const std::vector<std::string>& tokens) {
 	if (channelName[0] != '#')
 		channelName = "#" + channelName;
 
@@ -139,6 +156,18 @@ void Server::handleChannel(Client& client, std::string& channelName) {
 	}
 
 	if (!it->second.isMember(client.getClientSocket())) {
+		if (it->second.getChannelKey() != "") {
+			if (tokens[3] != it->second.getChannelKey()) {
+				client.sendClientMsg(client.getClientSocket(), ERROR_WRONG_CHANNEL_PASS);
+				return;
+			}
+		}
+		else {
+			if (tokens.size() != 2) {
+				client.sendClientMsg(client.getClientSocket(), ERROR_NO_PASS_CHANNEL);
+				return;
+			}
+		}
 		it->second.addMember(client.getClientSocket());
 		sendChannelJoinInfo(it->second, channelName, client);
 	}
@@ -211,7 +240,7 @@ void Server::joinChannel(Client& client, const std::vector<std::string>& tokens)
 	std::vector<std::string> channelsList = splitComa(channelsNames);
 
 	for (std::vector<std::string>::iterator it = channelsList.begin(); it != channelsList.end(); ++it)
-		handleChannel(client, *it);
+		handleChannel(client, *it, tokens);
 
 }
 

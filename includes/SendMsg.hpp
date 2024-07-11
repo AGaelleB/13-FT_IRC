@@ -40,9 +40,16 @@
 # define ERROR_NOT_IN_CHANNEL RED "ERROR: Failled to send message, the client must join a channel\n" RESET
 # define ERROR_CMD_TOPIC RED "Error: Must be: /TOPIC <channel> OR /TOPIC <channel> <new topic>\n" RESET
 # define ERROR_NOT_IN_CHANNEL_TOPIC RED "ERROR: Failled to set Topic, you must be in the channel\n" RESET
+# define ERROR_WRONG_CHANNEL_PASS RED "ERROR: Failled to join the channel, password is incorrect\n" RESET
+# define ERROR_NO_PASS_CHANNEL RED "ERROR: Failled to join the channel, no password required\n" RESET
 
 //topic
 # define ERROR_TOPIC_SIZE RED "Error: Topic must contain between 1 and 307 characters\n" RESET
+
+//mode
+# define ERROR_CMD_MODE RED "Error: Must be: /MODE <channel> <option>\n" RESET
+# define ERROR_CMD_MODE_K RED "Error: Must be: /MODE <channel> <+k> <password>\n" RESET
+# define ERROR_MODE_NOT_FOUND RED "Error: MODE not found\n" RESET
 
 
 // server
