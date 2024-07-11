@@ -156,33 +156,32 @@ void Server::sendChannelJoinInfo(Channel& channel, const std::string& channelNam
 			toSend = RPL_PRIVMSG(nick, username, channel.getName(), listOfMembers);
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 			
-			// if (!channel.getDescription().empty()) {
-			//     toSend = RPL_TOPIC(nick, channelName, channel.getDescription());
-			//     send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
-			// }
-			// else {
+			if (channel.getTopic().getTopicName().empty()) {
 			    toSend = RPL_NOTOPIC(nick, channelName);
 			    send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
-			// }
+			}
+			else {
+			    toSend = RPL_TOPIC(nick, channelName, channel.getTopic().getTopicName());
+			    send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+			}
 		} 
 		else {
 			// toSend = nick + " [" + username + "\e[0m@localhost] has joined " + channelName + std::string(RESET) + "\r\n";
 			toSend = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + std::string(CYAN_IRSSI) + nick + std::string(RESET) + " [" + std::string(CYAN_IRSSI) + username + "@localhost" + std::string(RESET) + "]" + " has joined " + std::string(BOLD) + channelName + std::string(RESET) + "\r\n";
-			
-			
+					
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 
 			toSend = listOfMembers;
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 
-			// if (!channel.getTopic().empty()) {
-			// 	toSend = "[topic : " + channel.getTopic() + "]\r\n";
-			// 	send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
-			// }
-			// else {
+			if (channel.getTopic().getTopicName().empty()) {
 				toSend = "[no topic set]\r\n";
 				send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
-			// }
+			}
+			else {
+				toSend = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "Topic for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + ": " + channel.getTopic().getTopicName() + "\r\n";
+				send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
+			}
 		}
 	}
 

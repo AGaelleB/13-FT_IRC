@@ -39,6 +39,11 @@
 # define ERROR_CHANNEL_FAILED_LEAVE RED "ERROR: Failled to leave the channel\n" RESET
 # define ERROR_NOT_IN_CHANNEL RED "ERROR: Failled to send message, the client must join a channel\n" RESET
 # define ERROR_CMD_TOPIC RED "Error: Must be: /TOPIC <channel> OR /TOPIC <channel> <new topic>\n" RESET
+# define ERROR_NOT_IN_CHANNEL_TOPIC RED "ERROR: Failled to set Topic, you must be in the channel\n" RESET
+
+//topic
+# define ERROR_TOPIC_SIZE RED "Error: Topic must contain between 1 and 307 characters\n" RESET
+
 
 // server
 # define MSG_WELCOME BLUE "\n ~~~    Welcome on our IRC Server!   ~~~ \n" RESET

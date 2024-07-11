@@ -101,7 +101,7 @@ std::string Server::PrintChannelListMembers(const std::string& channelName, cons
 	for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
 		std::map<int, Client>::const_iterator clientIt = _clients.find(*memberIt);
 		if (clientIt != _clients.end()) {
-			membersList += clientIt->second.getUser().getNickname() + " ";
+			membersList += "<" + clientIt->second.getUser().getNickname() + "> ";
 		}
 	}
 
