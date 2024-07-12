@@ -30,6 +30,15 @@ enum CommandType {
 	UNKNOWN
 };
 
+enum ModeType {
+	MODE_I,
+	MODE_T,
+	MODE_K,
+	MODE_O,
+	MODE_L,
+	MODE_UNKNOWN
+};
+
 class Server {
 	private:
 		static const int				_MAX_CLIENTS = 20;		
@@ -58,11 +67,11 @@ class Server {
 		void		stopServer();
 		void		startServer();
 
+		Client&		getClientBySocket(int socket);
+
+
 		/******************************* COMMANDES ********************************/
 
-		// Mode
-		bool	validateTokensMode(Client& client, const std::vector<std::string>& tokens);
-		void	modeCmdClient(Client& client, std::vector<std::string> tokens);
 
 		// AllCommands.cpp
 		CommandType	getCommandType(const std::string& command);
@@ -80,7 +89,7 @@ class Server {
 		// channelMsg.cpp
 		void		broadcastMessageToChannel(const std::string& channelName, const std::string& message, int excludeSocket);
 		void		ChannelMsg(Client& client);
-				
+		
 		// help.cpp
 		void		helpCmdClient(Client& client);
 		void		helpCmdServer();
@@ -100,6 +109,19 @@ class Server {
 		void		channelListMembers(int clientSocket, const std::string& channelName, Client& client);
 		std::string	PrintChannelListMembers(const std::string& channelName, const std::map<std::string, Channel>& channels);
 
+		// mode.cpp
+		ModeType	getModeType(const std::string& modeType);
+		bool		validateTokensMode(Client& client, const std::vector<std::string>& tokens);
+		void		modeCmdClient(Client& client, std::vector<std::string> tokens);
+		
+		// mode_k.cpp
+		void					modeKCmd(Client& client, std::vector<std::string> tokens, Channel& channel);
+
+		// mode_o.cpp
+		void		modeOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName);
+		void		modePlusOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName);
+		void		modeMinusdOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName);
+		
 		// nick.cpp
 		bool		isNicknameAvailable(const std::string& nickname); 
 		void		removeNickname(const std::string& nickname);

@@ -50,6 +50,8 @@
 # define ERROR_CMD_MODE RED "Error: Must be: /MODE <channel> <option>\n" RESET
 # define ERROR_CMD_MODE_K RED "Error: Must be: /MODE <channel> <+k> <password>\n" RESET
 # define ERROR_MODE_NOT_FOUND RED "Error: MODE not found\n" RESET
+# define ERROR_CMD_MODE_L RED "Error: Must be: /MODE <channel> <+l> <max users>\n" RESET
+# define ERROR_CMD_MODE_O RED "Error: Must be: /MODE <channel> <+o / -o> <user nickname>\n" RESET
 
 
 // server

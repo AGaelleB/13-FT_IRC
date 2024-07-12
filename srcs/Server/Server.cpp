@@ -53,6 +53,9 @@ Server::~Server() {
 		close(_server_socket);
 }
 
+Client& Server::getClientBySocket(int socket) {
+	return (_clients[socket]);
+}
 
 /************************************** FUNCTIONS **************************************/
 

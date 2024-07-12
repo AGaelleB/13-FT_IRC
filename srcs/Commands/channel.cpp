@@ -51,6 +51,10 @@ const std::string&		Channel::getChannelKey() const {
 	return (_password);
 }
 
+const std::vector<int>& Channel::getOperators() const {
+    return (_membersOperators);
+}
+
 /*************************************** SETTERS ***************************************/
 
 void Channel::setMode(const std::string& mode) {
@@ -71,7 +75,6 @@ void Channel::addMember(int clientSocket) {
 	if (!isMember(clientSocket))
 		_memberSockets.push_back(clientSocket);
 }
-
 
 void Channel::removeMember(int clientSocket) {
 	std::vector<int>::iterator it;
