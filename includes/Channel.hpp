@@ -7,8 +7,6 @@
 const int MIN_NAME_CHANNEL_SIZE = 1;
 const int MAX_NAME_CHANNEL_SIZE = 32;
 
-
-
 class Client;
 
 class Channel {
@@ -19,7 +17,8 @@ class Channel {
 		Topic					_topic;
 		std::string				_mode;
 		std::string				_password;
-		bool					_topic_right;
+		bool					_topicRight;
+		int			_maxMembersChannel;
 
 	public:
 		Channel();
@@ -34,6 +33,7 @@ class Channel {
 		Topic&					getTopic();
 		std::string				getMode() const;
 		bool					getTopicRight() const;
+		int						getMaxMembers() const;
 		const std::string&		getChannelKey() const;
 		const std::vector<int>&	getOperators() const;
 
@@ -41,7 +41,7 @@ class Channel {
 		void					setMode(const std::string& mode);
 		void					setTopicRight(bool keypass_set);
 		void					setChannelKey(std::string password);
-
+		void					setMaxMembers(int newMaxMember);
 		// channel.cpp
 		void					addMember(int clientSocket);
 		void					removeMember(int clientSocket);

@@ -2,7 +2,7 @@
 
 void Server::modeTCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
 	if (tokens.size() != 3) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_T);
+		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_T); 
 		return;
 	}
 

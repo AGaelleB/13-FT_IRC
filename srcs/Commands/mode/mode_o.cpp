@@ -11,6 +11,11 @@
  */
 
 void	Server::modeOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
+	if (tokens.size() != 4) {
+		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_O);
+		return;
+	}
+
 	if (tokens[2] == "+o")
 		modePlusOCmd(client, tokens, channel, channelName);
 	else if (tokens[2] == "-o")
@@ -18,11 +23,6 @@ void	Server::modeOCmd(Client& client, std::vector<std::string> tokens, Channel& 
 }
 
 void	Server::modePlusOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
-	if (tokens.size() != 4) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_O);
-		return;
-	}
-
 	int userSocket = -1;
 	Client* memberClient = NULL;
 	std::string fullMessage;
@@ -58,11 +58,6 @@ void	Server::modePlusOCmd(Client& client, std::vector<std::string> tokens, Chann
 }
 
 void Server::modeMinusdOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
-	if (tokens.size() < 4) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE);
-		return;
-	}
-
 	int userSocket = -1;
 	Client* memberClient = NULL;
 	std::string fullMessage;

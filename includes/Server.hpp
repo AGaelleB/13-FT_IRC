@@ -115,7 +115,10 @@ class Server {
 		void		modeCmdClient(Client& client, std::vector<std::string> tokens);
 		
 		// mode_k.cpp
-		void					modeKCmd(Client& client, std::vector<std::string> tokens, Channel& channel);
+		void		modeKCmd(Client& client, std::vector<std::string> tokens, Channel& channel);
+
+		// mode_l.cpp
+		void		modeLCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName);
 
 		// mode_o.cpp
 		void		modeOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName);

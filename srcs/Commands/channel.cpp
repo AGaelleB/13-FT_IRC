@@ -9,7 +9,8 @@ Channel::Channel() {
 Channel::Channel(const std::string& channelName) {
 	_channelName = channelName;
 	_password = "";
-	_topic_right = false;
+	_topicRight = false;
+	_maxMembersChannel = 10;
 }
 
 Channel::~Channel() {
@@ -44,11 +45,15 @@ std::string	Channel::getMode() const {
 }
 
 bool	Channel::getTopicRight() const {
-	return (_topic_right);
+	return (_topicRight);
 }
 
-const std::string&		Channel::getChannelKey() const {
+const std::string&	Channel::getChannelKey() const {
 	return (_password);
+}
+
+int Channel::getMaxMembers() const {
+	return (_maxMembersChannel);
 }
 
 const std::vector<int>& Channel::getOperators() const {
@@ -57,15 +62,19 @@ const std::vector<int>& Channel::getOperators() const {
 
 /*************************************** SETTERS ***************************************/
 
-void Channel::setMode(const std::string& mode) {
+void	Channel::setMode(const std::string& mode) {
 	_mode = mode;
 }
 
-void	Channel::setTopicRight(bool topic_right) {
-	_topic_right = topic_right;
+void	Channel::setTopicRight(bool topicRight) {
+	_topicRight = topicRight;
 }
 
-void Channel::setChannelKey(std::string password) {
+void	Channel::setMaxMembers(int newMaxMember) {
+	_maxMembersChannel = newMaxMember;
+}
+
+void	Channel::setChannelKey(std::string password) {
 	_password = password;
 }
 
@@ -170,6 +179,10 @@ void Server::handleChannel(Client& client, std::string& channelName, const std::
 				client.sendClientMsg(client.getClientSocket(), ERROR_NO_PASS_CHANNEL);
 				return;
 			}
+		}
+		if (it->second.getMembersCount() >= it->second.getMaxMembers()) {
+			client.sendClientMsg(client.getClientSocket(), ERROR_NO_PASS_CHANNEL); // channel has full up faire l'erreur  erreur
+			return;
 		}
 		it->second.addMember(client.getClientSocket());
 		sendChannelJoinInfo(it->second, channelName, client);
