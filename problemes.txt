@@ -1,7 +1,7 @@
 warning, si on ctrlC un netclien au moment du password du client, ca stop le server 
 
 
-atttention au message envoye sur le server si on se connecte en irssi mais sans mettre le mdp, en mode 
+attention au message envoye sur le server si on se connecte en irssi mais sans mettre le mdp, en mode 
 /connect localhost 6678
 
 
@@ -17,6 +17,7 @@ ex:
 petit warning, probleme de commande si tu commences a taper une commande et qu un autre utilisateur fait une action en meme temps sur un autre terminal. 
 exemple : rejoindre, quitter ou ecrire un message
 ca fait un melanges des message et du coup des unknown command
+je pense demander a lili comment vider les buffers des commandes
 
 
 
@@ -35,7 +36,7 @@ Channel: [#q] created successfully! ✅
 Channel: [#e] created successfully! ✅
 
 
-litlle truc a faire si on a le courrage, => afficher leur des messages lors des envois 
+litlle truc a faire si on a le courrage, => afficher l'heure des messages lors des envois 
 
 
 a mettre sous le tapis je pense :
@@ -43,3 +44,19 @@ si on veut join plusieurs channel en une commande et que l un deux a un mdp, met
 ex #protected a un mdp et je veux faire :
 /join a,b,c,protected,d
 solution : verifier s il y a des virgules, si oui parcourir les channels et check si l un d eux est protected => return
+
+
+
+ATTENTNION 
+voir si on resout le fait que l on l on face des vector pour l ordre des channel, 
+et du coup pour la commande TOPIC, pour set un un topic il faudrait ne plus avoir un specifier le nom dui channel 
+mais directement que le changement soit applique au channel ou nous sommes actuellement 
+
+
+mettre un pettit msg pour quand on mmet le mode +t
+
+
+Probleme avec las cmd topic:
+irssi n'a pas besoin de specifier le channel pour lequel elle veut modifier le topic par default cela modifira le dernier channle dans lequel elle est rentree 
+il faut donc faire un vector avec lordre de join et pas lordre de creation 
+et par default lorsque la cmd topic est tapee rajouter manuelemnt devant le <newtopic> le channel correspondant 

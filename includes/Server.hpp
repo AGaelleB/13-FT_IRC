@@ -122,6 +122,9 @@ class Server {
 		void		modePlusOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName);
 		void		modeMinusdOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName);
 		
+		// mode_t.cpp
+		void		modeTCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName);
+
 		// nick.cpp
 		bool		isNicknameAvailable(const std::string& nickname); 
 		void		removeNickname(const std::string& nickname);

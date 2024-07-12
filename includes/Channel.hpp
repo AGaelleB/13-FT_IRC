@@ -19,7 +19,7 @@ class Channel {
 		Topic					_topic;
 		std::string				_mode;
 		std::string				_password;
-		bool					_keypass_set;
+		bool					_topic_right;
 
 	public:
 		Channel();
@@ -33,13 +33,13 @@ class Channel {
 		const Topic&			getTopic() const;
 		Topic&					getTopic();
 		std::string				getMode() const;
-		bool					getTopicRestricted() const;
+		bool					getTopicRight() const;
 		const std::string&		getChannelKey() const;
 		const std::vector<int>&	getOperators() const;
 
 		// setters
 		void					setMode(const std::string& mode);
-		void					setTopicRestricted(bool keypass_set);
+		void					setTopicRight(bool keypass_set);
 		void					setChannelKey(std::string password);
 
 		// channel.cpp

@@ -9,7 +9,7 @@ Channel::Channel() {
 Channel::Channel(const std::string& channelName) {
 	_channelName = channelName;
 	_password = "";
-	_keypass_set = false;
+	_topic_right = false;
 }
 
 Channel::~Channel() {
@@ -43,8 +43,8 @@ std::string	Channel::getMode() const {
 	return (_mode);
 }
 
-bool	Channel::getTopicRestricted() const {
-	return (_keypass_set);
+bool	Channel::getTopicRight() const {
+	return (_topic_right);
 }
 
 const std::string&		Channel::getChannelKey() const {
@@ -61,8 +61,8 @@ void Channel::setMode(const std::string& mode) {
 	_mode = mode;
 }
 
-void	Channel::setTopicRestricted(bool keypass_set) {
-	_keypass_set = keypass_set;
+void	Channel::setTopicRight(bool topic_right) {
+	_topic_right = topic_right;
 }
 
 void Channel::setChannelKey(std::string password) {
@@ -199,14 +199,10 @@ void Server::sendChannelJoinInfo(Channel& channel, const std::string& channelNam
 			toSend = RPL_PRIVMSG(nick, username, channel.getName(), listOfMembers);
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 			
-			if (channel.getTopic().getTopicName().empty()) {
-			    toSend = RPL_NOTOPIC(nick, channelName);
-			    send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
-			}
-			else {
-			    toSend = RPL_TOPIC(nick, channelName, channel.getTopic().getTopicName());
-			    send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
-			}
+			if (channel.getTopic().getTopicName().empty())
+			    client.sendClientMsg(client.getClientSocket(), RPL_NOTOPIC(client.getUser().getNickname(), channelName).c_str());
+			else 
+				client.sendClientMsg(client.getClientSocket(), RPL_TOPIC(client.getUser().getNickname(), channelName,  channel.getTopic().getTopicName()).c_str());
 		} 
 		else {
 			// toSend = nick + " [" + username + "\e[0m@localhost] has joined " + channelName + std::string(RESET) + "\r\n";

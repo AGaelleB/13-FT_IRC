@@ -4,8 +4,8 @@
 
 i : Invitation seulement - le canal est accessible uniquement sur invitation.
 t : Sujet restreint - seul les opérateurs peuvent changer le sujet.
-k : Mot de passe - un mot de passe est requis pour rejoindre le canal.
-o : Opérateur de canal - donne ou retire le privilège d'opérateur.
+✅ k : Mot de passe - un mot de passe est requis pour rejoindre le canal.
+✅ o : Opérateur de canal - donne ou retire le privilège d'opérateur.
 l : Limite d'utilisateurs - fixe un nombre maximum d'utilisateurs dans le canal.
 
 */
@@ -23,7 +23,7 @@ ModeType Server::getModeType(const std::string& modeType) {
 
 
 bool Server::validateTokensMode(Client& client, const std::vector<std::string>& tokens) {
-	if (tokens.size() < 2) {
+	if (tokens.size() < 3) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE); 
 		return (false);
 	}
@@ -57,6 +57,7 @@ void Server::modeCmdClient(Client& client, std::vector<std::string> tokens) {
 			break;
 		case MODE_T:
 			std::cout << "mode T received" << std::endl;
+			modeTCmd(client, tokens, channel, channelName);
 			break;
 		case MODE_K:
 			std::cout << "mode K received" << std::endl;
@@ -75,3 +76,5 @@ void Server::modeCmdClient(Client& client, std::vector<std::string> tokens) {
 			break;
 	}
 }
+
+// /connect localhost 6667 1

@@ -24,17 +24,32 @@ void	Server::modePlusOCmd(Client& client, std::vector<std::string> tokens, Chann
 	}
 
 	int userSocket = -1;
-    for (std::vector<int>::const_iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); it++) {
-        Client& memberClient = getClientBySocket(*it);
-        if (memberClient.getUser().getNickname() == tokens[3]) {
-            userSocket = memberClient.getClientSocket();
+	Client* memberClient = NULL;
+	std::string fullMessage;
+    for (std::vector<int>::const_iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
+        Client& tempClient = getClientBySocket(*it);
+        if (tempClient.getUser().getNickname() == tokens[3]) {
+            userSocket = tempClient.getClientSocket();
+            memberClient = &tempClient;
             break;
         }
     }
-	if (userSocket != -1) {
+	if (userSocket != -1 && memberClient != NULL) {
 		channel.addOperator(userSocket);
-		std::string fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname MODE " + channelName + " +o " + tokens[3] + "\r\n";
-		broadcastMessageToChannel(channelName, fullMessage, -1);
+		std::string plusMsgNetcat = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "mode/" + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "[+o " + memberClient->getUser().getNickname() + "] by " + std::string(BOLD) + client.getUser().getNickname() + std::string(RESET) + "\r\n";
+		std::string plusMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname MODE " + channelName + " +o " + tokens[3] + "\r\n";
+
+		const std::vector<int>& members = channel.getMembers();
+		for (size_t i = 0; i < members.size(); ++i) {
+			int memberSocket = members[i];
+			Client& memberClient = _clients[memberSocket];
+
+			if (memberClient.isIrssi)
+				fullMessage = plusMsgIrssi;
+			else 
+				fullMessage = plusMsgNetcat;
+			::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
+		}
 	}
 	else {
 		client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: User " + tokens[3] + " not found in the channel: [" + channelName + "]\n" + RESET).c_str());
@@ -42,30 +57,46 @@ void	Server::modePlusOCmd(Client& client, std::vector<std::string> tokens, Chann
 	}
 }
 
-void	Server::modeMinusdOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
+void Server::modeMinusdOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
 	if (tokens.size() < 4) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE);
 		return;
 	}
 
 	int userSocket = -1;
-    for (std::vector<int>::const_iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); it++) {
-        Client& memberClient = getClientBySocket(*it);
-        if (memberClient.getUser().getNickname() == tokens[3]) {
-            userSocket = memberClient.getClientSocket();
+	Client* memberClient = NULL;
+	std::string fullMessage;
+    for (std::vector<int>::const_iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
+        Client& tempClient = getClientBySocket(*it);
+        if (tempClient.getUser().getNickname() == tokens[3]) {
+            userSocket = tempClient.getClientSocket();
+            memberClient = &tempClient;
             break;
         }
     }
-	if (userSocket != -1) {
+	if (userSocket != -1 && memberClient != NULL) {
 		channel.removeOperator(userSocket);
-		std::string fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname MODE " + channelName + " -o " + tokens[3] + "\r\n";
-		broadcastMessageToChannel(channelName, fullMessage, -1);
+		std::string minusMsgNetcat = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "mode/" + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "[-o " + memberClient->getUser().getNickname() + "] by " + std::string(BOLD) + client.getUser().getNickname() + std::string(RESET) + "\r\n";
+		std::string minusMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname MODE " + channelName + " -o " + tokens[3] + "\r\n";
+
+		const std::vector<int>& members = channel.getMembers();
+		for (size_t i = 0; i < members.size(); ++i) {
+			int memberSocket = members[i];
+			Client& memberClient = _clients[memberSocket];
+
+			if (memberClient.isIrssi)
+				fullMessage = minusMsgIrssi;
+			else 
+				fullMessage = minusMsgNetcat;
+			::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
+		}
 	}
 	else {
 		client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: User " + tokens[3] + " not found in the channel: [" + channelName + "]\n" + RESET).c_str());
 		return;
 	}
 }
+
 
 void	Channel::addOperator(int clientToAdd) {
 	if (!isOperator(clientToAdd))
@@ -90,3 +121,6 @@ bool Channel::isOperator(int clientSocket) const {
 	}
 	return (false);
 }
+
+// /connect localhost 6667 1
+

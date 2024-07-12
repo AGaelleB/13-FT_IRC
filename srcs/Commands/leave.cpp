@@ -56,8 +56,7 @@ void Server::leaveChannelCommon(Client& client, const std::string& channelName, 
 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
 	if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
 		it->second.removeMember(client.getClientSocket());
-
-		std::string leaveMsgNetcat = "\e[0;36m -!- " + client.getUser().getNickname() + " [" + client.getUser().getUsername() + "\e[0m@localhost] has left " + channelName + " [" + reason + "]\r\n";
+		std::string leaveMsgNetcat = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + std::string(CYAN_IRSSI) + client.getUser().getNickname() + std::string(RESET) + " [" + std::string(CYAN_IRSSI) + client.getUser().getUsername() + "@localhost" + std::string(RESET) + "]" + " has left " + std::string(BOLD) + channelName + std::string(RESET) + " [" + reason + "]\r\n";
 		std::string leaveMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@localhost PART " + channelName + " :" + reason + "\r\n";
 
 		// Diffuser le message de départ à tous les membres du canal
@@ -117,8 +116,5 @@ std::string Server::joinTokens(const std::vector<std::string>& tokens, size_t st
 	return (result);
 }
 
-/* 
 
-/connect localhost 6667 1
-
- */
+// /connect localhost 6667 1
