@@ -117,4 +117,4 @@ std::string Server::joinTokens(const std::vector<std::string>& tokens, size_t st
 }
 
 
-// /connect localhost 6667 1
+// /connect localhost 6668 1
