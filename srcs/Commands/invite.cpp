@@ -1,14 +1,5 @@
 #include "../../includes/Server.hpp"
 
-/* 
-	+i restreint l'acces au salon
-
-	invite permet dajouter un nickname a la liste des users aurosiewrs a rejoindre le salon
-	au momment du join check si il fait parti de la liste (isinvite)
-	pour invite verifier que le user soit membre du channel sur le quel il invite (ismember)
- */
-
-
 void Server::sendErrorMessage(Client& client, const std::string& errorMsgNetcat, const std::string& errorMsgIrssi) {
 	if (client.isIrssi)
 		::send(client.getClientSocket(), errorMsgIrssi.c_str(), errorMsgIrssi.size(), 0);
@@ -53,8 +44,6 @@ bool Server::validateChannelMembership(Client& client, const std::string& channe
 	}
 	return (true);
 }
-
-
 
 void Server::sendInviteMessages(Client& client, Channel& channel, const std::string& channelName, Client& invitedClient, int userSocket) {
 
@@ -124,6 +113,17 @@ void Channel::addInvitedMember(int clientToAdd) {
 	if (!isInvitedMember(clientToAdd))
 		_membersIsInvite.push_back(clientToAdd);
 }
+
+void	Channel::removeInvitedMember(int clientToErase) {
+	std::vector<int>::iterator it;
+	for (it = _membersIsInvite.begin(); it != _membersIsInvite.end(); ++it) {
+		if (*it == clientToErase) {
+			_membersIsInvite.erase(it);
+			break; 
+		}
+	}
+}
+
 
 bool Channel::isInvitedMember(int clientSocket) const {
 	std::vector<int>::const_iterator it;

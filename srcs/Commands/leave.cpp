@@ -8,6 +8,10 @@ void Server::leaveAllChannels(Client& client) {
 	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
 		Channel& channel = it->second;
 
+		if (channel.isOperator(clientSocket))
+			channel.removeOperator(clientSocket);
+		if (channel.isInvitedMember(clientSocket))
+			channel.removeInvitedMember(clientSocket);
 		if (channel.isMember(clientSocket)) {
 			channel.removeMember(clientSocket);
 			std::string leaveMsg = BOLD "<" + client.getUser().getNickname() + "> has left the channel " + it->first + "\n" RESET;
@@ -17,7 +21,6 @@ void Server::leaveAllChannels(Client& client) {
 				channelsToRemove.push_back(it->first);
 		}
 	}
-
 	for (std::vector<std::string>::iterator it = channelsToRemove.begin(); it != channelsToRemove.end(); ++it) {
 		_channels.erase(*it);
 		_channelOrder.erase(std::remove(_channelOrder.begin(), _channelOrder.end(), *it), _channelOrder.end());
@@ -117,4 +120,4 @@ std::string Server::joinTokens(const std::vector<std::string>& tokens, size_t st
 }
 
 
-// /connect localhost 6668 1
+// /connect localhost 6667 1

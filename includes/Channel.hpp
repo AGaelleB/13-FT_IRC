@@ -20,6 +20,7 @@ class Channel {
 		std::string				_password;
 		bool					_topicRight;
 		int						_maxMembersChannel;
+		bool					_invitationAccess;
 
 	public:
 		Channel();
@@ -37,12 +38,15 @@ class Channel {
 		int						getMaxMembers() const;
 		const std::string&		getChannelKey() const;
 		const std::vector<int>&	getOperators() const;
+		const std::vector<int>&	getMembersInvite() const;
+		bool					getInvitationAccess() const;
 
 		// setters
 		void					setMode(const std::string& mode);
-		void					setTopicRight(bool keypass_set);
+		void					setTopicRight(bool topicRight);
 		void					setChannelKey(std::string password);
 		void					setMaxMembers(int newMaxMember);
+		void					setInvitationAccess(bool invitationAccess);
 
 		// channel.cpp
 		void					addMember(int clientSocket);
@@ -56,6 +60,7 @@ class Channel {
 
 		// invite.cpp
 		void					addInvitedMember(int clientToAdd);
+		void					removeInvitedMember(int clientToErase);
 		bool					isInvitedMember(int clientSocket) const;
 
 

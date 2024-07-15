@@ -1,70 +1,56 @@
-void Server::inviteCmdClient(Client& client, std::vector<std::string> tokens) {
-    if (tokens.size() != 3) {
-        client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: Invalid number of parameters. Usage: /INVITE <user> <channel>\n" + RESET).c_str());
-
-        if (client.isIrssi) {
-            std::string channelName = tokens.size() > 2 ? tokens[2] : "";
-            client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "461 " + channelName + " INVITE :Invalid number of parameters. Usage: /INVITE <user> <channel>\r\n" + RESET).c_str());
-        }
-        return;
-    }
-
-    int userSocket = -1;
-    Client* invitedClient = NULL;
-    std::string fullMessage;
-
-    std::string channelName = tokens[2];
-
-    if (channelName[0] != '#')
+void Server::handleChannel(Client& client, std::string& channelName, const std::vector<std::string>& tokens) {
+    if (channelName[0] != '#') {
         channelName = "#" + channelName;
+    }
 
     std::map<std::string, Channel>::iterator it = _channels.find(channelName);
     if (it == _channels.end()) {
-        client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: Channel " + channelName + " not found\n" + RESET).c_str());
-        return;
+        createChannel(client, channelName);
+        usleep(42); // Assurez-vous que cette pause est nécessaire
+
+        it = _channels.find(channelName);
+        if (it == _channels.end()) {
+            client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_CREATE);
+            return;
+        }
     }
 
     Channel& channel = it->second;
-    if (!channel.isMember(client.getClientSocket())) {
-        client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: You are not a member of the channel " + channelName + "\n" + RESET).c_str());
+
+    // Vérifier si le client est déjà membre du canal
+    if (channel.isMember(client.getClientSocket())) {
+        std::stringstream ss;
+        ss << MSG_ALREADY_CHAN << channelName << std::endl << std::endl;
+        std::string channelMsg = ss.str();
+        client.sendClientMsg(client.getClientSocket(), channelMsg.c_str());
         return;
     }
 
-    for (std::map<int, Client>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-        if (it->second.getUser().getNickname() == tokens[1]) {
-            userSocket = it->second.getClientSocket();
-            invitedClient = &it->second;
-            break;
-        }
-    }
-
-    if (userSocket != -1 && invitedClient != NULL) {
-        if (channel.isMember(userSocket)) {
-            client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: User " + invitedClient->getUser().getNickname() + " is already in the channel " + channelName + "\n" + RESET).c_str());
-            if (invitedClient->isIrssi) {
-                client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "INVITE " + tokens[1] + " " + channelName + " :is already in channel\r\n" + RESET).c_str());
-            }
+    // Vérifier si le canal est protégé par un mot de passe
+    if (!channel.getChannelKey().empty()) {
+        if (tokens.size() < 3 || tokens[2] != channel.getChannelKey()) {
+            client.sendClientMsg(client.getClientSocket(), ERROR_WRONG_CHANNEL_PASS);
             return;
         }
+    }
 
-        channel.addInvitedMember(userSocket);
-        std::string inviteMsgNetcat = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + client.getUser().getNickname() + " invited " + invitedClient->getUser().getNickname() + " to join " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "\r\n";
-        std::string inviteMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname INVITE " + tokens[1] + " :" + channelName + "\r\n";
-
-        const std::vector<int>& members = channel.getMembers();
-        for (size_t i = 0; i < members.size(); ++i) {
-            int memberSocket = members[i];
-            Client& memberClient = _clients[memberSocket];
-
-            if (memberClient.isIrssi)
-                fullMessage = inviteMsgIrssi;
-            else
-                fullMessage = inviteMsgNetcat;
-            ::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
-        }
-        invitedClient->sendClientMsg(userSocket, ("You have been invited to join " + channelName + " by " + client.getUser().getNickname() + "\r\n").c_str());
-    } else {
-        client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: User " + tokens[1] + " not found\n" + RESET).c_str());
+    // Vérifier si le canal est plein
+    if (channel.getMembersCount() >= channel.getMaxMembers()) {
+        client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FULL);
         return;
     }
+
+    // Vérifier si le canal est en mode invitation seulement (+i)
+    if (channel.getInvitationAccess()) {
+        std::cout << YELLOW << "MODE +i true" << RESET << std::endl;
+        if (!channel.isInvitedMember(client.getClientSocket())) {
+            std::cout << YELLOW << "MODE +i true, not invited" << RESET << std::endl;
+            client.sendClientMsg(client.getClientSocket(), ERROR_INVITE_ONLY_CHANNEL);
+            return;
+        }
+    }
+
+    // Ajouter le client au canal
+    channel.addMember(client.getClientSocket());
+    sendChannelJoinInfo(channel, channelName, client);
 }

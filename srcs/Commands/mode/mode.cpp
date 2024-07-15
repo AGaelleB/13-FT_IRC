@@ -30,7 +30,6 @@ bool Server::validateTokensMode(Client& client, const std::vector<std::string>& 
 	return (true);
 }
 
-
 void Server::modeCmdClient(Client& client, std::vector<std::string> tokens) {
 	if (!validateTokensMode(client, tokens))
 		return;	
@@ -40,11 +39,10 @@ void Server::modeCmdClient(Client& client, std::vector<std::string> tokens) {
 	if (channelName[0] != '#')
 		channelName = "#" + channelName;
 	
-	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
-	if (it == _channels.end()) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_NOT_FOUND);
+	if (!validateChannelMembership(client, channelName))
 		return;
-	}
+
+	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
 	
 	Channel& channel = it->second;
 	std::string mode = tokens[2];
@@ -54,6 +52,7 @@ void Server::modeCmdClient(Client& client, std::vector<std::string> tokens) {
 	switch (modetype) {
 		case MODE_I:
 			std::cout << "mode I received" << std::endl;
+			modeICmd(client, tokens, channel, channelName);
 			break;
 		case MODE_T:
 			std::cout << "mode T received" << std::endl;

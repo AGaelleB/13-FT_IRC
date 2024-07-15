@@ -124,6 +124,9 @@ class Server {
 		bool		validateTokensMode(Client& client, const std::vector<std::string>& tokens);
 		void		modeCmdClient(Client& client, std::vector<std::string> tokens);
 		
+		// mode_i.cpp
+		void		modeICmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName);
+
 		// mode_k.cpp
 		void		modeKCmd(Client& client, std::vector<std::string> tokens, Channel& channel);
 

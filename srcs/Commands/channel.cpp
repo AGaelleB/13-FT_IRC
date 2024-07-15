@@ -10,6 +10,7 @@ Channel::Channel(const std::string& channelName) {
 	_channelName = channelName;
 	_password = "";
 	_topicRight = false;
+	_invitationAccess = false;
 	_maxMembersChannel = 10;
 }
 
@@ -57,7 +58,15 @@ int Channel::getMaxMembers() const {
 }
 
 const std::vector<int>& Channel::getOperators() const {
-    return (_membersOperators);
+	return (_membersOperators);
+}
+
+const std::vector<int>& Channel::getMembersInvite() const {
+	return (_membersIsInvite);
+}
+
+bool	Channel::getInvitationAccess() const {
+	return (_invitationAccess);
 }
 
 /*************************************** SETTERS ***************************************/
@@ -76,6 +85,10 @@ void	Channel::setMaxMembers(int newMaxMember) {
 
 void	Channel::setChannelKey(std::string password) {
 	_password = password;
+}
+
+void	Channel::setInvitationAccess(bool invitationAccess) {
+	_invitationAccess = invitationAccess;
 }
 
 /************************************** FUNCTIONS **************************************/

@@ -54,6 +54,7 @@
 # define ERROR_CMD_MODE_O RED "Error: Must be: /MODE <channel> <+o / -o> <user nickname>\n" RESET
 # define ERROR_CMD_MODE_T RED "Error: Must be: /MODE <channel> <+t / -t>\n" RESET
 # define ERROR_CMD_MODE_T_RIGHT RED "Error: You must have permissions to change this topic\n" RESET
+# define ERROR_CMD_MODE_I RED "Error: Must be: /MODE <channel> <+i / -i>\n" RESET
 
 // server
 # define MSG_WELCOME BLUE "\n ~~~    Welcome on our IRC Server!   ~~~ \n" RESET
