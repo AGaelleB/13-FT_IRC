@@ -81,6 +81,8 @@ class Server {
 		// channel.cpp
 		bool		checkChannelName(const std::string& channelName);
 		void		createChannel(Client& client, std::string channelName);
+		
+		// join.cpp
 		bool		validateTokensJoin(Client& client, const std::vector<std::string>& tokens);
 		void		handleChannel(Client& client, std::string& channelName, const std::vector<std::string>& tokens);
 		void		joinChannel(Client& client, const std::vector<std::string>& tokens);
