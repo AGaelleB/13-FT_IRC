@@ -94,6 +94,9 @@ class Server {
 		void		helpCmdClient(Client& client);
 		void		helpCmdServer();
 
+		// invite.cpp
+		void		inviteCmdClient(Client& client, std::vector<std::string> tokens);
+
 		// leave.cpp
 		void		leaveAllChannels(Client& client);
 		void		leaveChannelIRSSI(Client& client, std::vector<std::string> tokens);

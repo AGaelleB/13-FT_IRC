@@ -9,8 +9,8 @@ CommandType Server::getCommandType(const std::string& command) {
 	if (command == "/quit" || command == "/QUIT" || command == "QUIT") return QUIT;
 	if (command == "/part" || command == "/leave" || command == "PART") return PART;
 	if (command == "/topic" || command == "/TOPIC" || command == "TOPIC") return TOPIC;
-	if (command == "/kick") return KICK;
-	if (command == "/invite") return INVITE;
+	if (command == "/kick" || command == "/KICK" || command == "KICK") return KICK;
+	if (command == "/invite" || command == "/INVITE" || command == "INVITE") return INVITE;
 	if (command == "PING") return PING;
 	if (command == "/mode" || command == "/MODE" ||command == "MODE") return MODE;
 	return UNKNOWN;
@@ -89,6 +89,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case INVITE:
 			std::cout << "INVITE command received" << std::endl;
+			inviteCmdClient(client, tokens);
 			break;
 		case MODE:
 			std::cout << "MODE command received" << std::endl;

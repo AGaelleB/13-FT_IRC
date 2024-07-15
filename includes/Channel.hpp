@@ -14,11 +14,12 @@ class Channel {
 		std::string				_channelName;
 		std::vector<int>		_memberSockets; // Liste des sockets des membres du canal
 		std::vector<int>		_membersOperators; // Liste des sockets des membres operateurs du canal
+		std::vector<int>		_membersIsInvite;
 		Topic					_topic;
 		std::string				_mode;
 		std::string				_password;
 		bool					_topicRight;
-		int			_maxMembersChannel;
+		int						_maxMembersChannel;
 
 	public:
 		Channel();
@@ -42,16 +43,21 @@ class Channel {
 		void					setTopicRight(bool keypass_set);
 		void					setChannelKey(std::string password);
 		void					setMaxMembers(int newMaxMember);
+
 		// channel.cpp
 		void					addMember(int clientSocket);
 		void					removeMember(int clientSocket);
 		bool					isMember(int clientSocket) const;
 
 		// mode_o.cpp
-		
 		void					addOperator(int clientToAdd);
 		void					removeOperator(int clientToErase);
 		bool					isOperator(int clientSocket) const;
+
+		// invite.cpp
+		void					addInvitedMember(int clientToAdd);
+		bool					isInvitedMember(int clientSocket) const;
+
 
 
 
