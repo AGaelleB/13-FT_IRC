@@ -95,6 +95,11 @@ class Server {
 		void		helpCmdServer();
 
 		// invite.cpp
+		void		sendErrorMessage(Client& client, const std::string& errorMsgNetcat, const std::string& errorMsgIrssi);
+		int		findUserSocket(const std::string& nickname);
+		bool		validateInviteCommand(Client& client, const std::vector<std::string>& tokens);
+		bool		validateChannelMembership(Client& client, const std::string& channelName);
+		void		sendInviteMessages(Client& client, Channel& channel, const std::string& channelName, Client& invitedClient, int userSocket);
 		void		inviteCmdClient(Client& client, std::vector<std::string> tokens);
 
 		// leave.cpp
