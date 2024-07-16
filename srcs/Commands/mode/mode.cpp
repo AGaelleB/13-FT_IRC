@@ -4,13 +4,11 @@
 
 i : Invitation seulement - le canal est accessible uniquement sur invitation.
 t : Sujet restreint - seul les opérateurs peuvent changer le sujet.
-✅ k : Mot de passe - un mot de passe est requis pour rejoindre le canal.
-✅ o : Opérateur de canal - donne ou retire le privilège d'opérateur.
+k : Mot de passe - un mot de passe est requis pour rejoindre le canal.
+o : Opérateur de canal - donne ou retire le privilège d'opérateur.
 l : Limite d'utilisateurs - fixe un nombre maximum d'utilisateurs dans le canal.
 
 */
-
-// /connect localhost 6667 1
 
 ModeType Server::getModeType(const std::string& modeType) {
 	if (modeType == "+i" || modeType == "-i") return MODE_I;
@@ -78,3 +76,14 @@ void Server::modeCmdClient(Client& client, std::vector<std::string> tokens) {
 }
 
 // /connect localhost 6667 1
+
+
+
+/* 
+
+	Définir un mot de passe pour le canal (+k).
+	Limiter le nombre d'utilisateurs pouvant rejoindre le canal (+l).
+	Kicker un utilisateur (KICK) : Les opérateurs peuvent expulser un utilisateur du canal.
+	Changer le sujet du canal (TOPIC) : Seuls les opérateurs peuvent changer le sujet du canal si le mode +t (topic protection) est activé.
+
+ */

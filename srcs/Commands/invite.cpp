@@ -48,9 +48,6 @@ bool Server::validateChannelMembership(Client& client, const std::string& channe
 void Server::sendInviteMessages(Client& client, Channel& channel, const std::string& channelName, Client& invitedClient, int userSocket) {
 
 	std::string inviteMsgNetcat = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + client.getUser().getNickname() + " invited " + invitedClient.getUser().getNickname() + " to join " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "\r\n";
-	
-	
-	
 	std::string inviteMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname INVITE " + invitedClient.getUser().getNickname() + " :" + channelName + "\r\n";
 
 	const std::vector<int>& members = channel.getMembers();
@@ -91,7 +88,7 @@ void Server::inviteCmdClient(Client& client, std::vector<std::string> tokens) {
 	if (userSocket == -1) {
 		std::string errorMsgNetcat = std::string(RED) + "Error: User " + tokens[1] + " not found\n" + RESET;
 		std::string errorMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname NOTICE " + client.getUser().getNickname() + " :User " + tokens[1] + " not found\r\n";
-		sendErrorMessage(client, errorMsgNetcat, errorMsgIrssi);
+		sendErrorMessage(client, errorMsgNetcat, errorMsgIrssi); 
 		return;
 	}
 
@@ -123,7 +120,6 @@ void	Channel::removeInvitedMember(int clientToErase) {
 		}
 	}
 }
-
 
 bool Channel::isInvitedMember(int clientSocket) const {
 	std::vector<int>::const_iterator it;

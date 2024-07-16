@@ -81,8 +81,6 @@ void Server::topicSetUp(Client& client, Channel& channel, std::string channelNam
 	}
 }
 
-
-
 void Server::topicCmdClient(Client& client, std::vector<std::string> tokens) {
 	if (!validateTokensTopic(client, tokens))
 		return;

@@ -38,6 +38,4 @@ void Server::modeTCmd(Client& client, std::vector<std::string> tokens, Channel& 
 	}
 }
 
-
-
 // /connect localhost 6667 1

@@ -85,7 +85,7 @@ class Server {
 		// join.cpp
 		bool		validateTokensJoin(Client& client, const std::vector<std::string>& tokens);
 		void		handleChannel(Client& client, std::string& channelName, const std::vector<std::string>& tokens);
-		void		joinChannel(Client& client, const std::vector<std::string>& tokens);
+		void		joinCmdClient(Client& client, const std::vector<std::string>& tokens);
 		void		sendChannelJoinInfo(Channel& channel, const std::string& channelName, Client& client);
 		
 		// channelMsg.cpp
@@ -106,10 +106,10 @@ class Server {
 
 		// leave.cpp
 		void		leaveAllChannels(Client& client);
-		void		leaveChannelIRSSI(Client& client, std::vector<std::string> tokens);
-		void		leaveChannelNC(Client& client, std::vector<std::string> tokens);
-		void		leaveChannelCommon(Client& client, const std::string& channelName, const std::string& reason);
-		void		leaveChannel(Client& client, std::vector<std::string> tokens);
+		void		leaveCmdClientIRSSI(Client& client, std::vector<std::string> tokens);
+		void		leaveCmdClientNC(Client& client, std::vector<std::string> tokens);
+		void		leaveCmdClientCommon(Client& client, const std::string& channelName, const std::string& reason);
+		void		leaveCmdClient(Client& client, std::vector<std::string> tokens);
 		std::string	joinTokens(const std::vector<std::string>& tokens, size_t startIndex);
 
 		// list.cpp
@@ -169,6 +169,12 @@ class Server {
 		void		topicInfo(Client& client, Channel& channel, std::string channelName);
 		void		topicSetUp(Client& client, Channel& channel, std::string channelName, std::vector<std::string> tokens);
 		void		topicCmdClient(Client& client, std::vector<std::string> tokens);
+
+		// kick.cpp
+		void		kickCmdClientReason(Client& client, Channel& channel, std::vector<std::string> tokens, int userSocket);
+		void		executeKick(Client& client, Channel& channel, const std::string& reason, int userSocket);
+		void		kickCmdClient(Client& client, std::vector<std::string> tokens);
+
 
 		/******************************* REGISTRATION *******************************/
 

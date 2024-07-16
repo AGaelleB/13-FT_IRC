@@ -70,7 +70,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case CHANNEL:
 			std::cout << "Channel command received" << std::endl;
-			joinChannel(client, tokens);
+			joinCmdClient(client, tokens);
 			break;
 		case QUIT:
 			std::cout << "Quit command received" << std::endl;
@@ -78,7 +78,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case PART:
 			std::cout << "PART command received" << std::endl;
-			leaveChannel(client, tokens);
+			leaveCmdClient(client, tokens);
 			break;
 		case TOPIC:
 			std::cout << "TOPIC command received" << std::endl;
@@ -86,6 +86,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case KICK:
 			std::cout << "KICK command received" << std::endl;
+			kickCmdClient(client, tokens);
 			break;
 		case INVITE:
 			std::cout << "INVITE command received" << std::endl;

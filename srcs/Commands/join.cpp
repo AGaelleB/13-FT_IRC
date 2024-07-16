@@ -119,7 +119,7 @@ void Server::sendChannelJoinInfo(Channel& channel, const std::string& channelNam
 	client.sendClientMsg(client.getClientSocket(), channelJoinedMsg.c_str());
 }
 
-void Server::joinChannel(Client& client, const std::vector<std::string>& tokens) {
+void Server::joinCmdClient(Client& client, const std::vector<std::string>& tokens) {
 	if (!validateTokensJoin(client, tokens))
 		return;
 

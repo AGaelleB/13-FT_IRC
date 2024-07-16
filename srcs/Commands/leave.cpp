@@ -28,17 +28,17 @@ void Server::leaveAllChannels(Client& client) {
 	}
 }
 
-void Server::leaveChannelIRSSI(Client& client, std::vector<std::string> tokens) {
+void Server::leaveCmdClientIRSSI(Client& client, std::vector<std::string> tokens) {
 	std::string reason = "Left the channel";
 	std::string channelName = trim(tokens[1]);
 
 	if (tokens.size() > 1)
 		reason = joinTokens(tokens, 1);
 
-	leaveChannelCommon(client, channelName, reason);
+	leaveCmdClientCommon(client, channelName, reason);
 }
 
-void Server::leaveChannelNC(Client& client, std::vector<std::string> tokens) {
+void Server::leaveCmdClientNC(Client& client, std::vector<std::string> tokens) {
 	std::string reason = "Left the channel";
 	std::string channelName;
 
@@ -51,11 +51,10 @@ void Server::leaveChannelNC(Client& client, std::vector<std::string> tokens) {
 	if (channelName[0] != '#')
 		channelName = "#" + channelName;
 
-	leaveChannelCommon(client, channelName, reason);
+	leaveCmdClientCommon(client, channelName, reason);
 }
 
-
-void Server::leaveChannelCommon(Client& client, const std::string& channelName, const std::string& reason) {
+void Server::leaveCmdClientCommon(Client& client, const std::string& channelName, const std::string& reason) {
 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
 	if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
 		it->second.removeMember(client.getClientSocket());
@@ -97,16 +96,16 @@ void Server::leaveChannelCommon(Client& client, const std::string& channelName, 
 		client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_FAILED_LEAVE);
 }
 
-void Server::leaveChannel(Client& client, std::vector<std::string> tokens) {
+void Server::leaveCmdClient(Client& client, std::vector<std::string> tokens) {
 	if (tokens.size() <= 1) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_LEAVE);
 		return;
 	}
 
 	if (client.isIrssi)
-		leaveChannelIRSSI(client, tokens);
+		leaveCmdClientIRSSI(client, tokens);
 	else
-		leaveChannelNC(client, tokens);
+		leaveCmdClientNC(client, tokens);
 }
 
 std::string Server::joinTokens(const std::vector<std::string>& tokens, size_t startIndex) {
