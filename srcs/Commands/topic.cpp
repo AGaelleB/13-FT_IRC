@@ -40,14 +40,12 @@ bool Server::validateTokensTopic(Client& client, const std::vector<std::string>&
 
 void Server::topicInfo(Client& client, Channel& channel, std::string channelName) {
 	if (channel.getTopic().getTopicName().empty()) {
-		std::string noTopicNetcat = std::string(RED) + "No topic set for " + channelName + "\n" + std::string(RESET);
-		std::string noTopicIrssi = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "No topic set for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "\r\n";
-		sendErrorMessage(client, noTopicNetcat, noTopicIrssi);
+		std::string noTopic = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "No topic set for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "\r\n";
+		sendErrorMessage(client, noTopic, noTopic);
 	}
 	else {
-		std::string topicSetNetcat = std::string(RED) + "Topic for " + channelName + ": " + channel.getTopic().getTopicName() + "\n" + std::string(RESET);
-		std::string topicSetIrssi = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "Topic for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + ": " + channel.getTopic().getTopicName() + "\r\n";
-		sendErrorMessage(client, topicSetNetcat, topicSetIrssi);
+		std::string topicSet = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "Topic for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + ": " + channel.getTopic().getTopicName() + "\r\n";
+		sendErrorMessage(client, topicSet, topicSet);
 	}
 }
 
@@ -70,9 +68,8 @@ void Server::topicSetUp(Client& client, Channel& channel, std::string channelNam
 	else {
 		if (newTopic == ":") {
 			newTopic = "";
-			std::string noTopicNetcat = std::string(RED) + "No topic set for " + channelName + "\n" + std::string(RESET);
-			std::string noTopicIrssi = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "No topic set for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "\r\n";
-			sendErrorMessage(client, noTopicNetcat, noTopicIrssi);
+			std::string noTopic = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "No topic set for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "\r\n";
+			sendErrorMessage(client, noTopic, noTopic);
 			return;
 		}
 		channel.getTopic().setTopicName(newTopic);
@@ -94,7 +91,6 @@ void Server::topicSetUp(Client& client, Channel& channel, std::string channelNam
 		}
 	}
 }
-
 
 void Server::topicCmdClient(Client& client, std::vector<std::string> tokens) {
 	if (!validateTokensTopic(client, tokens))
@@ -139,6 +135,5 @@ void Server::topicCmdClient(Client& client, std::vector<std::string> tokens) {
 		}
 	}
 }
-
 
 // /connect localhost 6667 1

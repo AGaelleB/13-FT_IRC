@@ -36,12 +36,6 @@ void Server::UserList(Client& client) {
 
 /************************************* LIST CHANNELS ************************************/
 
-std::string intToString(int number) {
-	std::stringstream ss;
-	ss << number;
-	return ss.str();
-}
-
 void Server::channelListMembers(int clientSocket, const std::string& channelName, Client& client) {
 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
 	if (it != _channels.end()) {
@@ -69,24 +63,6 @@ void Server::channelList(Client& client) {
 
 	client.sendClientMsg(client.getClientSocket(), MSG_END_LIST);
 }
-
-// A REUTILISER POUR L AFFICHAGE DES MEMBRES DE CHANNEL
-// std::string Server::PrintChannelListMembers(const std::string& channelName) {
-// 	std::string membersList;
-
-// 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
-// 	if (it != _channels.end()) {
-// 		const std::vector<int>& members = it->second.getMembers();
-// 		for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
-// 			std::map<int, Client>::iterator clientIt = _clients.find(*memberIt);
-// 			if (clientIt != _clients.end()) {
-// 				membersList += "    -> " + clientIt->second.getUser().getNickname() + "\n";
-// 			}
-// 		}
-// 	}
-// 	return (membersList);
-// }
-
 
 std::string Server::PrintChannelListMembers(const std::string& channelName, const std::map<std::string, Channel>& channels) {
    

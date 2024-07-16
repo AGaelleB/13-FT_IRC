@@ -58,7 +58,7 @@ void Server::modeCmdClient(Client& client, std::vector<std::string> tokens) {
 			break;
 		case MODE_K:
 			std::cout << "mode K received" << std::endl;
-			modeKCmd(client, tokens, channel);
+			modeKCmd(client, tokens, channel, channelName);
 			break;
 		case MODE_O:
 			std::cout << "mode O received" << std::endl;

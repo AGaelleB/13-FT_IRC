@@ -9,18 +9,17 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 		if (bytes_received == 0) {
 			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ [socket: " << client_fd << "]" << RESET << std::endl;
 			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << "/" << _MAX_CLIENTS << std::endl;
-		}
-		else {
+		} else {
 			std::cerr << "Error: data reception failed [socket: " << client_fd << "]" << std::endl;
 			std::cerr << "recv error: " << strerror(errno) << " (errno: " << errno << ")" << std::endl;
 		}
-		
+
 		if (!client.getUser().getNickname().empty())
 			removeNickname(client.getUser().getNickname());
 
 		close(client_fd);
 		_clients.erase(client_fd); // Supprimer le client de la map
-	
+
 		for (int i = 0; i < nfds; ++i) { // Retirer le client de la structure pollfd
 			if (fds[i].fd == client_fd) {
 				fds[i] = fds[nfds - 1];
@@ -28,30 +27,35 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 				break;
 			}
 		}
-	}
-	else {
+	} else {
 		if (static_cast<size_t>(bytes_received) >= sizeof(buffer) - 1) {
-			client.sendClientMsg(client_fd, ERROR_MSG_CLIENT_TOO_LONG);
-			std::cerr << "Error: Command too long, client_fd: " << client_fd << std::endl;
+			std::string netcatMessage = "Error: Command too long\n";
+			std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Command too long\r\n";
+			sendErrorMessage(client, netcatMessage, irssiMessage);
 			memset(buffer, 0, sizeof(buffer)); // clear the buffer
 			return;
 		}
+
 		buffer[bytes_received] = '\0';
 		std::string message(buffer);
 
-        if (message.size() > MAX_TOPIC_SIZE) {
-            std::cerr << "Error: Command too long, client_fd: " << client_fd << std::endl;
-            client.sendClientMsg(client_fd, ERROR_MSG_CLIENT_TOO_LONG);
-			memset(buffer, 0, sizeof(buffer)); // clear the buffer
-            return;
-        }
-
-		std::vector<std::string> tokens = split(message);
-		if (tokens.empty()) {
-			client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+		if (message.size() > MAX_TOPIC_SIZE) {
+			std::string netcatMessage = "Error: Message too long\n";
+			std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Message too long\r\n";
+			sendErrorMessage(client, netcatMessage, irssiMessage);
 			memset(buffer, 0, sizeof(buffer)); // clear the buffer
 			return;
 		}
+
+		std::vector<std::string> tokens = split(message);
+		if (tokens.empty()) {
+			std::string netcatMessage = "Error: Unknown command\n";
+			std::string irssiMessage = ERR_UNKNOWNCOMMAND(client.getUser().getNickname(), message);
+			sendErrorMessage(client, netcatMessage, irssiMessage);
+			memset(buffer, 0, sizeof(buffer)); // clear the buffer
+			return;
+		}
+
 		parseClientMsg(message, client);
 	}
 }

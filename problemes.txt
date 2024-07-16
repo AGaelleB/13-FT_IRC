@@ -60,3 +60,11 @@ Probleme avec las cmd topic:
 irssi n'a pas besoin de specifier le channel pour lequel elle veut modifier le topic par default cela modifira le dernier channle dans lequel elle est rentree 
 il faut donc faire un vector avec lordre de join et pas lordre de creation 
 et par default lorsque la cmd topic est tapee rajouter manuelemnt devant le <newtopic> le channel correspondant 
+
+
+faire attention voir si on ne leaks pas lorsque l on fait avec IRSSI /quit + des arguments. exemple :
+/quit je veux partir
+car le server recoit
+Quit command received
+Error: data reception failed [socket: 4]
+recv error: Connection reset by peer (errno: 104)

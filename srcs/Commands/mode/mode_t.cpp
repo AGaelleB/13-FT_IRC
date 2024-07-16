@@ -1,8 +1,16 @@
 #include "../../../includes/Server.hpp"
 
+/* 
+	— t : Définir/supprimer les restrictions de la commande TOPIC pour les opérateurs de canaux
+	/MODE <channel> <+t / -t>
+
+ */
+
 void Server::modeTCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
 	if (tokens.size() != 3) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_T); 
+		std::string netcatMessage = "Error: Must be: /MODE <channel> <+t / -t>\r\n";
+		std::string irssiMessage = ":localhost 461 " + client.getUser().getNickname() + " MODE_T :Not enough parameters\r\n";
+		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
 	}
 
@@ -21,7 +29,9 @@ void Server::modeTCmd(Client& client, std::vector<std::string> tokens, Channel& 
 		topicRightMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname MODE " + channelName + " -t\r\n";
 	}
 	else {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_T);
+		std::string netcatMessage = "Error: Must be: /MODE <channel> <+t / -t>\r\n";
+		std::string irssiMessage = ":localhost 472 " + client.getUser().getNickname() + " " + tokens[2] + " :is unknown mode char to me\r\n";
+		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
 	}
 

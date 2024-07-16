@@ -1,20 +1,28 @@
 #include "../../../includes/Server.hpp"
 
+/* 
+    — l : Définir/supprimer la limite d’utilisateurs pour le canal
 
-std::string ERROR_INVALID_MEMBER_LIMIT = "Invalid member limit. It must be a positive integer.\r\n";
+    /mode <channel> +l <nombre>
+ */
+
 
 void Server::modeLCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
-	if (tokens.size() != 4) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_L); 
-		return;
-	}
+    if (tokens.size() != 4) {
+        std::string netcatMessage = "Error: Must be: /MODE <channel> <+l> <max users>\r\n";
+        std::string irssiMessage = ":localhost 461 " + client.getUser().getNickname() + " MODE_L :Not enough parameters\r\n";
+        sendErrorMessage(client, netcatMessage, irssiMessage);
+        return;
+    }
 
     std::string fullMessage;
 
     if (tokens[2] == "+l") {
         int newMaxMembers = atoi(tokens[3].c_str());
         if (newMaxMembers <= 0) {
-            client.sendClientMsg(client.getClientSocket(), ERROR_INVALID_MEMBER_LIMIT.c_str());
+            std::string netcatMessage = "Invalid member limit. It must be a positive integer.\r\n";
+            std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Invalid member limit. It must be a positive integer.\r\n";
+            sendErrorMessage(client, netcatMessage, irssiMessage);
             return;
         }
 
@@ -41,3 +49,5 @@ void Server::modeLCmd(Client& client, std::vector<std::string> tokens, Channel& 
         }
     }
 }
+
+// /connect localhost 6667 1

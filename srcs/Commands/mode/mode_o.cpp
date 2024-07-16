@@ -7,12 +7,14 @@
 	Expulser des utilisateurs du canal.
 	Définir d'autres modes de canal.
 	Attribuer ou révoquer le statut d'opérateur à d'autres utilisateurs.
-    
+	
  */
 
-void	Server::modeOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
+void Server::modeOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
 	if (tokens.size() != 4) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_O);
+		std::string netcatMessage = "Error: Must be: /MODE <channel> <+o / -o> <user nickname>\r\n";
+		std::string irssiMessage = ":localhost 461 " + client.getUser().getNickname() + " MODE_O :Not enough parameters\r\n";
+		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
 	}
 
@@ -22,18 +24,18 @@ void	Server::modeOCmd(Client& client, std::vector<std::string> tokens, Channel& 
 		modeMinusdOCmd(client, tokens, channel, channelName);
 }
 
-void	Server::modePlusOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
+void Server::modePlusOCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
 	int userSocket = -1;
 	Client* memberClient = NULL;
 	std::string fullMessage;
-    for (std::vector<int>::const_iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
-        Client& tempClient = getClientBySocket(*it);
-        if (tempClient.getUser().getNickname() == tokens[3]) {
-            userSocket = tempClient.getClientSocket();
-            memberClient = &tempClient;
-            break;
-        }
-    }
+	for (std::vector<int>::const_iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
+		Client& tempClient = getClientBySocket(*it);
+		if (tempClient.getUser().getNickname() == tokens[3]) {
+			userSocket = tempClient.getClientSocket();
+			memberClient = &tempClient;
+			break;
+		}
+	}
 	if (userSocket != -1 && memberClient != NULL) {
 		channel.addOperator(userSocket);
 		std::string plusMsgNetcat = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "mode/" + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "[+o " + memberClient->getUser().getNickname() + "] by " + std::string(BOLD) + client.getUser().getNickname() + std::string(RESET) + "\r\n";
@@ -46,13 +48,15 @@ void	Server::modePlusOCmd(Client& client, std::vector<std::string> tokens, Chann
 
 			if (memberClient.isIrssi)
 				fullMessage = plusMsgIrssi;
-			else 
+			else
 				fullMessage = plusMsgNetcat;
 			::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
 		}
 	}
 	else {
-		client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: User " + tokens[3] + " not found in the channel: [" + channelName + "]\n" + RESET).c_str());
+		std::string netcatMessage = std::string(RED) + "Error: User " + tokens[3] + " not found in the channel: [" + channelName + "]\n" + std::string(RESET);
+		std::string irssiMessage = ":localhost 401 " + client.getUser().getNickname() + " " + tokens[3] + " :No such nick/channel\r\n";
+		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
 	}
 }
@@ -61,14 +65,14 @@ void Server::modeMinusdOCmd(Client& client, std::vector<std::string> tokens, Cha
 	int userSocket = -1;
 	Client* memberClient = NULL;
 	std::string fullMessage;
-    for (std::vector<int>::const_iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
-        Client& tempClient = getClientBySocket(*it);
-        if (tempClient.getUser().getNickname() == tokens[3]) {
-            userSocket = tempClient.getClientSocket();
-            memberClient = &tempClient;
-            break;
-        }
-    }
+	for (std::vector<int>::const_iterator it = channel.getMembers().begin(); it != channel.getMembers().end(); ++it) {
+		Client& tempClient = getClientBySocket(*it);
+		if (tempClient.getUser().getNickname() == tokens[3]) {
+			userSocket = tempClient.getClientSocket();
+			memberClient = &tempClient;
+			break;
+		}
+	}
 	if (userSocket != -1 && memberClient != NULL) {
 		channel.removeOperator(userSocket);
 		std::string minusMsgNetcat = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "mode/" + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "[-o " + memberClient->getUser().getNickname() + "] by " + std::string(BOLD) + client.getUser().getNickname() + std::string(RESET) + "\r\n";
@@ -81,17 +85,18 @@ void Server::modeMinusdOCmd(Client& client, std::vector<std::string> tokens, Cha
 
 			if (memberClient.isIrssi)
 				fullMessage = minusMsgIrssi;
-			else 
+			else
 				fullMessage = minusMsgNetcat;
 			::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
 		}
 	}
 	else {
-		client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: User " + tokens[3] + " not found in the channel: [" + channelName + "]\n" + RESET).c_str());
+		std::string netcatMessage = std::string(RED) + "Error: User " + tokens[3] + " not found in the channel: [" + channelName + "]\n" + std::string(RESET);
+		std::string irssiMessage = ":localhost 401 " + client.getUser().getNickname() + " " + tokens[3] + " :No such nick/channel\r\n";
+		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
 	}
 }
-
 
 void	Channel::addOperator(int clientToAdd) {
 	if (!isOperator(clientToAdd))
