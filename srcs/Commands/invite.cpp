@@ -1,5 +1,9 @@
 #include "../../includes/Server.hpp"
 
+/* 
+	/INVITE <user> <channel>
+ */
+
 void Server::sendErrorMessage(Client& client, const std::string& errorMsgNetcat, const std::string& errorMsgIrssi) {
 	if (client.isIrssi)
 		::send(client.getClientSocket(), errorMsgIrssi.c_str(), errorMsgIrssi.size(), 0);

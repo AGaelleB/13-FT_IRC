@@ -1,5 +1,9 @@
 #include "../../includes/Server.hpp"
 
+/* 
+	/TOPIC <channel> OR /TOPIC <channel> <new topic>
+ */
+
 /************************************* CONST ET DEST *************************************/
 
 Topic::Topic() {
@@ -26,7 +30,9 @@ void Topic::setTopicName(const std::string& topicName) {
 
 bool Server::validateTokensTopic(Client& client, const std::vector<std::string>& tokens) {
 	if (tokens.size() < 2) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_TOPIC);
+		std::string errorMsgNetcat = std::string(RED) + "Error: Invalid number of parameters. Usage: /TOPIC <channel> OR /TOPIC <channel> <new topic>\n" + std::string(RESET);
+		std::string errorMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname NOTICE " + client.getUser().getNickname() + " :Invalid number of parameters. Usage: /TOPIC <channel> OR /TOPIC <channel> <new topic>\r\n";
+		sendErrorMessage(client, errorMsgNetcat, errorMsgIrssi);
 		return (false);
 	}
 	return (true);
@@ -34,12 +40,14 @@ bool Server::validateTokensTopic(Client& client, const std::vector<std::string>&
 
 void Server::topicInfo(Client& client, Channel& channel, std::string channelName) {
 	if (channel.getTopic().getTopicName().empty()) {
-		std::string noTopic = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "No topic set for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "\r\n";
-		client.sendClientMsg(client.getClientSocket(), noTopic.c_str());
+		std::string noTopicNetcat = std::string(RED) + "No topic set for " + channelName + "\n" + std::string(RESET);
+		std::string noTopicIrssi = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "No topic set for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "\r\n";
+		sendErrorMessage(client, noTopicNetcat, noTopicIrssi);
 	}
 	else {
-		std::string TopicSet = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "Topic for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + ": " + channel.getTopic().getTopicName() + "\r\n";
-		client.sendClientMsg(client.getClientSocket(), TopicSet.c_str());
+		std::string topicSetNetcat = std::string(RED) + "Topic for " + channelName + ": " + channel.getTopic().getTopicName() + "\n" + std::string(RESET);
+		std::string topicSetIrssi = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "Topic for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + ": " + channel.getTopic().getTopicName() + "\r\n";
+		sendErrorMessage(client, topicSetNetcat, topicSetIrssi);
 	}
 }
 
@@ -49,16 +57,22 @@ void Server::topicSetUp(Client& client, Channel& channel, std::string channelNam
 		newTopic += " " + tokens[i];
 	}
 
-
 	if (newTopic.size() > MAX_TOPIC_SIZE || newTopic.size() < MIN_TOPIC_SIZE) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_TOPIC_SIZE);
+		std::ostringstream oss;
+		oss << "Error: Topic size must be between " << MIN_TOPIC_SIZE << " and " << MAX_TOPIC_SIZE << " characters.\n";
+		std::string errorMsgNetcat = std::string(RED) + oss.str() + std::string(RESET);
+		std::ostringstream ossIrssi;
+		ossIrssi << ":" << client.getUser().getNickname() << "!" << client.getUser().getUsername() << "@hostname NOTICE " << client.getUser().getNickname() << " :Topic size must be between " << MIN_TOPIC_SIZE << " and " << MAX_TOPIC_SIZE << " characters.\r\n";
+		std::string errorMsgIrssi = ossIrssi.str();
+		sendErrorMessage(client, errorMsgNetcat, errorMsgIrssi);
 		return;
 	}
 	else {
 		if (newTopic == ":") {
 			newTopic = "";
-			std::string noTopic = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "No topic set for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "\r\n";
-			client.sendClientMsg(client.getClientSocket(), noTopic.c_str());
+			std::string noTopicNetcat = std::string(RED) + "No topic set for " + channelName + "\n" + std::string(RESET);
+			std::string noTopicIrssi = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + "No topic set for " + std::string(CYAN_IRSSI) + channelName + std::string(RESET) + "\r\n";
+			sendErrorMessage(client, noTopicNetcat, noTopicIrssi);
 			return;
 		}
 		channel.getTopic().setTopicName(newTopic);
@@ -81,6 +95,7 @@ void Server::topicSetUp(Client& client, Channel& channel, std::string channelNam
 	}
 }
 
+
 void Server::topicCmdClient(Client& client, std::vector<std::string> tokens) {
 	if (!validateTokensTopic(client, tokens))
 		return;
@@ -92,10 +107,9 @@ void Server::topicCmdClient(Client& client, std::vector<std::string> tokens) {
 
 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
 	if (it == _channels.end()) {
-		if (client.isIrssi)
-      	  	client.sendClientMsg(client.getClientSocket(), ERR_NOSUCHCHANNEL(channelName).c_str());
-		else
-			client.sendClientMsg(client.getClientSocket(), ERROR_CHANNEL_NOT_FOUND);
+		std::string errorMsgNetcat = std::string(RED) + "Error: No such channel " + channelName + "\n" + std::string(RESET);
+		std::string errorMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname NOTICE " + client.getUser().getNickname() + " :No such channel " + channelName + "\r\n";
+		sendErrorMessage(client, errorMsgNetcat, errorMsgIrssi);
 		return;
 	}
 
@@ -109,12 +123,9 @@ void Server::topicCmdClient(Client& client, std::vector<std::string> tokens) {
 				if (channel.isOperator(client.getClientSocket()))
 					topicSetUp(client, channel, channelName, tokens);
 				else {
-					if (client.isIrssi)
-						client.sendClientMsg(client.getClientSocket(), ERR_CHANOPRIVSNEEDED(client.getUser().getNickname(), channelName).c_str());
-					else {
-						std::string fullMessage = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + channelName + " You're not channel operator" + "\r\n";
-						broadcastMessageToChannel(channelName, fullMessage, -1);
-					}
+					std::string errorMsgNetcat = std::string(RED) + "Error: You're not channel operator for " + channelName + "\n" + std::string(RESET);
+					std::string errorMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname NOTICE " + client.getUser().getNickname() + " :You're not channel operator for " + channelName + "\r\n";
+					sendErrorMessage(client, errorMsgNetcat, errorMsgIrssi);
 					return;
 				}
 			}
@@ -122,11 +133,9 @@ void Server::topicCmdClient(Client& client, std::vector<std::string> tokens) {
 				topicSetUp(client, channel, channelName, tokens);
 		}
 		else {
-			if (client.isIrssi)
-				client.sendClientMsg(client.getClientSocket(), ERR_NOTONCHANNEL(client.getUser().getNickname(), channelName).c_str());
-			else
-				client.sendClientMsg(client.getClientSocket(), ERROR_NOT_IN_CHANNEL_TOPIC);
-			
+			std::string errorMsgNetcat = std::string(RED) + "Error: You're not in the channel " + channelName + "\n" + std::string(RESET);
+			std::string errorMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname NOTICE " + client.getUser().getNickname() + " :You're not in the channel " + channelName + "\r\n";
+			sendErrorMessage(client, errorMsgNetcat, errorMsgIrssi);
 		}
 	}
 }

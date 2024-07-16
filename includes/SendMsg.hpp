@@ -38,7 +38,6 @@
 # define ERROR_CMD_LEAVE RED "Error: Must be: [/leave OR /part] + <channelName>\n" RESET
 # define ERROR_CHANNEL_FAILED_LEAVE RED "ERROR: Failled to leave the channel\n" RESET
 # define ERROR_NOT_IN_CHANNEL RED "ERROR: Failled to send message, the client must join a channel\n" RESET
-# define ERROR_CMD_TOPIC RED "Error: Must be: /TOPIC <channel> OR /TOPIC <channel> <new topic>\n" RESET
 # define ERROR_NOT_IN_CHANNEL_TOPIC RED "ERROR: Failled to set Topic, you must be in the channel\n" RESET
 # define ERROR_WRONG_CHANNEL_PASS RED "ERROR: Failled to join the channel, password is incorrect\n" RESET
 # define ERROR_NO_PASS_CHANNEL RED "ERROR: Failled to join the channel, no password required\n" RESET

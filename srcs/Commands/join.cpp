@@ -19,7 +19,7 @@ void Server::handleChannel(Client& client, std::string& channelName, const std::
 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
 	if (it == _channels.end()) {
 		createChannel(client, channelName);
-		usleep(42); // Assurez-vous que cette pause est nécessaire
+		usleep(42);
 
 		it = _channels.find(channelName);
 		if (it == _channels.end()) {
@@ -31,7 +31,7 @@ void Server::handleChannel(Client& client, std::string& channelName, const std::
 	Channel& channel = it->second;
 
 	// Vérifier si le client est déjà membre du canal
-	if (channel.isMember(client.getClientSocket())) {
+	if (channel.isMember(client.getClientSocket()) && !client.isIrssi) {
 		std::stringstream ss;
 		ss << MSG_ALREADY_CHAN << channelName << std::endl << std::endl;
 		std::string channelMsg = ss.str();

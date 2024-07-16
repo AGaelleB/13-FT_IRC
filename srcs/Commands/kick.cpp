@@ -89,9 +89,6 @@ void Server::kickCmdClient(Client& client, std::vector<std::string> tokens) {
 	}
 
 	// Trouve le socket de l'utilisateur à kicker
-	// std::string nickName = tokens[2];
-	// if (nickName[0] == ':')
-	// 	nickName = nickName.substr(1); 
 	int userSocket = findUserSocket(tokens[2]);
 	if (userSocket == -1) {
 		std::string errorMsgNetcat = std::string(RED) + "Error: User " + tokens[2] + " not found\n" + RESET;

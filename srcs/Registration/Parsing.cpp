@@ -33,32 +33,26 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 		if (static_cast<size_t>(bytes_received) >= sizeof(buffer) - 1) {
 			client.sendClientMsg(client_fd, ERROR_MSG_CLIENT_TOO_LONG);
 			std::cerr << "Error: Command too long, client_fd: " << client_fd << std::endl;
+			memset(buffer, 0, sizeof(buffer)); // clear the buffer
 			return;
 		}
 		buffer[bytes_received] = '\0';
 		std::string message(buffer);
 
+        if (message.size() > MAX_TOPIC_SIZE) {
+            std::cerr << "Error: Command too long, client_fd: " << client_fd << std::endl;
+            client.sendClientMsg(client_fd, ERROR_MSG_CLIENT_TOO_LONG);
+			memset(buffer, 0, sizeof(buffer)); // clear the buffer
+            return;
+        }
+
 		std::vector<std::string> tokens = split(message);
 		if (tokens.empty()) {
 			client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+			memset(buffer, 0, sizeof(buffer)); // clear the buffer
 			return;
 		}
-
-		// std::string command = tokens[0];
-		// CommandType commandType = getCommandType(command);
-		// if (commandType == UNKNOWN) {
-		// 	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
-		// 		Channel& channel = it->second;
-		// 		if (channel.isMember(client_fd)) {
-		// 			std::string fullMessage = "<" + client.getUser().getNickname() + "> " + message;
-		// 			broadcastMessageToChannel(it->first, fullMessage, client_fd);
-		// 			break;
-		// 		}
-		// 	}
-		// }
-		// else {
-			parseClientMsg(message, client);
-		// }
+		parseClientMsg(message, client);
 	}
 }
 
