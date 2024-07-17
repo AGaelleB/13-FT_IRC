@@ -1,5 +1,8 @@
 ///////////////////////// PROBLEMES TO FIX /////////////////////////
 
+valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes nc localhost 6667
+valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./ircserv 6667 1
+
 
 warning, si on ctrlC un netclien au moment du password du client, ca stop le server 
 

@@ -21,8 +21,6 @@ void Server::quitCmdClient(Client& client, std::vector<std::string> tokens) {
 
 	std::cout << RED << "\nClient " << old_nickname << " is disconnected! ❌ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
 
-	_clients.erase(client.getClientSocket());
-
 	for (int i = 0; i < nfds; ++i) {
 		if (fds[i].fd == client.getClientSocket()) {
 			fds[i] = fds[nfds - 1];
@@ -30,6 +28,8 @@ void Server::quitCmdClient(Client& client, std::vector<std::string> tokens) {
 			break;
 		}
 	}
+	
+	_clients.erase(client.getClientSocket());
 }
 
 /* 
