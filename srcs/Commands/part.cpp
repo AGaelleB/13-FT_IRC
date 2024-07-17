@@ -95,7 +95,9 @@ void Server::partCmdClientCommon(Client& client, const std::string& channelName,
 
 void Server::partCmdClient(Client& client, std::vector<std::string> tokens) {
 	if (tokens.size() <= 1) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_LEAVE);
+		std::string irssiMessage = ":localhost 461 " + client.getUser().getNickname() + " PART :Not enough parameters\r\n";
+		std::string netcatMessage = "Error: Must be: [/leave OR /part] + <channelName>\n";
+		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
 	}
 

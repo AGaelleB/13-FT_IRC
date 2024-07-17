@@ -67,8 +67,7 @@ void Server::sendMessageToUser(Server& server, Client& client, const std::string
 	}
 
 	if (recipientSocket == -1) {
-		// std::string irssiMessage = ERR_NOSUCHNICK(client.getUser().getNickname(), target);
-		std::string irssiMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname NOTICE " + client.getUser().getNickname() + ":localhost 401 " + client.getUser().getNickname() + " " + client.getUser().getUsername() + " :Nickname does not exist.\r\n";
+		std::string irssiMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname NOTICE " + client.getUser().getNickname() + " :User " + target + " not found\r\n";
 		std::string netcatMessage = "Error: User " + target + " not found\n";
 		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
@@ -114,9 +113,6 @@ void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& to
 	for (std::vector<std::string>::iterator it = targetList.begin(); it != targetList.end(); ++it)
 		handleTarget(*this, client, *it, msgContent);
 }
-
-
-
 
 // /connect localhost 6667 1
 
