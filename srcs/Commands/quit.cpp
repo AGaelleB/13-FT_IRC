@@ -20,7 +20,6 @@ void Server::quitCmdClient(Client& client, std::vector<std::string> tokens) {
 		removeNickname(old_nickname);
 
 	std::cout << RED << "\nClient " << old_nickname << " is disconnected! ❌ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
-	std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << "/" << _MAX_CLIENTS << std::endl;
 
 	_clients.erase(client.getClientSocket());
 

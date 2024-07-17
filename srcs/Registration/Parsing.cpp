@@ -8,8 +8,8 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 	if (bytes_received <= 0) {
 		if (bytes_received == 0) {
 			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ [socket: " << client_fd << "]" << RESET << std::endl;
-			std::cout << BOLD << "Total client(s) still online: " << RESET << nfds - 2 << "/" << _MAX_CLIENTS << std::endl;
-		} else {
+		}
+		else {
 			std::cerr << "Error: data reception failed [socket: " << client_fd << "]" << std::endl;
 			std::cerr << "recv error: " << strerror(errno) << " (errno: " << errno << ")" << std::endl;
 		}
@@ -27,7 +27,8 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 				break;
 			}
 		}
-	} else {
+	}
+	else {
 		if (static_cast<size_t>(bytes_received) >= sizeof(buffer) - 1) {
 			std::string netcatMessage = "Error: Command too long\n";
 			std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Command too long\r\n";
@@ -100,9 +101,6 @@ void Server::parsingDataIrssi(Client &client, int new_client_socket) {
 	}
 	addUser(client, username, nickname);
 	logRPLirssi(client);
-
-	// std::cout << YELLOW "\nirssi username = " << username << RESET << std::endl;
-	// std::cout << YELLOW "irssi nickname = " << nickname << RESET << std::endl;
 }
 
 void Server::parsingDataNetcat(Client &client, int new_client_socket) {
@@ -139,18 +137,17 @@ void Server::detectClient(int client_socket) {
 		std::string answer(buffer);
 		if (findCapLs(answer) == 0) {
 			if (checkPasswordirssi(answer, client) == 1) {
-				// std::cerr << ORANGE << "connected with irssi!\n" << RESET;
 				this->_irssi_data = answer;
 				parsingDataIrssi(client, client_socket);
 				isRegistered(client);
 				std::cerr << ORANGE << "[" << client.getUser().getNickname() << "] is connected with irssi!\n" << RESET;
 				client.isIrssi = true;
+				std::cout << GREEN << "\nNew connection accepted! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
 			}
 			else {
 				client.sendClientMsg(client_socket, ERROR_ARGS_IRSSI);
 				close(client_socket);
 				_clients.erase(client_socket);
-				// nfds--;
 			}
 		}
 	}
@@ -159,6 +156,7 @@ void Server::detectClient(int client_socket) {
 		parsingDataNetcat(client, client_socket);
 		isRegistered(client); 
 		std::cerr << ORANGE << "[" << client.getUser().getNickname() << "] is connected with netcat!\n" << RESET;
+		std::cout << GREEN << "\nNew connection accepted! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
 	}
 }
 

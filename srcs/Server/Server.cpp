@@ -86,10 +86,6 @@ void Server::acceptNewConnection() {
 		std::cerr << "Error: connection not accepted" << std::endl;
 		return;
 	}
-
-	std::cout << GREEN << "\nNew connection accepted! ✅ [socket: " << new_client_socket << "]" << RESET << std::endl;
-	std::cout << BOLD << "Total client(s) online: " << RESET << nfds << "/" << _MAX_CLIENTS << std::endl;
-
 	fds[nfds].fd = new_client_socket;
 	fds[nfds].events = POLLIN;
 	

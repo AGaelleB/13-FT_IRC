@@ -1,11 +1,6 @@
 warning, si on ctrlC un netclien au moment du password du client, ca stop le server 
 
 
-attention au message envoye sur le server si on se connecte en irssi mais sans mettre le mdp, en mode 
-/connect localhost 6678
-
-
-
 petit warning, on peut avec le client netcat quitter un channel qui n est pas celui sur le quel nous sommes actuellement present
 ex:
 /join a,b,c

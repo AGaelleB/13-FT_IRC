@@ -106,11 +106,6 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 	}
 }
 
-/* 
-	tester msg trop long
-	msg priv a rissi, puis irssi join channel, irssi envoi un msg a quelqun qui n existe pas, puis essaie de quitter
- */
-
 void Server::handleUnknownCommand(Client& client, const std::vector<std::string>& tokens) {
 	if (tokens.empty()) {
 		std::string netcatMessage = "Error: Must be: /msg OR /PRIVMSG <target> <message>\n";
