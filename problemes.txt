@@ -1,13 +1,7 @@
+///////////////////////// PROBLEMES TO FIX /////////////////////////
+
+
 warning, si on ctrlC un netclien au moment du password du client, ca stop le server 
-
-
-petit warning, on peut avec le client netcat quitter un channel qui n est pas celui sur le quel nous sommes actuellement present
-ex:
-/join a,b,c
-/part b
-    => ca fonctionne alors que irssi ne fait partir que du "c"
-
-
 
 petit warning, probleme de commande si tu commences a taper une commande et qu un autre utilisateur fait une action en meme temps sur un autre terminal. 
 exemple : rejoindre, quitter ou ecrire un message
@@ -15,8 +9,21 @@ ca fait un melanges des message et du coup des unknown command
 je pense demander a lili comment vider les buffers des commandes
 
 
+faire attention voir si on ne leaks pas lorsque l on fait avec IRSSI /quit + des arguments. exemple :
+/quit je veux partir
+car le server recoit
+Quit command received
+Error: data reception failed [socket: 4]
+recv error: Connection reset by peer (errno: 104)
 
-warning, client 1 cree a,b,c et client 2 rejoin q,e,c => le client 2 se retoruvera dans le channel e, car c etait deja existant 
+
+faire la gestion des ctrl Z
+
+
+
+///////////////////////// ORDRE DES CHANNELS /////////////////////////
+
+1 - warning, client 1 cree a,b,c et client 2 rejoin q,e,c => le client 2 se retoruvera dans le channel e, car c etait deja existant 
 <Gaga>: JOIN #a,#b,#c:
 Channel command received
 Channel: [#a] created successfully! ✅
@@ -31,35 +38,23 @@ Channel: [#q] created successfully! ✅
 Channel: [#e] created successfully! ✅
 
 
-litlle truc a faire si on a le courrage, => afficher l'heure des messages lors des envois 
 
-
-a mettre sous le tapis je pense :
+2 - a mettre sous le tapis je pense :
 si on veut join plusieurs channel en une commande et que l un deux a un mdp, mettre une erreur 
 ex #protected a un mdp et je veux faire :
 /join a,b,c,protected,d
 solution : verifier s il y a des virgules, si oui parcourir les channels et check si l un d eux est protected => return
 
-
-
-ATTENTNION 
+3 - ATTENTNION 
 voir si on resout le fait que l on l on face des vector pour l ordre des channel, 
 et du coup pour la commande TOPIC, pour set un un topic il faudrait ne plus avoir un specifier le nom dui channel 
 mais directement que le changement soit applique au channel ou nous sommes actuellement 
 
 
-mettre un pettit msg pour quand on mmet le mode +t
-
-
-Probleme avec las cmd topic:
+4 - Probleme avec las cmd topic:
 irssi n'a pas besoin de specifier le channel pour lequel elle veut modifier le topic par default cela modifira le dernier channle dans lequel elle est rentree 
 il faut donc faire un vector avec lordre de join et pas lordre de creation 
 et par default lorsque la cmd topic est tapee rajouter manuelemnt devant le <newtopic> le channel correspondant 
 
+///////////////////////////////////////////////////////////////////////////
 
-faire attention voir si on ne leaks pas lorsque l on fait avec IRSSI /quit + des arguments. exemple :
-/quit je veux partir
-car le server recoit
-Quit command received
-Error: data reception failed [socket: 4]
-recv error: Connection reset by peer (errno: 104)
