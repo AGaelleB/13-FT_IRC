@@ -76,7 +76,7 @@ class Server {
 		// AllCommands.cpp
 		CommandType	getCommandType(const std::string& command);
 		void		parseClientMsg(const std::string& message, Client& client);
-		void		checkUnknownCmd(Client& client, const std::vector<std::string>& tokens);
+		void		handleUnknownCommand(Client& client, const std::vector<std::string>& tokens);
 
 		// channel.cpp
 		bool		checkChannelName(const std::string& channelName);
@@ -105,11 +105,11 @@ class Server {
 		void		inviteCmdClient(Client& client, std::vector<std::string> tokens);
 
 		// leave.cpp
-		void		leaveAllChannels(Client& client);
-		void		leaveCmdClientIRSSI(Client& client, std::vector<std::string> tokens);
-		void		leaveCmdClientNC(Client& client, std::vector<std::string> tokens);
-		void		leaveCmdClientCommon(Client& client, const std::string& channelName, const std::string& reason);
-		void		leaveCmdClient(Client& client, std::vector<std::string> tokens);
+		void		partAllChannels(Client& client);
+		void		partCmdClientIRSSI(Client& client, std::vector<std::string> tokens);
+		void		partCmdClientNC(Client& client, std::vector<std::string> tokens);
+		void		partCmdClientCommon(Client& client, const std::string& channelName, const std::string& reason);
+		void		partCmdClient(Client& client, std::vector<std::string> tokens);
 		std::string	joinTokens(const std::vector<std::string>& tokens, size_t startIndex);
 
 		// list.cpp

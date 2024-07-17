@@ -39,6 +39,11 @@ std::string ERR_NOSUCHNICK(const std::string &nick, const std::string &target) {
 	return ":localhost 401 " + nick + " " + target + " :Nickname does not exist.\r\n";
 }
 
+// std::string ERR_NOSUCHNICK(const std::string& nick, const std::string& target) {
+//     return ":localhost 401 " + nick + " " + target + " :No such nick/channel\r\n";
+// }
+
+
 std::string ERR_NOSUCHCHANNEL(const std::string &chan_name) {
 	return ":localhost 403 " + chan_name + " :No such channel\r\n";
 }

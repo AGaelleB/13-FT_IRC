@@ -42,6 +42,12 @@
 # define ERROR_WRONG_CHANNEL_PASS RED "ERROR: Failled to join the channel, password is incorrect\n" RESET
 # define ERROR_NO_PASS_CHANNEL RED "ERROR: Failled to join the channel, no password required\n" RESET
 
+#define ERROR_CMD_PRIVMSG_NETCAT RED "Error: Must be: /msg OR /PRIVMSG <target> <message>\n" RESET
+#define UNKNOWN_CMD_NETCAT "Unknown command\n"
+#define ERROR_CMD_PRIVMSG_IRSSI ":localhost NOTICE * :Must be: /msg OR /PRIVMSG <target> <message>\r\n"
+#define UNKNOWN_CMD_IRSSI ":localhost NOTICE * :Unknown command\r\n"
+
+
 //topic
 # define ERROR_TOPIC_SIZE RED "Error: Topic must contain between 1 and 307 characters\n" RESET
 

@@ -7,7 +7,7 @@ void Server::quitCmdClient(Client& client, std::vector<std::string> tokens) {
 		return;
 	}
 
-	leaveAllChannels(client);
+	partAllChannels(client);
 
 	client.sendClientMsg(client.getClientSocket(), MSG_DISCONNECT_CLIENT);
 	usleep(42);

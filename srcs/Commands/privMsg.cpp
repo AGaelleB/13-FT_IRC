@@ -2,10 +2,12 @@
 
 bool Server::validateTokensPrivMsg(Client& client, const std::vector<std::string>& tokens) {
 	if (tokens.size() < 3) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
-		return (false);
+		std::string irssiMessage = ERR_NEEDMOREPARAMS(client.getUser().getNickname(), "PRIVMSG");
+		std::string netcatMessage = "Error: Must be: /msg OR /PRIVMSG <target> <message>\n";
+		sendErrorMessage(client, netcatMessage, irssiMessage);
+		return false;
 	}
-	return (true);
+	return true;
 }
 
 std::string Server::extractMessageContent(const std::string& message, const std::string& targets) {
@@ -20,34 +22,39 @@ std::string Server::extractMessageContent(const std::string& message, const std:
 	return (msgContent);
 }
 
+
 void Server::sendMessageToChannel(Server& server, Client& client, const std::string& channelName, const std::string& msgContent) {
-    std::map<std::string, Channel>::iterator it = server._channels.find(channelName);
-    if (it == server._channels.end()) {
-        client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: Channel " + channelName + " not found\n" + RESET).c_str());
-        return;
-    }
+	std::map<std::string, Channel>::iterator it = server._channels.find(channelName);
+	if (it == server._channels.end()) {
+		std::string irssiMessage = ERR_NOSUCHCHANNEL(channelName);
+		std::string netcatMessage = std::string(RED) + "Error: Channel " + channelName + " not found\n" + RESET;
+		sendErrorMessage(client, netcatMessage, irssiMessage);
+		return;
+	}
 
-    if (!it->second.isMember(client.getClientSocket())) {
-        client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: You are not a member of the channel " + channelName + "\n" + RESET).c_str());
-        return;
-    }
+	if (!it->second.isMember(client.getClientSocket())) {
+		std::string irssiMessage = ERR_NOTONCHANNEL(client.getUser().getNickname(), channelName);
+		std::string netcatMessage = std::string(RED) + "Error: You are not a member of the channel " + channelName + "\n" + RESET;
+		sendErrorMessage(client, netcatMessage, irssiMessage);
+		return;
+	}
 
-    Channel& channel = it->second;
-    const std::vector<int>& members = channel.getMembers();
-    for (size_t i = 0; i < members.size(); ++i) {
-        int memberSocket = members[i];
-        Client& memberClient = server._clients[memberSocket];
+	Channel& channel = it->second;
+	const std::vector<int>& members = channel.getMembers();
+	for (size_t i = 0; i < members.size(); ++i) {
+		int memberSocket = members[i];
+		Client& memberClient = server._clients[memberSocket];
 
-        std::string fullMessage;
-        if (memberClient.isIrssi && client.getClientSocket() != memberClient.getClientSocket())
-            fullMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + channelName + " :" + msgContent + "\r\n";
+		std::string fullMessage;
+		if (memberClient.isIrssi && client.getClientSocket() != memberClient.getClientSocket())
+			fullMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + channelName + " :" + msgContent + "\r\n";
 		else if (client.getClientSocket() == memberClient.getClientSocket())
-			fullMessage = "[" + channelName + "] < " + std::string(BOLD) + client.getUser().getNickname() + std::string(RESET) + "> " + msgContent + "\r\n";
-        else
-            fullMessage = "[" + channelName + "] < " + client.getUser().getNickname() + "> " + msgContent + "\r\n";
+			fullMessage = "[" + channelName + "] <" + std::string(BOLD) + client.getUser().getNickname() + std::string(RESET) + "> " + msgContent + "\r\n";
+		else
+			fullMessage = "[" + channelName + "] <" + client.getUser().getNickname() + "> " + msgContent + "\r\n";
 		
-        ::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
-    }
+		::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
+	}
 }
 
 void Server::sendMessageToUser(Server& server, Client& client, const std::string& target, const std::string& msgContent) {
@@ -58,8 +65,12 @@ void Server::sendMessageToUser(Server& server, Client& client, const std::string
 			break;
 		}
 	}
+
 	if (recipientSocket == -1) {
-		client.sendClientMsg(client.getClientSocket(), (std::string(RED) + "Error: User " + target + " not found\n" + RESET).c_str());
+		// std::string irssiMessage = ERR_NOSUCHNICK(client.getUser().getNickname(), target);
+		std::string irssiMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname NOTICE " + client.getUser().getNickname() + ":localhost 401 " + client.getUser().getNickname() + " " + client.getUser().getUsername() + " :Nickname does not exist.\r\n";
+		std::string netcatMessage = "Error: User " + target + " not found\n";
+		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
 	}
 
@@ -69,11 +80,11 @@ void Server::sendMessageToUser(Server& server, Client& client, const std::string
 	if (recipientClient.isIrssi)
 		fullMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + target + " :" + msgContent + "\r\n";
 	else
-		fullMessage = "< " + client.getUser().getNickname() + "> " + msgContent + "\r\n";
+		fullMessage = "<" + client.getUser().getNickname() + "> " + msgContent + "\r\n";
 
-	client.sendClientMsg(recipientSocket, fullMessage.c_str());
+	::send(recipientSocket, fullMessage.c_str(), fullMessage.size(), 0);
 
-	std::string logMessage = std::string(BOLD) + "<" + client.getUser().getNickname() + ">:" + std::string(RESET) + " PRIVMSG " + target + ":" + msgContent;
+	std::string logMessage = "<" + client.getUser().getNickname() + "> PRIVMSG " + target + ": " + msgContent;
 	std::cout << logMessage << std::endl;
 }
 
@@ -92,7 +103,9 @@ void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& to
 	std::string msgContent = extractMessageContent(message, targets);
 
 	if (msgContent.length() > MAX_SIZE_MSG) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_MSG_TOO_LONG);
+		std::string irssiMessage = ":localhost 404 " + client.getUser().getNickname() + " :Message too long\r\n";
+		std::string netcatMessage = "Error: Message too long\n";
+		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
 	}
 
@@ -101,6 +114,8 @@ void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& to
 	for (std::vector<std::string>::iterator it = targetList.begin(); it != targetList.end(); ++it)
 		handleTarget(*this, client, *it, msgContent);
 }
+
+
 
 
 // /connect localhost 6667 1

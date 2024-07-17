@@ -78,7 +78,7 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case PART:
 			std::cout << "PART command received" << std::endl;
-			leaveCmdClient(client, tokens);
+			partCmdClient(client, tokens);
 			break;
 		case TOPIC:
 			std::cout << "TOPIC command received" << std::endl;
@@ -101,57 +101,70 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			break;
 		case UNKNOWN:
 		default:
-			// si la commande ne commence pas par un slash 
-			// et que lutilisateur est present dans un channel le message senvoie dans le dernier chanel rejoint
-			checkUnknownCmd(client, tokens);
+			handleUnknownCommand(client, tokens);
 			break;
 	}
 }
 
+/* 
+	tester msg trop long
+	msg priv a rissi, puis irssi join channel, irssi envoi un msg a quelqun qui n existe pas, puis essaie de quitter
+ */
 
-// a decouper pour plus de clarete 
-void Server::checkUnknownCmd(Client& client, const std::vector<std::string>& tokens) {
+void Server::handleUnknownCommand(Client& client, const std::vector<std::string>& tokens) {
 	if (tokens.empty()) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_PRIVMSG);
+		std::string netcatMessage = "Error: Must be: /msg OR /PRIVMSG <target> <message>\n";
+		std::string irssiMessage = ":localhost NOTICE * :Must be: /msg OR /PRIVMSG <target> <message>\r\n";
+		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
 	}
 
 	if (tokens[0][0] == '/') {
-		client.sendClientMsg(client.getClientSocket(), UNKNOWN_CMD);
+		std::string netcatMessage = "Unknown command\n";
+		// std::string irssiMessage = ":localhost NOTICE * :Unknown command\r\n";
+		std::string irssiMessage = ERR_UNKNOWNCOMMAND(client.getUser().getNickname(), tokens[0]);
+		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
 	}
 
+	// Reconstituer le message à partir des tokens
 	std::string message = tokens[0];
-	for (size_t i = 1; i < tokens.size(); ++i) {
+	for (size_t i = 1; i < tokens.size(); ++i)
 		message += " " + tokens[i];
-	}
 
-	std::vector<std::string>::reverse_iterator rit;
-	for (rit = _channelOrder.rbegin(); rit != _channelOrder.rend(); ++rit) {
+	// Parcourir la liste des canaux pour trouver ceux auxquels le client appartient
+	for (std::vector<std::string>::reverse_iterator rit = _channelOrder.rbegin(); rit != _channelOrder.rend(); ++rit) {
 		const std::string& channelName = *rit;
 		std::map<std::string, Channel>::iterator it = _channels.find(channelName);
+		
+		// Si le canal est trouvé et que le client est membre de ce canal
 		if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
 			Channel& channel = it->second;
-
-			// Utiliser une référence non-constante pour les membres
 			const std::vector<int>& members = channel.getMembers();
-			std::vector<int>::const_iterator memberIt;
-			for (memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
+			
+			// Envoyer le message à tous les membres du canal
+			for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
 				int memberSocket = *memberIt;
 				Client& memberClient = _clients[memberSocket];
-
 				std::string fullMessage;
+				
 				if (memberClient.isIrssi)
-					fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@localhost PRIVMSG " + channelName + " :" + message + "\r\n";
+                    fullMessage = RPL_PRIVMSG(client.getUser().getNickname(), client.getUser().getUsername(), channelName, message);
+					// fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@localhost PRIVMSG " + channelName + " :" + message + "\r\n";
 				else
-					fullMessage = "[" + channelName + "] < " + std::string(BOLD) + client.getUser().getNickname() + std::string(RESET) + "> " + message + "\r\n";
-
+					fullMessage = "[" + channelName + "] <" + BOLD + client.getUser().getNickname() + RESET + "> " + message + "\r\n";
 				send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
 			}
 			return;
 		}
 	}
-	client.sendClientMsg(client.getClientSocket(), ERROR_NOT_IN_CHANNEL);
+
+	// Si le client n'est membre d'aucun canal, envoyer un message d'erreur
+	std::string netcatMessage = "ERROR: Failed to send message, the client must join a channel\n";
+	// std::string irssiMessage = ":localhost NOTICE * :You are not in any channel\r\n";
+	std::string irssiMessage = ERR_NOTONCHANNEL(client.getUser().getNickname(), "NoChannel");
+	sendErrorMessage(client, netcatMessage, irssiMessage);
 }
+
 
 // /connect localhost 6667 1
