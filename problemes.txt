@@ -1,8 +1,9 @@
-///////////////////////// PROBLEMES TO FIX /////////////////////////
 
 valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./ircserv 6667 1
 valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes nc localhost 6667
 
+
+///////////////////////// PROBLEMES TO FIX /////////////////////////
 
 warning, si on ctrlC un netclien au moment du password du client, ca stop le server 
 => fonctionne mais pb avec le buffer apres qui est mal vide
@@ -14,7 +15,6 @@ je pense demander a lili comment vider les buffers des commandes
 
 faire la gestion des ctrl Z
 
-coder une fonction /STOP pour quitter le server
 
 ///////////////////////// ORDRE DES CHANNELS /////////////////////////
 
