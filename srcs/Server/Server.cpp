@@ -94,17 +94,26 @@ void Server::acceptNewConnection() {
 	detectClient(new_client_socket);
 }
 
-
-
 void Server::handlePollEvents() {
-	for (int i = 0; i < nfds; ++i) {
-		if (fds[i].revents & POLLIN) {
-			if (fds[i].fd == _server_socket)
-				acceptNewConnection();
-			else
-				handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
-		}
-	}
+    for (int i = 0; i < nfds; ++i) {
+        if (fds[i].revents & POLLIN) {
+            if (fds[i].fd == _server_socket) {
+                acceptNewConnection();
+            }
+			else if (fds[i].fd == STDIN_FILENO) {
+                std::string command;
+                std::getline(std::cin, command);
+                if (command == "/STOP") {
+                    std::cout << "Received /STOP command, shutting down server..." << std::endl;
+                    _shutdown_signal = true;
+                    break; // Exit the loop after setting the shutdown signal
+                }
+            }
+			else {
+                handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
+            }
+        }
+    }
 }
 
 void Server::stopServer() {
@@ -119,22 +128,26 @@ void Server::stopServer() {
 }
 
 void Server::startServer() {
-	initializeServer();
+    initializeServer();
 
-	while (!_shutdown_signal) {
-		int poll_count = poll(fds, nfds, 1000);
-		if (poll_count == -1) {
-			if (errno == EINTR)
-				continue; // Interrompu par un signal
-			std::cerr << "Error: poll failed" << std::endl;
-			break;
-		}
-		handlePollEvents();
-	}
-	stopServer();
+    // Set up pollfd for server socket and stdin
+    fds[0].fd = _server_socket;
+    fds[0].events = POLLIN;
+    fds[1].fd = STDIN_FILENO;
+    fds[1].events = POLLIN;
+    nfds = 2; // We have two fds to monitor: server socket and stdin
+
+    while (!_shutdown_signal) {
+        int poll_count = poll(fds, nfds, 1000);
+        if (poll_count == -1) {
+            if (errno == EINTR)
+                continue; // Interrupted by a signal
+            std::cerr << "Error: poll failed" << std::endl;
+            break;
+        }
+        handlePollEvents();
+    }
+    stopServer();
 }
 
-
-
-
-
+// /connect localhost 6667 1
