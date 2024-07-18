@@ -63,8 +63,9 @@ void Server::initializeServer() {
 	std::cout << bannerServer;
 	std::cout << BLUE << ". . . Listening on port " << _port << " . . . " << RESET << std::endl;
 
-	signal(SIGINT, Server::SignalHandler); // catch the signal (ctrl + c)
-	signal(SIGQUIT, Server::SignalHandler); // catch the signal (ctrl + \)
+	signal(SIGINT, Server::SignalHandler);   // catch the signal (ctrl + c)
+	signal(SIGQUIT, Server::SignalHandler);  // catch the signal (ctrl + \)
+	signal(SIGTSTP, Server::TstpSignalHandler);  // catch the signal (ctrl + z)
 }
 
 void Server::acceptNewConnection() {
@@ -95,25 +96,25 @@ void Server::acceptNewConnection() {
 }
 
 void Server::handlePollEvents() {
-    for (int i = 0; i < nfds; ++i) {
-        if (fds[i].revents & POLLIN) {
-            if (fds[i].fd == _server_socket) {
-                acceptNewConnection();
-            }
+	for (int i = 0; i < nfds; ++i) {
+		if (fds[i].revents & POLLIN) {
+			if (fds[i].fd == _server_socket) {
+				acceptNewConnection();
+			}
 			else if (fds[i].fd == STDIN_FILENO) {
-                std::string command;
-                std::getline(std::cin, command);
-                if (command == "/STOP") {
-                    std::cout << "Received /STOP command" << std::endl;
-                    _shutdown_signal = true;
-                    break; // Exit the loop after setting the shutdown signal
-                }
-            }
+				std::string command;
+				std::getline(std::cin, command);
+				if (command == "/STOP") {
+					std::cout << "Received /STOP command" << std::endl;
+					_shutdown_signal = true;
+					break; // Exit the loop after setting the shutdown signal
+				}
+			}
 			else {
-                handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
-            }
-        }
-    }
+				handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
+			}
+		}
+	}
 }
 
 void Server::stopServer() {
@@ -128,26 +129,26 @@ void Server::stopServer() {
 }
 
 void Server::startServer() {
-    initializeServer();
+	initializeServer();
 
-    // Set up pollfd for server socket and stdin
-    fds[0].fd = _server_socket;
-    fds[0].events = POLLIN;
-    fds[1].fd = STDIN_FILENO;
-    fds[1].events = POLLIN;
-    nfds = 2; // We have two fds to monitor: server socket and stdin
+	// Set up pollfd for server socket and stdin
+	fds[0].fd = _server_socket;
+	fds[0].events = POLLIN;
+	fds[1].fd = STDIN_FILENO;
+	fds[1].events = POLLIN;
+	nfds = 2; // We have two fds to monitor: server socket and stdin
 
-    while (!_shutdown_signal) {
-        int poll_count = poll(fds, nfds, 1000);
-        if (poll_count == -1) {
-            if (errno == EINTR)
-                continue; // Interrupted by a signal
-            std::cerr << "Error: poll failed" << std::endl;
-            break;
-        }
-        handlePollEvents();
-    }
-    stopServer();
+	while (!_shutdown_signal) {
+		int poll_count = poll(fds, nfds, 1000);
+		if (poll_count == -1) {
+			if (errno == EINTR)
+				continue; // Interrupted by a signal
+			std::cerr << "Error: poll failed" << std::endl;
+			break;
+		}
+		handlePollEvents();
+	}
+	stopServer();
 }
 
 // /connect localhost 6667 1

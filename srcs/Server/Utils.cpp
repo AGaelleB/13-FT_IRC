@@ -47,3 +47,9 @@ void Server::SignalHandler(int sig) {
 	Server::_shutdown_signal = true; // to stop the server
 	(void)sig;
 }
+
+
+void Server::TstpSignalHandler(int sig) {
+    std::cout << std::endl << "SIGTSTP (Ctrl+Z) Received! Ignoring suspension" << std::endl;
+    (void)sig;
+}

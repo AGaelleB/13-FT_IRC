@@ -198,6 +198,7 @@ class Server {
 		
 		// Utils.cpp
 		static void	SignalHandler(int sig);
+		static void TstpSignalHandler(int sig); // signal handler for SIGTSTP
 };
 
 
