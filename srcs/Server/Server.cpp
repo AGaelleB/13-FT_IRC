@@ -104,7 +104,7 @@ void Server::handlePollEvents() {
                 std::string command;
                 std::getline(std::cin, command);
                 if (command == "/STOP") {
-                    std::cout << "Received /STOP command, shutting down server..." << std::endl;
+                    std::cout << "Received /STOP command" << std::endl;
                     _shutdown_signal = true;
                     break; // Exit the loop after setting the shutdown signal
                 }
