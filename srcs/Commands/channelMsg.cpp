@@ -2,18 +2,18 @@
 
 void Server::broadcastMessageToChannel(const std::string& channelName, const std::string& message, int excludeSocket) {
 	
-    std::map<std::string, Channel>::iterator it = _channels.find(channelName);
-    if (it != _channels.end()) {
-        const std::vector<int>& members = it->second.getMembers();
-        for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
-            if (*memberIt != excludeSocket) {
-                std::map<int, Client>::iterator clientIt = _clients.find(*memberIt);
-                if (clientIt != _clients.end()) {
-                    clientIt->second.sendClientMsg(clientIt->second.getClientSocket(), message.c_str());
-                }
-            }
-        }
-    }
+	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
+	if (it != _channels.end()) {
+		const std::vector<int>& members = it->second.getMembers();
+		for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
+			if (*memberIt != excludeSocket) {
+				std::map<int, Client>::iterator clientIt = _clients.find(*memberIt);
+				if (clientIt != _clients.end()) {
+					clientIt->second.sendClientMsg(clientIt->second.getClientSocket(), message.c_str());
+				}
+			}
+		}
+	}
 }
 
 void Server::ChannelMsg(Client& client) {

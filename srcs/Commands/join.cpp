@@ -28,39 +28,39 @@ void Server::handleChannel(Client& client, std::string& channelName, const std::
 
 	Channel& channel = it->second;
 
-    // Vérifier si le client est déjà membre du canal
-    if (channel.isMember(client.getClientSocket())) {
-        std::string netcatMessage = MSG_ALREADY_CHAN + channelName + "\n\n";
-        std::string irssiMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@localhost NOTICE " + client.getUser().getNickname() + " :You are already on channel " + channelName + "\r\n";
-        sendErrorMessage(client, netcatMessage, irssiMessage);
-        return;
-    }
+	// Vérifier si le client est déjà membre du canal
+	if (channel.isMember(client.getClientSocket())) {
+		std::string netcatMessage = MSG_ALREADY_CHAN + channelName + "\n\n";
+		std::string irssiMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@localhost NOTICE " + client.getUser().getNickname() + " :You are already on channel " + channelName + "\r\n";
+		sendErrorMessage(client, netcatMessage, irssiMessage);
+		return;
+	}
 
-    // Vérifier si le canal est protégé par un mot de passe
-    if (!channel.getChannelKey().empty()) {
-        if (tokens.size() < 3 || tokens[2] != channel.getChannelKey()) {
-            std::string netcatMessage = "ERROR: Wrong channel password\n";
-            std::string irssiMessage = ERR_BADCHANNELKEY(client.getUser().getNickname(), channelName);
-            sendErrorMessage(client, netcatMessage, irssiMessage);
-            return;
-        }
-    }
+	// Vérifier si le canal est protégé par un mot de passe
+	if (!channel.getChannelKey().empty()) {
+		if (tokens.size() < 3 || tokens[2] != channel.getChannelKey()) {
+			std::string netcatMessage = "ERROR: Wrong channel password\n";
+			std::string irssiMessage = ERR_BADCHANNELKEY(client.getUser().getNickname(), channelName);
+			sendErrorMessage(client, netcatMessage, irssiMessage);
+			return;
+		}
+	}
 
-    // Vérifier si le canal est plein
-    if (channel.getMembersCount() >= channel.getMaxMembers()) {
-        std::string netcatMessage = "ERROR: Channel is full\n";
-        std::string irssiMessage = ERR_CHANNELISFULL(client.getUser().getNickname(), channelName);
-        sendErrorMessage(client, netcatMessage, irssiMessage);
-        return;
-    }
+	// Vérifier si le canal est plein
+	if (channel.getMembersCount() >= channel.getMaxMembers()) {
+		std::string netcatMessage = "ERROR: Channel is full\n";
+		std::string irssiMessage = ERR_CHANNELISFULL(client.getUser().getNickname(), channelName);
+		sendErrorMessage(client, netcatMessage, irssiMessage);
+		return;
+	}
 
-    // Vérifier si le canal est en mode invitation seulement (+i)
-    if (channel.getInvitationAccess() && !channel.isInvitedMember(client.getClientSocket())) {
-        std::string netcatMessage = "Cannot join this channel: you need an invite.\n";
-        std::string irssiMessage = ERR_INVITEONLYCHAN(channelName);
-        sendErrorMessage(client, netcatMessage, irssiMessage);
-        return;
-    }
+	// Vérifier si le canal est en mode invitation seulement (+i)
+	if (channel.getInvitationAccess() && !channel.isInvitedMember(client.getClientSocket())) {
+		std::string netcatMessage = "Cannot join this channel: you need an invite.\n";
+		std::string irssiMessage = ERR_INVITEONLYCHAN(channelName);
+		sendErrorMessage(client, netcatMessage, irssiMessage);
+		return;
+	}
 
 	// Ajouter le client au canal
 	channel.addMember(client.getClientSocket());

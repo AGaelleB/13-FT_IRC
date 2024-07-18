@@ -144,7 +144,7 @@ void Server::handleUnknownCommand(Client& client, const std::vector<std::string>
 				std::string fullMessage;
 				
 				if (memberClient.isIrssi)
-                    fullMessage = RPL_PRIVMSG(client.getUser().getNickname(), client.getUser().getUsername(), channelName, message);
+					fullMessage = RPL_PRIVMSG(client.getUser().getNickname(), client.getUser().getUsername(), channelName, message);
 					// fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@localhost PRIVMSG " + channelName + " :" + message + "\r\n";
 				else
 					fullMessage = "[" + channelName + "] <" + BOLD + client.getUser().getNickname() + RESET + "> " + message + "\r\n";
