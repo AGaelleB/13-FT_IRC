@@ -103,13 +103,21 @@ void Server::parsingDataIrssi(Client &client, int new_client_socket) {
 	logRPLirssi(client);
 }
 
-void Server::parsingDataNetcat(Client &client, int new_client_socket) {
-	client.setClientSocket(new_client_socket);
-	client.sendClientMsg(new_client_socket, bannerIRC);
-	client.sendClientMsg(new_client_socket, MSG_WELCOME);
-	client.sendClientMsg(new_client_socket, MSG_HELP_CLIENT);
-	authenticateAndRegister(client);
-	_clients[new_client_socket] = client; // Ajout du client à la map
+bool Server::parsingDataNetcat(Client &client, int new_client_socket) {
+    client.setClientSocket(new_client_socket);
+    client.sendClientMsg(new_client_socket, bannerIRC);
+    client.sendClientMsg(new_client_socket, MSG_WELCOME);
+    client.sendClientMsg(new_client_socket, MSG_HELP_CLIENT);
+    
+    try {
+        authenticateAndRegister(client);
+        _clients[new_client_socket] = client; // Ajout du client à la map
+        return true;
+    }
+	catch (const std::exception& e) {
+        std::cerr << "Error during authentication and registration: " << e.what() << std::endl;
+        return false;
+    }
 }
 
 void Server::detectClient(int client_socket) {
@@ -140,9 +148,9 @@ void Server::detectClient(int client_socket) {
 				this->_irssi_data = answer;
 				parsingDataIrssi(client, client_socket);
 				isRegistered(client);
-				std::cerr << ORANGE << "[" << client.getUser().getNickname() << "] is connected with irssi!\n" << RESET;
+				std::cerr << ORANGE << "1 - [" << client.getUser().getNickname() << "] is connected with irssi!\n" << RESET;
 				client.isIrssi = true;
-				std::cout << GREEN << "\nNew connection accepted! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
+				std::cout << GREEN << "\n1 - New connection accepted! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
 			}
 			else {
 				client.sendClientMsg(client_socket, ERROR_ARGS_IRSSI);
@@ -155,10 +163,11 @@ void Server::detectClient(int client_socket) {
 		std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
 		parsingDataNetcat(client, client_socket);
 		isRegistered(client); 
-		std::cerr << ORANGE << "[" << client.getUser().getNickname() << "] is connected with netcat!\n" << RESET;
-		std::cout << GREEN << "\nNew connection accepted! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
+		std::cerr << ORANGE << "2 - [" << client.getUser().getNickname() << "] is connected with netcat!\n" << RESET;
+		std::cout << GREEN << "\n2- New connection accepted! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
 	}
 }
+
 
 // /connect localhost 6667 1
 

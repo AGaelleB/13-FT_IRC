@@ -1,7 +1,7 @@
 ///////////////////////// PROBLEMES TO FIX /////////////////////////
 
-valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes nc localhost 6667
 valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./ircserv 6667 1
+valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes nc localhost 6667
 
 
 warning, si on ctrlC un netclien au moment du password du client, ca stop le server 
@@ -24,6 +24,7 @@ recv error: Connection reset by peer (errno: 104)
 faire la gestion des ctrl Z
 
 
+coder une fonction /EXIT pour quitter le server
 
 ///////////////////////// ORDRE DES CHANNELS /////////////////////////
 

@@ -188,7 +188,7 @@ class Server {
 		void		handleClientMessage(int client_fd, Client& client);
 		void		logRPLirssi(Client& client);
 		void		parsingDataIrssi(Client &client, int new_client_socket);
-		void		parsingDataNetcat(Client &client, int new_client_socket);
+		bool		parsingDataNetcat(Client &client, int new_client_socket);
 		void		setNonBlocking(int socket);
 		void		detectClient(int client_socket);
 
