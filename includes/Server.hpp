@@ -181,7 +181,7 @@ class Server {
 		// Authentification.cpp
 		void		checkPassword(Client &client);
 		void		addUser(Client &client, const std::string &username, const std::string &nickname);
-		void		isRegistered(Client &client);
+		bool		isRegistered(Client &client);
 		void		authenticateAndRegister(Client &client);
 
 		// parsing.cpp
