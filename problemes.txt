@@ -6,6 +6,7 @@ valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./ircserv 6667 
 
 warning, si on ctrlC un netclien au moment du password du client, ca stop le server 
 
+
 petit warning, probleme de commande si tu commences a taper une commande et qu un autre utilisateur fait une action en meme temps sur un autre terminal. 
 exemple : rejoindre, quitter ou ecrire un message
 ca fait un melanges des message et du coup des unknown command
