@@ -5,26 +5,16 @@ valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes nc localhost 66
 
 
 warning, si on ctrlC un netclien au moment du password du client, ca stop le server 
-
+=> fonctionne mais pb avec le buffer apres qui est mal vide
 
 petit warning, probleme de commande si tu commences a taper une commande et qu un autre utilisateur fait une action en meme temps sur un autre terminal. 
 exemple : rejoindre, quitter ou ecrire un message
 ca fait un melanges des message et du coup des unknown command
 je pense demander a lili comment vider les buffers des commandes
 
-
-faire attention voir si on ne leaks pas lorsque l on fait avec IRSSI /quit + des arguments. exemple :
-/quit je veux partir
-car le server recoit
-Quit command received
-Error: data reception failed [socket: 4]
-recv error: Connection reset by peer (errno: 104)
-
-
 faire la gestion des ctrl Z
 
-
-coder une fonction /EXIT pour quitter le server
+coder une fonction /STOP pour quitter le server
 
 ///////////////////////// ORDRE DES CHANNELS /////////////////////////
 

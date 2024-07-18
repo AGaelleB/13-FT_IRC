@@ -162,6 +162,7 @@ class Server {
 		void		privMsgCmdClient(Client& client, const std::vector<std::string>& tokens, const std::string& message);
 
 		// quit.cpp
+		void		quitCmdClientReason(Client& client, std::vector<std::string> tokens, std::string old_nickname);
 		void		quitCmdClient(Client& client, std::vector<std::string> tokens);
 
 		// topic.cpp
