@@ -99,7 +99,5 @@ std::string Server::PrintChannelListMembers(const std::string& channelName, cons
 	return membersList;
 }
 
-
-
 // /connect localhost 6667 1
 

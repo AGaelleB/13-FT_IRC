@@ -10,7 +10,6 @@ bool Server::validateTokensJoin(Client& client, const std::vector<std::string>& 
 	return (true);
 }
 
-
 void Server::handleChannel(Client& client, std::string& channelName, const std::vector<std::string>& tokens) {
 	if (channelName[0] != '#')
 		channelName = "#" + channelName;
@@ -92,9 +91,7 @@ void Server::sendChannelJoinInfo(Channel& channel, const std::string& channelNam
 		} 
 		else {
 			toSend = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "- " + std::string(RESET) + std::string(CYAN_IRSSI) + nick + std::string(RESET) + " [" + std::string(CYAN_IRSSI) + username + "@localhost" + std::string(RESET) + "]" + " has joined " + std::string(BOLD) + channelName + std::string(RESET) + "\r\n";
-					
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
-
 			toSend = listOfMembers;
 			send(member.getClientSocket(), toSend.c_str(), toSend.size(), 0);
 
@@ -108,7 +105,6 @@ void Server::sendChannelJoinInfo(Channel& channel, const std::string& channelNam
 			}
 		}
 	}
-
 	std::stringstream ss;
 	ss << MSG_JOIN_CHAN << channelName << std::endl << std::endl;
 	std::string channelJoinedMsg = ss.str();
@@ -118,17 +114,12 @@ void Server::sendChannelJoinInfo(Channel& channel, const std::string& channelNam
 void Server::joinCmdClient(Client& client, const std::vector<std::string>& tokens) {
 	if (!validateTokensJoin(client, tokens))
 		return;
-
 	std::string channelsNames = trim(tokens[1]);
-
 	std::vector<std::string> channelsList = splitComa(channelsNames);
-
 	for (std::vector<std::string>::iterator it = channelsList.begin(); it != channelsList.end(); ++it)
 		handleChannel(client, *it, tokens);
 
 }
-
-
 
 // /connect localhost 6667 1
 

@@ -2,8 +2,6 @@
 
 void Server::broadcastMessageToChannel(const std::string& channelName, const std::string& message, int excludeSocket) {
 	
-	// std::cout << YELLOW << "START broadcastMessageToChannel" << RESET << std::endl; 
-
     std::map<std::string, Channel>::iterator it = _channels.find(channelName);
     if (it != _channels.end()) {
         const std::vector<int>& members = it->second.getMembers();
@@ -19,8 +17,6 @@ void Server::broadcastMessageToChannel(const std::string& channelName, const std
 }
 
 void Server::ChannelMsg(Client& client) {
-
-	// std::cout << YELLOW << "START ChannelMsg" << RESET << std::endl; 
 
 	char buffer[MAX_SIZE_MSG];
 	int bytes_read = recv(client.getClientSocket(), buffer, sizeof(buffer) - 1, 0);

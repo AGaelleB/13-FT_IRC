@@ -108,3 +108,4 @@ void Server::kickCmdClient(Client& client, std::vector<std::string> tokens) {
 	// Appelle la fonction pour gérer le kick avec la raison
 	kickCmdClientReason(client, channel, tokens, userSocket);
 }
+
