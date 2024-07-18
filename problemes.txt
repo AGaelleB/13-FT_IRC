@@ -13,8 +13,6 @@ exemple : rejoindre, quitter ou ecrire un message
 ca fait un melanges des message et du coup des unknown command
 je pense demander a lili comment vider les buffers des commandes
 
-faire la gestion des ctrl Z
-
 
 ///////////////////////// ORDRE DES CHANNELS /////////////////////////
 
@@ -53,3 +51,5 @@ et par default lorsque la cmd topic est tapee rajouter manuelemnt devant le <new
 
 ///////////////////////////////////////////////////////////////////////////
 
+BONUS - faire une petite note avec toutes les cmd de base a faire
+exemple aussi si ctrlZ ca met en pause et mettre fg pour reprendre 
