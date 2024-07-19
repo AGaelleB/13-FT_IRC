@@ -193,19 +193,6 @@ fg
 
 Pour envoyer un fichier entre deux clients utilisant irssi et netcat, on utilise le protocole DCC (Direct Client-to-Client) qui est spécifiquement conçu pour ce type de transfert sur IRC.
 
-### Utilisation de netcat
-
-- **Commande sur l'ordinateur de l'émetteur :**
-```sh
-nc -l -p 6667 < [fichier_a_envoyer]
-```
-
-- **Commande sur l'ordinateur du récepteur :**
-
-```sh
-nc <adresse_ip_emetteur> 6667 > [fichier_recu]
-```
-
 ### Utilisation de irssi et DCC
 
 - **Commande sur l'ordinateur de l'émetteur (client irssi) :**
