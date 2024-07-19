@@ -218,3 +218,12 @@ Notre bot IRC surveille les messages envoyés dans les canaux et expulse les uti
      /mode #nom_du_channel +b [mot_banni]
      /mode #nom_du_channel -b [mot_debanni]
      ```
+
+# Commandes pour les leaks
+
+Attention, VS Code laisse des fds open, a tester sur un terminal
+
+```sh
+valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./ircserv 6667 1
+valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes nc localhost 6667
+```
