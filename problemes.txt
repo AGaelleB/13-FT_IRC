@@ -27,9 +27,3 @@ Channel: [#c] created successfully! ✅
 Channel command received
 Channel: [#q] created successfully! ✅
 Channel: [#e] created successfully! ✅
-
-///////////////////////// BONUS /////////////////////////
-
-voir pour l envoi des files
-
-//////////////////////////////////////////////////////////
