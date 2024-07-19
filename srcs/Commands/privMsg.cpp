@@ -42,13 +42,13 @@ void Server::sendMessageToUser(Server& server, Client& client, const std::string
 
 	std::string fullMessage;
 	if (recipientClient.isIrssi)
-		fullMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + target + " :" + msgContent + "\r\n";
+		fullMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + target + " " + msgContent + "\r\n"; // MODIF
 	else
 		fullMessage = "<" + client.getUser().getNickname() + "> " + msgContent + "\r\n";
 
 	::send(recipientSocket, fullMessage.c_str(), fullMessage.size(), 0);
 
-	std::string logMessage = "<" + client.getUser().getNickname() + "> PRIVMSG " + target + ": " + msgContent;
+	std::string logMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + target + " " + msgContent + "\r\n"; // MODIF
 	std::cout << logMessage << std::endl;
 }
 
