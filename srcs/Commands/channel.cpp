@@ -158,29 +158,30 @@ void Server::createChannel(Client& client, std::string channelName) {
 }
 
 void Channel::initializeBannedWords() {
-	std::string defaultBannedWords[] = {
-		// English banned words
-		"anal", "anus", "arse", "ass", "ballsack", "balls", "bastard", "bitch", "biatch", "bloody",
-		"blowjob", "blow job", "bollock", "bollok", "boner", "boob", "bugger", "bum", "butt",
-		"buttplug", "clitoris", "cock", "coon", "crap", "cunt", "dick", "dildo", "dyke",
-		"fag", "feck", "fellate", "fellatio", "felching", "fuck", "f u c k", "fudgepacker", "fudge packer",
-		"flange", "jerk", "jizz", "knobend", "knob end", "labia", "muff", "nigger", "nigga",
-		"penis", "piss", "prick", "pube", "pussy", "scrotum", "sex", "shit", "s hit", "sh1t",
-		"slut", "smegma", "spunk", "tit", "tosser", "turd", "twat", "vagina", "wank", "whore",
+    std::string defaultBannedWords[] = {
+        // English banned words
+        "anal", "anus", "arse", "ass", "ballsack", "balls", "bastard", "bitch", "biatch", "bloody",
+        "blowjob", "blow job", "bollock", "bollok", "boner", "boob", "bugger", "bum", "butt",
+        "buttplug", "clitoris", "cock", "coon", "crap", "cunt", "dick", "dildo", "dyke",
+        "fag", "feck", "fellate", "fellatio", "felching", "fuck", "f u c k", "fudgepacker", "fudge packer",
+        "flange", "jerk", "jizz", "knobend", "knob end", "labia", "muff", "nigger", "nigga",
+        "penis", "piss", "prick", "pube", "pussy", "scrotum", "sex", "shit", "s hit", "sh1t",
+        "slut", "smegma", "spunk", "tit", "tosser", "turd", "twat", "vagina", "wank", "whore",
 
-		// French banned words
-		"abruti", "baise", "baiser", "batard", "connard", "connasse", "conne", "con", "connerie",
-		"cul", "emmerde", "emmerder", "enculé", "enculer", "enculé", "encule", "foutre",
-		"gueule", "merde", "nique", "niquer", "putain", "salaud", "salope", "sodomie", "sucer", "pute"
-	};
+        // French banned words
+        "abruti", "baise", "baiser", "batard", "connard", "connasse", "conne", "con", "connerie",
+        "cul", "emmerde", "emmerder", "enculé", "enculer", "enculé", "encule", "foutre",
+        "gueule", "merde", "nique", "niquer", "putain", "salaud", "salope", "sodomie", "sucer", "pute"
+    };
 
-	for (size_t i = 0; i < sizeof(defaultBannedWords) / sizeof(defaultBannedWords[0]); ++i) {
-		_bannedWords.insert(defaultBannedWords[i]);
-	}
+    for (size_t i = 0; i < sizeof(defaultBannedWords) / sizeof(defaultBannedWords[0]); ++i) {
+        _bannedWords.insert(defaultBannedWords[i]);
+    }
 
-	// Adding the same words with ":" in front
-	for (size_t i = 0; i < sizeof(defaultBannedWords) / sizeof(defaultBannedWords[0]); ++i) {
-		_bannedWords.insert(":" + defaultBannedWords[i]);
-	}
+    // Adding the same words with ":" in front
+    for (size_t i = 0; i < sizeof(defaultBannedWords) / sizeof(defaultBannedWords[0]); ++i) {
+        _bannedWords.insert(":" + defaultBannedWords[i]);
+    }
 }
+
 

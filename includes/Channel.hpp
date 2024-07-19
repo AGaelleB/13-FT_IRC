@@ -24,7 +24,7 @@ class Channel {
 		bool							_topicRight;
 		int								_maxMembersChannel;
 		bool							_invitationAccess;
-		std::unordered_set<std::string>	_bannedWords; // Liste des mots interdits
+		std::set<std::string>			_bannedWords; // Liste des mots interdits
 		void							initializeBannedWords();
 
 	public:
