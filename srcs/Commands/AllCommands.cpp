@@ -32,7 +32,8 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 		if (i == 1) {
 			reconstructedMessage += " " + tokens[i] + ":";
 			colonAdded = true;
-		} else {
+		}
+		else {
 			reconstructedMessage += tokens[i] + " ";
 		}
 	}
@@ -136,6 +137,20 @@ void Server::handleUnknownCommand(Client& client, const std::vector<std::string>
 		if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
 			Channel& channel = it->second;
 			const std::vector<int>& members = channel.getMembers();
+			
+			// Vérifier si le message contient des mots interdits
+			std::istringstream iss(message);
+			std::string word;
+			while (iss >> word) {
+				if (channel.isBannedWord(word)) {
+					// Expulser le client si un mot interdit est trouvé
+					channel.removeMember(client.getClientSocket());
+					std::string irssiKickMessage = ":localhost 474 " + client.getUser().getNickname() + " " + channelName + " :You have been kicked for using the banned word \"" + word + "\".\r\n";
+					std::string netcatKickMessage = std::string(RED) + "You have been kicked from the channel " + channelName + " for using the banned word \"" + word + "\".\n" + RESET;
+					sendErrorMessage(client, netcatKickMessage, irssiKickMessage);
+					return;
+				}
+			}
 			
 			// Envoyer le message à tous les membres du canal
 			for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {

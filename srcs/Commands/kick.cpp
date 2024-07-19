@@ -50,7 +50,10 @@ void Server::executeKick(Client& client, Channel& channel, const std::string& re
 	std::string notificationIrssi = RPL_KICK(client.getUser().getNickname(), client.getUser().getUsername(), channelName, targetClient.getUser().getNickname(), reason);
 
 	if (targetClient.isIrssi)
+	{
+		std::cout << YELLOW << "KICKED" << RESET << std::endl;
 		targetClient.sendClientMsg(targetClient.getClientSocket(), notificationIrssi.c_str());
+	}
 	else
 		targetClient.sendClientMsg(targetClient.getClientSocket(), notificationNetcat.c_str());
 }

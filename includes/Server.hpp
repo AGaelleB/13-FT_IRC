@@ -36,6 +36,7 @@ enum ModeType {
 	MODE_K,
 	MODE_O,
 	MODE_L,
+	MODE_B,
 	MODE_UNKNOWN
 };
 
@@ -77,6 +78,9 @@ class Server {
 		CommandType	getCommandType(const std::string& command);
 		void		parseClientMsg(const std::string& message, Client& client);
 		void		handleUnknownCommand(Client& client, const std::vector<std::string>& tokens);
+
+		// bot.cpp
+		void addBannedWordCmd(Client& client, const std::vector<std::string>& tokens, Channel& channel);
 
 		// channel.cpp
 		bool		checkChannelName(const std::string& channelName);
@@ -124,6 +128,10 @@ class Server {
 		bool		validateTokensMode(Client& client, const std::vector<std::string>& tokens);
 		void		modeCmdClient(Client& client, std::vector<std::string> tokens);
 		
+
+		// mode_i.cpp
+		void		modeBCmd(Client& client, const std::vector<std::string>& tokens, Channel& channel, const std::string& channelName);
+
 		// mode_i.cpp
 		void		modeICmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName);
 

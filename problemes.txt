@@ -36,3 +36,6 @@ voir pour l envoi des files
 //////////////////////////////////////////////////////////
 
 
+supprimer le chan si la derniere personne presente est bannnis
+
+chaine de caractere genre sa va 

@@ -11,6 +11,7 @@ SRCS = srcs/main.cpp \
 	srcs/Client/User.cpp \
 	\
 	srcs/Commands/AllCommands.cpp \
+	srcs/Commands/bot.cpp \
 	srcs/Commands/channel.cpp \
 	srcs/Commands/channelMsg.cpp \
 	srcs/Commands/help.cpp \
@@ -26,6 +27,7 @@ SRCS = srcs/main.cpp \
 	srcs/Commands/quit.cpp \
 	srcs/Commands/topic.cpp \
 	\
+	srcs/Commands/mode/mode_b.cpp \
 	srcs/Commands/mode/mode_i.cpp \
 	srcs/Commands/mode/mode_k.cpp \
 	srcs/Commands/mode/mode_l.cpp \

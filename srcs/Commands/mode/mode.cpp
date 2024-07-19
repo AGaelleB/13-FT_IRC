@@ -16,9 +16,9 @@ ModeType Server::getModeType(const std::string& modeType) {
 	if (modeType == "+k" || modeType == "-k") return MODE_K;
 	if (modeType == "+o" || modeType == "-o") return MODE_O;
 	if (modeType == "+l" || modeType == "-l") return MODE_L;
+	if (modeType == "+b" || modeType == "-b") return MODE_B;
 	return MODE_UNKNOWN;
 }
-
 
 bool Server::validateTokensMode(Client& client, const std::vector<std::string>& tokens) {
 	if (tokens.size() < 3) {
@@ -41,10 +41,15 @@ void Server::modeCmdClient(Client& client, std::vector<std::string> tokens) {
 		return;
 
 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
+	if (it == _channels.end()) {
+		std::string irssiMessage = ":localhost 403 " + client.getUser().getNickname() + " " + channelName + " :No such channel\r\n";
+		std::string netcatMessage = std::string(RED) + "Error: Channel " + channelName + " not found.\n" + RESET;
+		sendErrorMessage(client, netcatMessage, irssiMessage);
+		return;
+	}
 	
 	Channel& channel = it->second;
 	std::string mode = tokens[2];
-
 
 	ModeType modetype = getModeType(mode);
 	switch (modetype) {
@@ -68,9 +73,15 @@ void Server::modeCmdClient(Client& client, std::vector<std::string> tokens) {
 			std::cout << "mode L received" << std::endl;
 			modeLCmd(client, tokens, channel, channelName);
 			break;
+		case MODE_B:
+			std::cout << "mode B received" << std::endl;
+			modeBCmd(client, tokens, channel, channelName);
+			break;
 		case MODE_UNKNOWN:
 		default:
-			client.sendClientMsg(client.getClientSocket(), ERROR_MODE_NOT_FOUND);
+			std::string irssiMessage = ":localhost 472 " + client.getUser().getNickname() + " " + mode + " :is unknown mode char to me\r\n";
+			std::string netcatMessage = std::string(RED) + "Error: Unknown mode command.\n" + RESET;
+			sendErrorMessage(client, netcatMessage, irssiMessage);
 			break;
 	}
 }
