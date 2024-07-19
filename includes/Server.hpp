@@ -80,7 +80,9 @@ class Server {
 		void		handleUnknownCommand(Client& client, const std::vector<std::string>& tokens);
 
 		// bot.cpp
-		void addBannedWordCmd(Client& client, const std::vector<std::string>& tokens, Channel& channel);
+		void		addBannedWordCmd(Client& client, const std::vector<std::string>& tokens, Channel& channel);
+		bool		checkBannedWordsPrivMsg(Client& client, Channel& channel, const std::string& channelName, const std::string& msgContent);
+		bool		checkBannedWordsUnknown(Client& client, Channel& channel, const std::string& channelName, const std::string& msgContent);
 
 		// channel.cpp
 		bool		checkChannelName(const std::string& channelName);

@@ -117,7 +117,6 @@ void Server::handleUnknownCommand(Client& client, const std::vector<std::string>
 
 	if (tokens[0][0] == '/') {
 		std::string netcatMessage = "Unknown command\n";
-		// std::string irssiMessage = ":localhost NOTICE * :Unknown command\r\n";
 		std::string irssiMessage = ERR_UNKNOWNCOMMAND(client.getUser().getNickname(), tokens[0]);
 		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
@@ -132,35 +131,24 @@ void Server::handleUnknownCommand(Client& client, const std::vector<std::string>
 	for (std::vector<std::string>::reverse_iterator rit = _channelOrder.rbegin(); rit != _channelOrder.rend(); ++rit) {
 		const std::string& channelName = *rit;
 		std::map<std::string, Channel>::iterator it = _channels.find(channelName);
-		
+
 		// Si le canal est trouvé et que le client est membre de ce canal
 		if (it != _channels.end() && it->second.isMember(client.getClientSocket())) {
 			Channel& channel = it->second;
-			const std::vector<int>& members = channel.getMembers();
-			
-			// Vérifier si le message contient des mots interdits
-			std::istringstream iss(message);
-			std::string word;
-			while (iss >> word) {
-				if (channel.isBannedWord(word)) {
-					// Expulser le client si un mot interdit est trouvé
-					channel.removeMember(client.getClientSocket());
-					std::string irssiKickMessage = ":localhost 474 " + client.getUser().getNickname() + " " + channelName + " :You have been kicked for using the banned word \"" + word + "\".\r\n";
-					std::string netcatKickMessage = std::string(RED) + "You have been kicked from the channel " + channelName + " for using the banned word \"" + word + "\".\n" + RESET;
-					sendErrorMessage(client, netcatKickMessage, irssiKickMessage);
-					return;
-				}
-			}
-			
+
+			// Vérifier si le message contient des mots interdits et gérer l'expulsion si nécessaire
+			if (checkBannedWordsUnknown(client, channel, channelName, message))
+				return;
+
 			// Envoyer le message à tous les membres du canal
+			const std::vector<int>& members = channel.getMembers();
 			for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
 				int memberSocket = *memberIt;
 				Client& memberClient = _clients[memberSocket];
 				std::string fullMessage;
-				
+
 				if (memberClient.isIrssi)
 					fullMessage = RPL_PRIVMSG(client.getUser().getNickname(), client.getUser().getUsername(), channelName, message);
-					// fullMessage = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@localhost PRIVMSG " + channelName + " :" + message + "\r\n";
 				else
 					fullMessage = "[" + channelName + "] <" + BOLD + client.getUser().getNickname() + RESET + "> " + message + "\r\n";
 				send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
@@ -171,10 +159,10 @@ void Server::handleUnknownCommand(Client& client, const std::vector<std::string>
 
 	// Si le client n'est membre d'aucun canal, envoyer un message d'erreur
 	std::string netcatMessage = "ERROR: Failed to send message, the client must join a channel\n";
-	// std::string irssiMessage = ":localhost NOTICE * :You are not in any channel\r\n";
 	std::string irssiMessage = ERR_NOTONCHANNEL(client.getUser().getNickname(), "NoChannel");
 	sendErrorMessage(client, netcatMessage, irssiMessage);
 }
+
 
 
 // /connect localhost 6667 1

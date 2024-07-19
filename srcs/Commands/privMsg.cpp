@@ -22,56 +22,6 @@ std::string Server::extractMessageContent(const std::string& message, const std:
 	return (msgContent);
 }
 
-void Server::sendMessageToChannel(Server& server, Client& client, const std::string& channelName, const std::string& msgContent) {
-    std::map<std::string, Channel>::iterator it = server._channels.find(channelName);
-    if (it == server._channels.end()) {
-        std::string irssiMessage = ERR_NOSUCHCHANNEL(channelName);
-        std::string netcatMessage = std::string(RED) + "Error: Channel " + channelName + " not found\n" + RESET;
-        sendErrorMessage(client, netcatMessage, irssiMessage);
-        return;
-    }
-
-    if (!it->second.isMember(client.getClientSocket())) {
-        std::string irssiMessage = ERR_NOTONCHANNEL(client.getUser().getNickname(), channelName);
-        std::string netcatMessage = std::string(RED) + "Error: You are not a member of the channel " + channelName + "\n" + RESET;
-        sendErrorMessage(client, netcatMessage, irssiMessage);
-        return;
-    }
-
-    Channel& channel = it->second;
-
-    // Vérifier si le message contient des mots interdits
-    std::istringstream iss(msgContent);
-    std::string word;
-    while (iss >> word) {
-        std::cout << YELLOW << word << RESET << std::endl;
-        if (channel.isBannedWord(word)) {
-            // Expulser le client si un mot interdit est trouvé
-            channel.removeMember(client.getClientSocket());
-            std::string irssiKickMessage = ":localhost 474 " + client.getUser().getNickname() + " NOTICE " + channelName + " :You have been kicked for using the banned word \"" + word + "\".\r\n";
-            std::string netcatKickMessage = std::string(RED) + "You have been kicked from the channel " + channelName + " for using the banned word \"" + word + "\".\n" + RESET;
-            sendErrorMessage(client, netcatKickMessage, irssiKickMessage);
-            return;
-        }
-    }
-
-    const std::vector<int>& members = channel.getMembers();
-    for (size_t i = 0; i < members.size(); ++i) {
-        int memberSocket = members[i];
-        Client& memberClient = server._clients[memberSocket];
-
-        std::string fullMessage;
-        if (memberClient.isIrssi && client.getClientSocket() != memberClient.getClientSocket())
-            fullMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + channelName + " :" + msgContent + "\r\n";
-        else if (client.getClientSocket() == memberClient.getClientSocket())
-            fullMessage = "[" + channelName + "] <" + std::string(BOLD) + client.getUser().getNickname() + std::string(RESET) + "> " + msgContent + "\r\n";
-        else
-            fullMessage = "[" + channelName + "] <" + client.getUser().getNickname() + "> " + msgContent + "\r\n";
-        
-        ::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
-    }
-}
-
 void Server::sendMessageToUser(Server& server, Client& client, const std::string& target, const std::string& msgContent) {
 	int recipientSocket = -1;
 	for (std::map<int, Client>::iterator it = server._clients.begin(); it != server._clients.end(); ++it) {
@@ -129,6 +79,45 @@ void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& to
 		handleTarget(*this, client, *it, msgContent);
 }
 
+
+void Server::sendMessageToChannel(Server& server, Client& client, const std::string& channelName, const std::string& msgContent) {
+	std::map<std::string, Channel>::iterator it = server._channels.find(channelName);
+	if (it == server._channels.end()) {
+		std::string irssiMessage = ERR_NOSUCHCHANNEL(channelName);
+		std::string netcatMessage = std::string(RED) + "Error: Channel " + channelName + " not found\n" + RESET;
+		sendErrorMessage(client, netcatMessage, irssiMessage);
+		return;
+	}
+
+	if (!it->second.isMember(client.getClientSocket())) {
+		std::string irssiMessage = ERR_NOTONCHANNEL(client.getUser().getNickname(), channelName);
+		std::string netcatMessage = std::string(RED) + "Error: You are not a member of the channel " + channelName + "\n" + RESET;
+		sendErrorMessage(client, netcatMessage, irssiMessage);
+		return;
+	}
+
+	Channel& channel = it->second;
+
+	// Vérifier si le message contient des mots interdits
+	if (checkBannedWordsPrivMsg(client, channel, channelName, msgContent))
+		return;
+
+	const std::vector<int>& members = channel.getMembers();
+	for (size_t i = 0; i < members.size(); ++i) {
+		int memberSocket = members[i];
+		Client& memberClient = server._clients[memberSocket];
+
+		std::string fullMessage;
+		if (memberClient.isIrssi && client.getClientSocket() != memberClient.getClientSocket())
+			fullMessage = ":" + client.getUser().getNickname() + " PRIVMSG " + channelName + " :" + msgContent + "\r\n";
+		else if (client.getClientSocket() == memberClient.getClientSocket())
+			fullMessage = "[" + channelName + "] <" + std::string(BOLD) + client.getUser().getNickname() + std::string(RESET) + "> " + msgContent + "\r\n";
+		else
+			fullMessage = "[" + channelName + "] <" + client.getUser().getNickname() + "> " + msgContent + "\r\n";
+
+		::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
+	}
+}
+
+
 // /connect localhost 6667 1
-
-

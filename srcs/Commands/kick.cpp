@@ -13,7 +13,6 @@ void Server::kickCmdClientReason(Client& client, Channel& channel, std::vector<s
 
 	executeKick(client, channel, reason, userSocket);
 }
-
 void Server::executeKick(Client& client, Channel& channel, const std::string& reason, int userSocket) {
 	// Récupère le client à partir du socket utilisateur
 	Client& targetClient = _clients[userSocket];
@@ -40,7 +39,7 @@ void Server::executeKick(Client& client, Channel& channel, const std::string& re
 		std::string fullMessage;
 		if (memberClient.isIrssi)
 			fullMessage = kickMsgIrssi;
-		else 
+		else
 			fullMessage = kickMsgNetcat;
 		::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
 	}
@@ -48,14 +47,15 @@ void Server::executeKick(Client& client, Channel& channel, const std::string& re
 	// Envoyer un message de notification à l'utilisateur kické
 	std::string notificationNetcat = std::string(RED) + "You have been kicked by " + client.getUser().getNickname() + " from channel " + channelName + " [" + reason + "]\n" + RESET;
 	std::string notificationIrssi = RPL_KICK(client.getUser().getNickname(), client.getUser().getUsername(), channelName, targetClient.getUser().getNickname(), reason);
+	std::string partMessage = RPL_PART(targetClient.getUser().getNickname(), targetClient.getUser().getUsername(), channelName, " :You have been kicked from the channel.");
 
-	if (targetClient.isIrssi)
-	{
-		std::cout << YELLOW << "KICKED" << RESET << std::endl;
+	if (targetClient.isIrssi) {
+		targetClient.sendClientMsg(targetClient.getClientSocket(), partMessage.c_str());
 		targetClient.sendClientMsg(targetClient.getClientSocket(), notificationIrssi.c_str());
 	}
-	else
+	else {
 		targetClient.sendClientMsg(targetClient.getClientSocket(), notificationNetcat.c_str());
+	}
 }
 
 void Server::kickCmdClient(Client& client, std::vector<std::string> tokens) {
