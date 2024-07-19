@@ -208,4 +208,13 @@ Pour envoyer un fichier entre deux clients utilisant irssi et netcat, on utilise
 
 ## Le bot
 
-Nous avons concu un bot qui blablabla
+Notre bot IRC surveille les messages envoyés dans les canaux et expulse les utilisateurs qui utilisent des mots interdits. Il maintient une liste de mots bannis et vérifie chaque message. Si un mot interdit est détecté, l'utilisateur est expulsé du canal et une notification est envoyée aux autres membres.
+
+1. **Mode b (ban word)**
+   - **Description** : Le mode +b permet aux opérateurs de canal d'ajouter/supprimer des mots à la liste des mots bannis.
+   - **Usage** : Seuls les opérateurs peuvent ajouter/retirer des mots interdits pour mieux modérer le canal.
+   - **Commande** :
+     ```sh
+     /mode #nom_du_channel +b [mot_banni]
+     /mode #nom_du_channel -b [mot_debanni]
+     ```
