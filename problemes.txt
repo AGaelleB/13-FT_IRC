@@ -33,9 +33,6 @@ Channel: [#e] created successfully! ✅
 faire le bot des msg censure
 voir pour l envoi des files
 
-faire une petite note avec toutes les cmd de base a faire
-exemple aussi si ctrlZ ca met en pause et mettre fg pour reprendre 
-
 //////////////////////////////////////////////////////////
 
 
