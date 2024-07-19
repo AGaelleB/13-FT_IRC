@@ -64,7 +64,7 @@ Lancez `irssi`, puis tapez :
 
   ```sh
   /PRIVMSG <nom de l'utilisateur> [message]
-  ``
+  ```
 
 - **Rejoindre un channel :**
 
