@@ -75,8 +75,9 @@ void Server::privMsgCmdClient(Client& client, const std::vector<std::string>& to
 
 	std::vector<std::string> targetList = splitComa(targets);
 
-	for (std::vector<std::string>::iterator it = targetList.begin(); it != targetList.end(); ++it)
-		handleTarget(*this, client, *it, msgContent);
+	for (std::vector<std::string>::iterator it = targetList.begin(); it != targetList.end(); ++it) {
+		handleTarget(*this, client, *it, msgContent);	
+	}
 }
 
 

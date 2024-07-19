@@ -4,8 +4,6 @@
 	KICK <channel> <user> [<comment>]
  */
 
-// /connect localhost 6667 1
-
 void Server::kickCmdClientReason(Client& client, Channel& channel, std::vector<std::string> tokens, int userSocket) {
 	std::string reason = "No reason specified";
 	if (tokens.size() > 3) 
@@ -13,6 +11,7 @@ void Server::kickCmdClientReason(Client& client, Channel& channel, std::vector<s
 
 	executeKick(client, channel, reason, userSocket);
 }
+
 void Server::executeKick(Client& client, Channel& channel, const std::string& reason, int userSocket) {
 	// Récupère le client à partir du socket utilisateur
 	Client& targetClient = _clients[userSocket];
@@ -53,9 +52,8 @@ void Server::executeKick(Client& client, Channel& channel, const std::string& re
 		targetClient.sendClientMsg(targetClient.getClientSocket(), partMessage.c_str());
 		targetClient.sendClientMsg(targetClient.getClientSocket(), notificationIrssi.c_str());
 	}
-	else {
+	else
 		targetClient.sendClientMsg(targetClient.getClientSocket(), notificationNetcat.c_str());
-	}
 }
 
 void Server::kickCmdClient(Client& client, std::vector<std::string> tokens) {

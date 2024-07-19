@@ -121,6 +121,3 @@ bool Channel::isOperator(int clientSocket) const {
 	}
 	return (false);
 }
-
-// /connect localhost 6667 1
-

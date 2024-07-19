@@ -63,9 +63,9 @@ void Server::initializeServer() {
 	std::cout << bannerServer;
 	std::cout << BLUE << ". . . Listening on port " << _port << " . . . " << RESET << std::endl;
 
-	signal(SIGINT, Server::SignalHandler);   // catch the signal (ctrl + c)
-	signal(SIGQUIT, Server::SignalHandler);  // catch the signal (ctrl + \)
-	signal(SIGTSTP, Server::TstpSignalHandler);  // catch the signal (ctrl + z)
+	signal(SIGINT, Server::SignalHandler);		// catch the signal (ctrl + c)
+	signal(SIGQUIT, Server::SignalHandler);		// catch the signal (ctrl + \)
+	signal(SIGTSTP, Server::TstpSignalHandler);	// catch the signal (ctrl + z)
 }
 
 void Server::acceptNewConnection() {
@@ -107,12 +107,11 @@ void Server::handlePollEvents() {
 				if (command == "/STOP") {
 					std::cout << "Received /STOP command" << std::endl;
 					_shutdown_signal = true;
-					break; // Exit the loop after setting the shutdown signal
+					break;
 				}
 			}
-			else {
+			else
 				handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
-			}
 		}
 	}
 }
@@ -142,7 +141,7 @@ void Server::startServer() {
 		int poll_count = poll(fds, nfds, 1000);
 		if (poll_count == -1) {
 			if (errno == EINTR)
-				continue; // Interrupted by a signal
+				continue;
 			std::cerr << "Error: poll failed" << std::endl;
 			break;
 		}
@@ -150,5 +149,3 @@ void Server::startServer() {
 	}
 	stopServer();
 }
-
-// /connect localhost 6667 1

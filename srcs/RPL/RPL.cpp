@@ -39,11 +39,6 @@ std::string ERR_NOSUCHNICK(const std::string &nick, const std::string &target) {
 	return ":localhost 401 " + nick + " " + target + " :Nickname does not exist.\r\n";
 }
 
-// std::string ERR_NOSUCHNICK(const std::string& nick, const std::string& target) {
-//     return ":localhost 401 " + nick + " " + target + " :No such nick/channel\r\n";
-// }
-
-
 std::string ERR_NOSUCHCHANNEL(const std::string &chan_name) {
 	return ":localhost 403 " + chan_name + " :No such channel\r\n";
 }
@@ -92,11 +87,11 @@ std::string ERR_CHANNELISFULL(const std::string &client, const std::string &chan
 
 // Names messages
 std::string RPL_NAMREPLY(const std::string &client, const std::string &channel, const std::string &list_of_nicks) {
-    return ":localhost 353 " + client + " = " + channel + " :" + list_of_nicks + "\r\n";
+	return ":localhost 353 " + client + " = " + channel + " :" + list_of_nicks + "\r\n";
 }
 
 std::string RPL_ENDOFNAMES(const std::string &client, const std::string &channel) {
-    return ":localhost 366 " + client + " " + channel + " :End of /NAMES list.\r\n";
+	return ":localhost 366 " + client + " " + channel + " :End of /NAMES list.\r\n";
 }
 
 
@@ -137,18 +132,13 @@ std::string RPL_PONG(const std::string &client, const std::string &token) {
 }
 
 // Part messages
-// std::string RPL_PART(const std::string &nickname, const std::string &username, const std::string &channel, const std::string &reason) {
-// 	return ":" + nickname + "!" + username + "@localhost PART " + channel + " " + (reason.empty() ? "." : reason) + "\r\n";
-// }
-
 std::string RPL_PART(const std::string &nickname, const std::string &username, const std::string &channel, const std::string &reason) {
-    return ":" + nickname + "!" + username + "@localhost PART " + channel + " :" + reason + "\r\n";
+	return ":" + nickname + "!" + username + "@localhost PART " + channel + " :" + reason + "\r\n";
 }
 
 std::string RPL_IRSSI_REFRESH(const std::string &client, const std::string &channel) {
-    return ":localhost 999 " + client + " " + channel + " :IRSSI_REFRESH\r\n";
+	return ":localhost 999 " + client + " " + channel + " :IRSSI_REFRESH\r\n";
 }
-
 
 // Quit messages
 std::string RPL_QUIT(const std::string &user_id, const std::string &reason) {

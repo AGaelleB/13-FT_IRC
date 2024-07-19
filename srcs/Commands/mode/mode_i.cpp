@@ -2,7 +2,7 @@
 
 void Server::modeICmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
 	if (tokens.size() != 3) {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_I); ////
+		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_I);
 		return;
 	}
 
@@ -23,7 +23,7 @@ void Server::modeICmd(Client& client, std::vector<std::string> tokens, Channel& 
 		invitationAccessMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname MODE " + channelName + " -i\r\n";
 	}
 	else {
-		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_I); ////
+		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_MODE_I);
 		return;
 	}
 
@@ -39,11 +39,3 @@ void Server::modeICmd(Client& client, std::vector<std::string> tokens, Channel& 
 		::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
 	}
 }
-
-/* 
-	mettre comentaire de l ordre ou sont attendus les arguments : pour +i si on fait /mode test +i
-	mettre msg qd le mode est active 
- */
-
-
-// /connect localhost 6667 1

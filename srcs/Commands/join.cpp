@@ -116,10 +116,8 @@ void Server::joinCmdClient(Client& client, const std::vector<std::string>& token
 		return;
 	std::string channelsNames = trim(tokens[1]);
 	std::vector<std::string> channelsList = splitComa(channelsNames);
-	for (std::vector<std::string>::iterator it = channelsList.begin(); it != channelsList.end(); ++it)
+	for (std::vector<std::string>::iterator it = channelsList.begin(); it != channelsList.end(); ++it) {
 		handleChannel(client, *it, tokens);
+	}
 
 }
-
-// /connect localhost 6667 1
-

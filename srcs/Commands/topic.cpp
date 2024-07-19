@@ -135,5 +135,3 @@ void Server::topicCmdClient(Client& client, std::vector<std::string> tokens) {
 		}
 	}
 }
-
-// /connect localhost 6667 1

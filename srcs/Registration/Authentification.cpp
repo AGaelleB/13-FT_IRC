@@ -12,7 +12,7 @@ void Server::checkPassword(Client &client) {
 			bytes_received = recv(client.getClientSocket(), buffer, sizeof(buffer) - 1, 0);
 			if (bytes_received == -1) {
 				if (errno == EWOULDBLOCK) {
-					usleep(42); // Attendre un peu avant de réessayer
+					usleep(42);
 					continue;
 				}
 				else {
@@ -51,6 +51,7 @@ void Server::checkPassword(Client &client) {
 			break;
 	}
 }
+
 void Server::addUser(Client &client, const std::string &username, const std::string &nickname) {
 	static int current_index = 1;
 	User user(current_index++, username, nickname);
@@ -67,10 +68,8 @@ void Server::authenticateAndRegister(Client &client) {
 	std::string username;
 	std::string nickname;
 
-	checkPassword(client); // ici si controle C ca coupe
+	checkPassword(client);
 	username = client.setUserName();
 	nickname = client.setNickName(*this);
 	addUser(client, username, nickname);
 }
-
-// /connect localhost 6667 1

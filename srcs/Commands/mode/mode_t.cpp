@@ -47,5 +47,3 @@ void Server::modeTCmd(Client& client, std::vector<std::string> tokens, Channel& 
 		::send(memberSocket, fullMessage.c_str(), fullMessage.size(), 0);
 	}
 }
-
-// /connect localhost 6667 1

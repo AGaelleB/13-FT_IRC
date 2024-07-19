@@ -29,8 +29,6 @@ User& Client::getUser() {
 	return (_user);
 }
 
-
-
 /*************************************** SETTERS ***************************************/
 
 void Client::setClientSocket(int socket) {
@@ -81,15 +79,12 @@ std::string Client::setUserName() {
 			else if (bytes_received > 0)
 				break;
 			else {
-				if (bytes_received == 0) {
+				if (bytes_received == 0)
 					std::cout << RED << "\nClient disconnected during username entry ❌ [socket: " << this->getClientSocket() << "]" << RESET << std::endl;
-					// nfds--;
-					// std::cout << BOLD << "Total client(s) still online: " << RESET << nfds << "/" << _MAX_CLIENTS << RESET << std::endl;
-				}
 				else
 					std::cerr << RED << "Error: reception failed during username entry ❌ [socket: " << this->getClientSocket() << "]" << RESET << std::endl;
 				close(this->getClientSocket());
-				return "";
+				return ("");
 			}
 		}
 		buffer[bytes_received] = '\0';
@@ -127,7 +122,7 @@ std::string Client::setNickName(Server& server) {
 				else
 					std::cerr << RED << "Error: reception failed during nickname entry, [socket: " << this->getClientSocket() << "]" << RESET << std::endl;
 				close(this->getClientSocket());
-				return "";
+				return ("");
 			}
 		}
 		buffer[bytes_received] = '\0';

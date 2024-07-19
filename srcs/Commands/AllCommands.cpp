@@ -1,19 +1,19 @@
 #include "../../includes/Server.hpp"
 
 CommandType Server::getCommandType(const std::string& command) {
-	if (command == "/help") return HELP;
-	if (command == "/nick" || command == "NICK") return NICK;
-	if (command == "/list" || command == "LIST") return LIST;
-	if (command == "/msg" || command == "/PRIVMSG" || command == "PRIVMSG" || command == "/privmsg") return PRIVMSG;
-	if (command == "/channel" || command == "/join" || command == "JOIN") return CHANNEL; 
-	if (command == "/quit" || command == "/QUIT" || command == "QUIT") return QUIT;
-	if (command == "/part" || command == "/leave" || command == "PART") return PART;
-	if (command == "/topic" || command == "/TOPIC" || command == "TOPIC") return TOPIC;
-	if (command == "/kick" || command == "/KICK" || command == "KICK") return KICK;
-	if (command == "/invite" || command == "/INVITE" || command == "INVITE") return INVITE;
-	if (command == "PING") return PING;
-	if (command == "/mode" || command == "/MODE" ||command == "MODE") return MODE;
-	return UNKNOWN;
+	if (command == "/help") return (HELP);
+	if (command == "/nick" || command == "NICK") return (NICK);
+	if (command == "/list" || command == "LIST") return (LIST);
+	if (command == "/msg" || command == "/PRIVMSG" || command == "PRIVMSG" || command == "/privmsg") return (PRIVMSG);
+	if (command == "/channel" || command == "/join" || command == "JOIN") return (CHANNEL); 
+	if (command == "/quit" || command == "/QUIT" || command == "QUIT") return (QUIT);
+	if (command == "/part" || command == "/leave" || command == "PART") return (PART);
+	if (command == "/topic" || command == "/TOPIC" || command == "TOPIC") return (TOPIC);
+	if (command == "/kick" || command == "/KICK" || command == "KICK") return (KICK);
+	if (command == "/invite" || command == "/INVITE" || command == "INVITE") return (INVITE);
+	if (command == "PING") return (PING);
+	if (command == "/mode" || command == "/MODE" ||command == "MODE") return (MODE);
+	return (UNKNOWN);
 }
 
 void Server::parseClientMsg(const std::string& message, Client& client) {
@@ -33,20 +33,17 @@ void Server::parseClientMsg(const std::string& message, Client& client) {
 			reconstructedMessage += " " + tokens[i] + ":";
 			colonAdded = true;
 		}
-		else {
+		else
 			reconstructedMessage += tokens[i] + " ";
-		}
 	}
 
 	// S'assurer que le ':' est ajouté correctement
-	if (!colonAdded && tokens.size() > 1) {
+	if (!colonAdded && tokens.size() > 1)
 		reconstructedMessage += ":";
-	}
 
 	// Supprimer l'espace supplémentaire à la fin du message reconstitué
-	if (!reconstructedMessage.empty() && reconstructedMessage[reconstructedMessage.size() - 1] == ' ') {
+	if (!reconstructedMessage.empty() && reconstructedMessage[reconstructedMessage.size() - 1] == ' ')
 		reconstructedMessage.erase(reconstructedMessage.size() - 1);
-	}
 
 	// Print le message reconstitué avec ':' collé au message proprement dit
 	std::cout << BOLD << "\n<" << client.getUser().getNickname() << ">: " << RESET << reconstructedMessage << std::endl;
@@ -157,12 +154,7 @@ void Server::handleUnknownCommand(Client& client, const std::vector<std::string>
 		}
 	}
 
-	// Si le client n'est membre d'aucun canal, envoyer un message d'erreur
 	std::string netcatMessage = "ERROR: Failed to send message, the client must join a channel\n";
 	std::string irssiMessage = ERR_NOTONCHANNEL(client.getUser().getNickname(), "NoChannel");
 	sendErrorMessage(client, netcatMessage, irssiMessage);
 }
-
-
-
-// /connect localhost 6667 1

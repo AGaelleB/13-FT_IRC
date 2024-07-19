@@ -1,6 +1,5 @@
 #include "../../includes/User.hpp"
 
-
 /************************************* CONST ET DEST *************************************/
 
 User::User() : _index(0), _userName("username"), _nickName("nickname") { }
@@ -36,4 +35,3 @@ void User::setUsername(const std::string& username) {
 void User::setNickname(const std::string& nickname) {
 	_nickName = nickname;
 }
-

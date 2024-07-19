@@ -11,13 +11,13 @@ l : Limite d'utilisateurs - fixe un nombre maximum d'utilisateurs dans le canal.
 */
 
 ModeType Server::getModeType(const std::string& modeType) {
-	if (modeType == "+i" || modeType == "-i") return MODE_I;
-	if (modeType == "+t" || modeType == "-t") return MODE_T;
-	if (modeType == "+k" || modeType == "-k") return MODE_K;
-	if (modeType == "+o" || modeType == "-o") return MODE_O;
-	if (modeType == "+l" || modeType == "-l") return MODE_L;
-	if (modeType == "+b" || modeType == "-b") return MODE_B;
-	return MODE_UNKNOWN;
+	if (modeType == "+i" || modeType == "-i") return (MODE_I);
+	if (modeType == "+t" || modeType == "-t") return (MODE_T);
+	if (modeType == "+k" || modeType == "-k") return (MODE_K);
+	if (modeType == "+o" || modeType == "-o") return (MODE_O);
+	if (modeType == "+l" || modeType == "-l") return (MODE_L);
+	if (modeType == "+b" || modeType == "-b") return (MODE_B);
+	return (MODE_UNKNOWN);
 }
 
 bool Server::validateTokensMode(Client& client, const std::vector<std::string>& tokens) {
@@ -85,16 +85,3 @@ void Server::modeCmdClient(Client& client, std::vector<std::string> tokens) {
 			break;
 	}
 }
-
-// /connect localhost 6667 1
-
-
-
-/* 
-
-	Définir un mot de passe pour le canal (+k).
-	Limiter le nombre d'utilisateurs pouvant rejoindre le canal (+l).
-	Kicker un utilisateur (KICK) : Les opérateurs peuvent expulser un utilisateur du canal.
-	Changer le sujet du canal (TOPIC) : Seuls les opérateurs peuvent changer le sujet du canal si le mode +t (topic protection) est activé.
-
- */

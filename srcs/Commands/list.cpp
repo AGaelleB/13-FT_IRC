@@ -29,8 +29,9 @@ void Server::UserList(Client& client) {
 	std::string msgSendUserIrssi = ":localhost 392 " + client.getUser().getNickname() + " :User list\r\n";
 	sendErrorMessage(client, msgSendUserNetcat, msgSendUserIrssi);
 
-	for (std::set<std::string>::iterator it = _nicknames.begin(); it != _nicknames.end(); ++it)
+	for (std::set<std::string>::iterator it = _nicknames.begin(); it != _nicknames.end(); ++it) {
 		nicknames_list += *it + "\n";
+	}
 
 	std::string msgEndListNetcat = std::string(BOLD) + "End of user list\n" + std::string(RESET);
 	std::string msgEndListIrssi = ":localhost 394 " + client.getUser().getNickname() + " :End of user list\r\n";
@@ -77,27 +78,21 @@ void Server::channelList(Client& client) {
 
 std::string Server::PrintChannelListMembers(const std::string& channelName, const std::map<std::string, Channel>& channels) {
 	std::map<std::string, Channel>::const_iterator it = channels.find(channelName);
-	if (it == channels.end()) {
-		return "";
-	}
+	if (it == channels.end())
+		return ("");
 
 	const std::vector<int>& members = it->second.getMembers();
 	std::string membersList;
 
 	for (std::vector<int>::const_iterator memberIt = members.begin(); memberIt != members.end(); ++memberIt) {
 		std::map<int, Client>::const_iterator clientIt = _clients.find(*memberIt);
-		if (clientIt != _clients.end()) {
+		if (clientIt != _clients.end())
 			membersList += "<" + clientIt->second.getUser().getNickname() + "> ";
-		}
 	}
 
-	// Supprimer le dernier espace
-	if (!membersList.empty()) {
+	if (!membersList.empty())
 		membersList.erase(membersList.size() - 1);
-	}
+
 	membersList = std::string(CYAN_IRSSI) + "-" + std::string(RESET) + "!" + std::string(CYAN_IRSSI) + "-" + std::string(RESET) + " [" + std::string(CYAN_IRSSI) + "users list" + std::string(RESET) + "] " + std::string(CYAN_IRSSI) + membersList + std::string(RESET) + "\r\n";
-	return membersList;
+	return (membersList);
 }
-
-// /connect localhost 6667 1
-

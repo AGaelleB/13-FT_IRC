@@ -51,8 +51,8 @@ class Server {
 		int								_port;
 		std::string						_irssi_data;
 		static bool						_shutdown_signal;	
-		std::map<std::string, Channel>	_channels; // Accès rapide par nom
-		std::vector<std::string>		_channelOrder;   // Maintenir l'ordre de création
+		std::map<std::string, Channel>	_channels;
+		std::vector<std::string>		_channelOrder;
 
 	public:
 		Server();
@@ -72,7 +72,6 @@ class Server {
 
 
 		/******************************* COMMANDES ********************************/
-
 
 		// AllCommands.cpp
 		CommandType	getCommandType(const std::string& command);
@@ -208,8 +207,7 @@ class Server {
 		
 		// Utils.cpp
 		static void	SignalHandler(int sig);
-		static void TstpSignalHandler(int sig); // signal handler for SIGTSTP
+		static void TstpSignalHandler(int sig);
 };
-
 
 #endif // SERVER_HPP

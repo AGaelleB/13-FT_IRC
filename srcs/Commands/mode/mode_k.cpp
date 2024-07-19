@@ -37,9 +37,6 @@ void Server::modeKCmd(Client& client, std::vector<std::string> tokens, Channel& 
 	}
 	else if (client.isIrssi && tokens[2] == "") {
 		std::string errorMsgIrssi = ERR_BADCHANNELKEY(client.getUser().getNickname(), channelName);
-		sendErrorMessage(client, "", errorMsgIrssi); // Empty netcat message, send only irssi message
+		sendErrorMessage(client, "", errorMsgIrssi);
 	}
 }
-
-
-// /connect localhost 6667 1

@@ -1,6 +1,5 @@
 #include "../../includes/Server.hpp"
 
-
 void Server::quitCmdClientReason(Client& client, std::vector<std::string> tokens, std::string old_nickname) {
 	std::string reason = "No reason specified";
 	if (tokens.size() > 1) 
@@ -50,8 +49,3 @@ void Server::quitCmdClient(Client& client, std::vector<std::string> tokens) {
 	
 	_clients.erase(client.getClientSocket());
 }
-
-/* 
-	/connect localhost 6667 1
-	/list channel
- */

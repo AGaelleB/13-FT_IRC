@@ -12,8 +12,8 @@ class Client;
 class Channel {
 	private:
 		std::string						_channelName;
-		std::vector<int>				_memberSockets; // Liste des sockets des membres du canal
-		std::vector<int>				_membersOperators; // Liste des sockets des membres operateurs du canal
+		std::vector<int>				_memberSockets;
+		std::vector<int>				_membersOperators;
 		std::vector<int>				_membersIsInvite;
 		Topic							_topic;
 		std::string						_mode;
@@ -21,7 +21,7 @@ class Channel {
 		bool							_topicRight;
 		int								_maxMembersChannel;
 		bool							_invitationAccess;
-		std::set<std::string>			_bannedWords; // Liste des mots interdits
+		std::set<std::string>			_bannedWords;
 		void							initializeBannedWords();
 
 	public:

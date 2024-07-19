@@ -64,5 +64,3 @@ void Server::nickCmdClient(std::vector<std::string> tokens, Client& client) {
 		sendErrorMessage(client, errorNetcat, errorIrssi);
 	}
 }
-
-// /connect localhost 6667 1

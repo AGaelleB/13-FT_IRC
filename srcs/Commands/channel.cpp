@@ -31,7 +31,7 @@ const std::vector<int>&	Channel::getMembers() const {
 }
 
 int Channel::getMembersCount() const {
-		return (_memberSockets.size());
+	return (_memberSockets.size());
 }
 
 const Topic& Channel::getTopic() const {
@@ -46,7 +46,7 @@ std::string	Channel::getMode() const {
 	return (_mode);
 }
 
-bool	Channel::getTopicRight() const {
+bool Channel::getTopicRight() const {
 	return (_topicRight);
 }
 
@@ -66,29 +66,29 @@ const std::vector<int>& Channel::getMembersInvite() const {
 	return (_membersIsInvite);
 }
 
-bool	Channel::getInvitationAccess() const {
+bool Channel::getInvitationAccess() const {
 	return (_invitationAccess);
 }
 
 /*************************************** SETTERS ***************************************/
 
-void	Channel::setMode(const std::string& mode) {
+void Channel::setMode(const std::string& mode) {
 	_mode = mode;
 }
 
-void	Channel::setTopicRight(bool topicRight) {
+void Channel::setTopicRight(bool topicRight) {
 	_topicRight = topicRight;
 }
 
-void	Channel::setMaxMembers(int newMaxMember) {
+void Channel::setMaxMembers(int newMaxMember) {
 	_maxMembersChannel = newMaxMember;
 }
 
-void	Channel::setChannelKey(std::string password) {
+void Channel::setChannelKey(std::string password) {
 	_password = password;
 }
 
-void	Channel::setInvitationAccess(bool invitationAccess) {
+void Channel::setInvitationAccess(bool invitationAccess) {
 	_invitationAccess = invitationAccess;
 }
 
@@ -152,36 +152,35 @@ void Server::createChannel(Client& client, std::string channelName) {
 		return;
 	}
 
-	_channelOrder.push_back(channelName); // Ajouter le nom du channel à la liste dans l'ordre de création
+	_channelOrder.push_back(channelName);
 
 	std::cout << BOLD << "Channel: [" << channelName << "] created successfully! ✅" << RESET << std::endl;
 }
 
 void Channel::initializeBannedWords() {
-    std::string defaultBannedWords[] = {
-        // English banned words
-        "anal", "anus", "arse", "ass", "ballsack", "balls", "bastard", "bitch", "biatch", "bloody",
-        "blowjob", "blow job", "bollock", "bollok", "boner", "boob", "bugger", "bum", "butt",
-        "buttplug", "clitoris", "cock", "coon", "crap", "cunt", "dick", "dildo", "dyke",
-        "fag", "feck", "fellate", "fellatio", "felching", "fuck", "f u c k", "fudgepacker", "fudge packer",
-        "flange", "jerk", "jizz", "knobend", "knob end", "labia", "muff", "nigger", "nigga",
-        "penis", "piss", "prick", "pube", "pussy", "scrotum", "sex", "shit", "s hit", "sh1t",
-        "slut", "smegma", "spunk", "tit", "tosser", "turd", "twat", "vagina", "wank", "whore",
+	std::string defaultBannedWords[] = {
+		// English banned words
+		"anal", "anus", "arse", "ass", "ballsack", "balls", "bastard", "bitch", "biatch", "bloody",
+		"blowjob", "blow job", "bollock", "bollok", "boner", "boob", "bugger", "bum", "butt",
+		"buttplug", "clitoris", "cock", "coon", "crap", "cunt", "dick", "dildo", "dyke",
+		"fag", "feck", "fellate", "fellatio", "felching", "fuck", "f u c k", "fudgepacker", "fudge packer",
+		"flange", "jerk", "jizz", "knobend", "knob end", "labia", "muff", "nigger", "nigga",
+		"penis", "piss", "prick", "pube", "pussy", "scrotum", "sex", "shit", "s hit", "sh1t",
+		"slut", "smegma", "spunk", "tit", "tosser", "turd", "twat", "vagina", "wank", "whore",
 
-        // French banned words
-        "abruti", "baise", "baiser", "batard", "connard", "connasse", "conne", "con", "connerie",
-        "cul", "emmerde", "emmerder", "enculé", "enculer", "enculé", "encule", "foutre",
-        "gueule", "merde", "nique", "niquer", "putain", "salaud", "salope", "sodomie", "sucer", "pute"
-    };
+		// French banned words
+		"abruti", "baise", "baiser", "batard", "connard", "connasse", "conne", "con", "connerie",
+		"cul", "emmerde", "emmerder", "enculé", "enculer", "enculé", "encule", "foutre",
+		"gueule", "merde", "nique", "niquer", "putain", "salaud", "salope", "sodomie", "sucer", "pute"
+	};
 
-    for (size_t i = 0; i < sizeof(defaultBannedWords) / sizeof(defaultBannedWords[0]); ++i) {
-        _bannedWords.insert(defaultBannedWords[i]);
-    }
+	for (size_t i = 0; i < sizeof(defaultBannedWords) / sizeof(defaultBannedWords[0]); ++i) {
+		_bannedWords.insert(defaultBannedWords[i]);
+	}
 
-    // Adding the same words with ":" in front
-    for (size_t i = 0; i < sizeof(defaultBannedWords) / sizeof(defaultBannedWords[0]); ++i) {
-        _bannedWords.insert(":" + defaultBannedWords[i]);
-    }
+	for (size_t i = 0; i < sizeof(defaultBannedWords) / sizeof(defaultBannedWords[0]); ++i) {
+		_bannedWords.insert(":" + defaultBannedWords[i]);
+	}
 }
 
 
