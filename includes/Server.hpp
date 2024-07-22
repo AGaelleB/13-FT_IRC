@@ -54,6 +54,7 @@ class Server {
 		std::map<std::string, Channel>	_channels;
 		std::vector<std::string>		_channelOrder;
 
+
 	public:
 		Server();
 		Server(int _port, const std::string &password);
@@ -99,7 +100,6 @@ class Server {
 		
 		// help.cpp
 		void		helpCmdClient(Client& client);
-		void		helpCmdServer();
 
 		// invite.cpp
 		void		sendErrorMessage(Client& client, const std::string& errorMsgNetcat, const std::string& errorMsgIrssi);

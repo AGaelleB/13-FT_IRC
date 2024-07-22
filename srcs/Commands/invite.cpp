@@ -32,9 +32,15 @@ bool Server::validateInviteCommand(Client& client, const std::vector<std::string
 
 bool Server::validateChannelMembership(Client& client, const std::string& channelName) {
 	std::map<std::string, Channel>::iterator it = _channels.find(channelName);
+	std::string errorMsgIrssi;
 	if (it == _channels.end()) {
 		std::string errorMsgNetcat = std::string(RED) + "Error: Channel " + channelName + " not found\n" + RESET;
-		std::string errorMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname NOTICE " + client.getUser().getNickname() + " :Channel " + channelName + " not found\r\n";
+		if (client.startServer) 
+			errorMsgIrssi = ":" + client.getUser().getNickname() + "!" + client.getUser().getUsername() + "@hostname NOTICE " + client.getUser().getNickname() + " :Channel " + channelName + " not found\r\n";
+		else {
+			errorMsgIrssi = "";
+			client.startServer = true;
+		}
 		sendErrorMessage(client, errorMsgNetcat, errorMsgIrssi);
 		return (false);
 	}

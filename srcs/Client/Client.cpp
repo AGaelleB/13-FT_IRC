@@ -6,6 +6,7 @@
 Client::Client() : _client_socket(-1) {
 	memset(&_client_addr, 0, sizeof(_client_addr));
 	isIrssi = false; 
+	startServer = false;
 }
 
 Client::~Client() {
