@@ -1,0 +1,13 @@
+1- nc
+2- irssi
+3- nc list user
+4- nc list channel
+5- ca bug, msi irssi join channel ne peut plus leave,
+6- les msg arrivent en decallage ensuite sur le serveur 
+
+
+
+/connect localhost 6667 123
+
+
+verifier leaks et fd
