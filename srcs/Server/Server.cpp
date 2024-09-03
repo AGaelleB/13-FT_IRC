@@ -3,6 +3,8 @@
 bool			Server::_shutdown_signal = false;
 struct pollfd	fds[1024];
 int				nfds = 1;
+int				poll_count;
+
 
 /************************************* CONST ET DEST *************************************/
 
@@ -138,7 +140,7 @@ void Server::startServer() {
 	nfds = 2; // We have two fds to monitor: server socket and stdin
 
 	while (!_shutdown_signal) {
-		int poll_count = poll(fds, nfds, 1000);
+		poll_count = poll(fds, nfds, 1000);
 		if (poll_count == -1) {
 			std::cerr << "Error: poll failed" << std::endl;
 			break;

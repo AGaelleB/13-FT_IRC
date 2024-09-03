@@ -10,6 +10,8 @@
 
 extern struct pollfd fds[1024];
 extern int nfds;
+extern int poll_count;
+
 
 class Client;
 class Channel;
