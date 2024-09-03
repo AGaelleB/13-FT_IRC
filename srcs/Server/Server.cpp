@@ -140,8 +140,6 @@ void Server::startServer() {
 	while (!_shutdown_signal) {
 		int poll_count = poll(fds, nfds, 1000);
 		if (poll_count == -1) {
-			if (errno == EINTR)
-				continue;
 			std::cerr << "Error: poll failed" << std::endl;
 			break;
 		}

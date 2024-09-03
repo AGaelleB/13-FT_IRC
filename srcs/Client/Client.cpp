@@ -73,7 +73,7 @@ std::string Client::setUserName() {
 		this->sendClientMsg(this->getClientSocket(), MSG_USERNAME);
 		while (true) {
 			bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
-			if (bytes_received == -1 && errno == EWOULDBLOCK) {
+			if (bytes_received == -1) {
 				usleep(42);
 				continue;
 			}
@@ -111,7 +111,7 @@ std::string Client::setNickName(Server& server) {
 		this->sendClientMsg(this->getClientSocket(), MSG_NICKNAME);
 		while (true) {
 			bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
-			if (bytes_received == -1 && errno == EWOULDBLOCK) {
+			if (bytes_received == -1) {
 				usleep(42);
 				continue;
 			}

@@ -11,15 +11,9 @@ void Server::checkPassword(Client &client) {
 		while (true) {
 			bytes_received = recv(client.getClientSocket(), buffer, sizeof(buffer) - 1, 0);
 			if (bytes_received == -1) {
-				if (errno == EWOULDBLOCK) {
-					usleep(42);
-					continue;
-				}
-				else {
 					std::cerr << "Error: reception failed during password entry, client_socket: " << client.getClientSocket() << std::endl;
 					close(client.getClientSocket());
 					return;
-				}
 			}
 			else if (bytes_received == 0) {
 				// Le client a fermé la connexion

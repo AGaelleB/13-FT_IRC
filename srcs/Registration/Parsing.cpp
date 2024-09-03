@@ -11,7 +11,6 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 		}
 		else {
 			std::cerr << "Error: data reception failed [socket: " << client_fd << "]" << std::endl;
-			std::cerr << "recv error: " << strerror(errno) << " (errno: " << errno << ")" << std::endl;
 		}
 
 		if (!client.getUser().getNickname().empty())
@@ -137,7 +136,7 @@ void Server::detectClient(int client_socket) {
 			data_received = true;
 			break;
 		}
-		else if (bytes_received == -1 && errno != EAGAIN && errno != EWOULDBLOCK) {
+		else if (bytes_received == -1 && errno != EAGAIN) {
 			std::cerr << RED << "Error receiving data\n" << RESET;
 			return;
 		}
