@@ -3,7 +3,7 @@
 /************************************** FUNCTIONS **************************************/
 
 bool Server::validateTokensJoin(Client& client, const std::vector<std::string>& tokens) {
-	if (tokens.size() < 2 && tokens.size() > 3) {
+	if (tokens.size() < 2 || tokens.size() > 3) {
 		client.sendClientMsg(client.getClientSocket(), ERROR_CMD_CHANNEL);
 		return (false);
 	}
