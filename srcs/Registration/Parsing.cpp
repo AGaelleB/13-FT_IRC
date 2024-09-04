@@ -6,21 +6,16 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
 	if (bytes_received <= 0) {
-		if (bytes_received == 0) {
+		if (bytes_received == 0)
 			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ [socket: " << client_fd << "]" << RESET << std::endl;
-		}
-		else {
+		else 
 			std::cerr << "Error: data reception failed [socket: " << client_fd << "]" << std::endl;
-		}
 
 		if (!client.getUser().getNickname().empty())
 			removeNickname(client.getUser().getNickname());
 
 		close(client_fd);
-		// Supprimer le client de la map
 		_clients.erase(client_fd);
-
-		// Retirer le client de la structure pollfd
 		for (int i = 0; i < nfds; ++i) { 
 			if (fds[i].fd == client_fd) {
 				fds[i] = fds[nfds - 1];
@@ -57,13 +52,11 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 			memset(buffer, 0, sizeof(buffer)); 
 			return;
 		}
-
 		parseClientMsg(message, client);
 	}
 }
 
 void Server::logRPLirssi(Client& client) {
-
 	client.sendClientMsg(client.getClientSocket(), bannerIRC);
 	client.sendClientMsg(client.getClientSocket(), "\n");
 
@@ -112,7 +105,6 @@ bool Server::parsingDataNetcat(Client &client, int new_client_socket) {
 	
 	try {
 		authenticateAndRegister(client);
-		// Ajout du client à la map
 		_clients[new_client_socket] = client;
 		return (true);
 	}
@@ -137,10 +129,7 @@ void Server::detectClient(int client_socket) {
 			break;
 		}
 	}
-
-	// Access the client object by reference
 	Client& client = _clients[client_socket];
-
 	if (data_received) {
 		std::string answer(buffer);
 		if (findCapLs(answer) == 0) {

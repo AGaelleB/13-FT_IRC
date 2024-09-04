@@ -7,7 +7,6 @@ void Server::checkPassword(Client &client) {
 	client.sendClientMsg(client.getClientSocket(), MSG_PASSWORD);
 
 	while (true) {
-		// Vérifier l'état du client en utilisant poll_count
 		if (poll_count <= 0) {
 			std::cerr << "Poll error or timeout during password entry." << std::endl;
 			handleClientDisconnection(client.getClientSocket());

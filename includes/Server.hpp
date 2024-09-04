@@ -43,7 +43,7 @@ enum ModeType {
 
 class Server {
 	private:
-		static const int				_MAX_CLIENTS = 20;		
+		static const int				_MAX_CLIENTS = 20;
 		int								_server_socket;
 		struct sockaddr_in				_server_addr;
 		std::string						_password;
@@ -69,9 +69,7 @@ class Server {
 		void		handlePollEvents();
 		void		stopServer();
 		void		startServer();
-
 		Client&		getClientBySocket(int socket);
-
 
 		/******************************* COMMANDES ********************************/
 
@@ -104,7 +102,7 @@ class Server {
 
 		// invite.cpp
 		void		sendErrorMessage(Client& client, const std::string& errorMsgNetcat, const std::string& errorMsgIrssi);
-		int		findUserSocket(const std::string& nickname);
+		int			findUserSocket(const std::string& nickname);
 		bool		validateInviteCommand(Client& client, const std::vector<std::string>& tokens);
 		bool		validateChannelMembership(Client& client, const std::string& channelName);
 		void		sendInviteMessages(Client& client, Channel& channel, const std::string& channelName, Client& invitedClient, int userSocket);
@@ -193,6 +191,8 @@ class Server {
 		void		checkPassword(Client &client);
 		void		addUser(Client &client, const std::string &username, const std::string &nickname);
 		bool		isRegistered(Client &client);
+		void		handleClientDisconnection(int client_fd);
+		void		removeClientFromPoll(int client_fd);
 		void		authenticateAndRegister(Client &client);
 
 		// parsing.cpp
@@ -209,11 +209,6 @@ class Server {
 		// Utils.cpp
 		static void	SignalHandler(int sig);
 		static void TstpSignalHandler(int sig);
-
-
-void handleClientDisconnection(int client_fd);
-void removeClientFromPoll(int client_fd);
-
 };
 
 #endif // SERVER_HPP

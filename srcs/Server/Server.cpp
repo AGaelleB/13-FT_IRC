@@ -99,9 +99,8 @@ void Server::acceptNewConnection() {
 void Server::handlePollEvents() {
 	for (int i = 0; i < nfds; ++i) {
 		if (fds[i].revents & POLLIN) {
-			if (fds[i].fd == _server_socket) {
+			if (fds[i].fd == _server_socket)
 				acceptNewConnection();
-			}
 			else if (fds[i].fd == STDIN_FILENO) {
 				std::string command;
 				std::getline(std::cin, command);
@@ -136,7 +135,7 @@ void Server::startServer() {
 	fds[0].events = POLLIN;
 	fds[1].fd = STDIN_FILENO;
 	fds[1].events = POLLIN;
-	nfds = 2; // We have two fds to monitor: server socket and stdin
+	nfds = 2;
 
 	while (!_shutdown_signal) {
 		poll_count = poll(fds, nfds, 1000);
