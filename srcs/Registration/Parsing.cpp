@@ -14,6 +14,7 @@ void Server::handleClientMessage(int client_fd, Client& client) {
 		if (!client.getUser().getNickname().empty())
 			removeNickname(client.getUser().getNickname());
 
+		partAllChannels(client);
 		close(client_fd);
 		_clients.erase(client_fd);
 		for (int i = 0; i < nfds; ++i) { 

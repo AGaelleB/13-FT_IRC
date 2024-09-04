@@ -59,7 +59,6 @@ void Server::handleClientDisconnection(int client_fd) {
 	removeClientFromPoll(client_fd);
 }
 
-
 void Server::authenticateAndRegister(Client &client) {
 	std::string username;
 	std::string nickname;
