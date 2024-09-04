@@ -123,19 +123,29 @@ void Server::acceptNewConnection() {
 //     }
 // }
 
+
+
 void Server::handlePollEvents() {
-    for (int i = 0; i < nfds; ++i) {
+    for (int i = 0; i < nfds; i++) {
+        if (fds[i].revents == 0) {
+            continue;
+        }
+
         if (fds[i].revents & POLLIN) {
-            std::cout << "Event detected on fd " << fds[i].fd << std::endl;
             if (fds[i].fd == _server_socket) {
+                // Nouvelle connexion entrante
                 acceptNewConnection();
             } else {
+                // Données sur un socket existant
                 handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
             }
+        } else if (fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) {
+            // Gestion des erreurs et déconnexions
+            std::cerr << "Client disconnected or error on socket: " << fds[i].fd << std::endl;
+            handleClientDisconnection(fds[i].fd);
         }
     }
 }
-
 
 void Server::stopServer() {
 	std::cout << "Shutting down server..." << std::endl;
@@ -160,13 +170,18 @@ void Server::startServer() {
     nfds = 1;
 
     while (!_shutdown_signal) {
-        int poll_count = poll(fds, nfds, 1000); // 1 seconde d'attente
+        poll_count = poll(fds, nfds, 1000); // 1 seconde d'attente
         if (poll_count == -1) {
             std::cerr << "Error: poll failed" << std::endl;
             break;
+        } else if (poll_count == 0) {
+            // Timeout - aucun événement détecté
+            continue;
         }
 
+        // Gérer les événements de poll
         handlePollEvents();
     }
     stopServer();
 }
+

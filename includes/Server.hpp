@@ -218,6 +218,7 @@ class Server {
 
 
 void handleClientDisconnection(int client_fd);
+void removeClientFromPoll(int client_fd);
 
 
 };

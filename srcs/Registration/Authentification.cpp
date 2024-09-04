@@ -7,6 +7,13 @@ void Server::checkPassword(Client &client) {
     client.sendClientMsg(client.getClientSocket(), MSG_PASSWORD);
 
     while (true) {
+        // Vérifier l'état du client en utilisant poll_count
+        if (poll_count <= 0) {
+            std::cerr << "Poll error or timeout during password entry." << std::endl;
+            handleClientDisconnection(client.getClientSocket());
+            return;
+        }
+
         bytes_received = recv(client.getClientSocket(), buffer, sizeof(buffer) - 1, 0);
         if (bytes_received <= 0) {
             std::cerr << RED << "Client disconnected during password entry, client_socket: " << client.getClientSocket() << RESET << std::endl;
@@ -25,6 +32,8 @@ void Server::checkPassword(Client &client) {
     }
 }
 
+
+
 void Server::addUser(Client &client, const std::string &username, const std::string &nickname) {
 	static int current_index = 1;
 	User user(current_index++, username, nickname);
@@ -37,23 +46,23 @@ bool Server::isRegistered(Client &client) {
 	return !client.getUser().getNickname().empty() && !client.getUser().getUsername().empty();
 }
 
-void Server::handleClientDisconnection(int client_fd) {
-    std::cout << RED << "Client disconnected! [socket: " << client_fd << "]" << RESET << std::endl;
-
-    // Supprimer le client de la map
-    _clients.erase(client_fd);
-
-    // Retirer le client de la structure pollfd
-    for (int i = 0; i < nfds; ++i) {
+void Server::removeClientFromPoll(int client_fd) {
+    for (int i = 0; i < nfds; i++) {
         if (fds[i].fd == client_fd) {
-            fds[i] = fds[nfds - 1]; // Remplace l'entrée courante par la dernière
+            for (int j = i; j < nfds - 1; j++) {
+                fds[j] = fds[j + 1];
+            }
             nfds--;
             break;
         }
     }
-
-    close(client_fd);
 }
+
+void Server::handleClientDisconnection(int client_fd) {
+    close(client_fd);
+    removeClientFromPoll(client_fd);
+}
+
 
 void Server::authenticateAndRegister(Client &client) {
     try {
