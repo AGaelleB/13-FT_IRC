@@ -1,66 +1,67 @@
 #include "../../includes/Server.hpp"
 
 void Server::handleClientMessage(int client_fd, Client& client) {
-	char buffer[1024];
-	memset(buffer, 0, sizeof(buffer)); 
-	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+    char buffer[1024];
+    memset(buffer, 0, sizeof(buffer)); 
+    ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
-	if (bytes_received <= 0) {
-		if (bytes_received == 0) {
-			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ [socket: " << client_fd << "]" << RESET << std::endl;
-		}
-		else {
-			std::cerr << "Error: data reception failed [socket: " << client_fd << "]" << std::endl;
-		}
+    if (bytes_received <= 0) {
+        // Le client s'est déconnecté ou une erreur est survenue
+        if (bytes_received == 0) {
+            std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ [socket: " << client_fd << "]" << RESET << std::endl;
+        } else {
+            std::cerr << RED << "Error: data reception failed [socket: " << client_fd << "]" << RESET << std::endl;
+        }
+        
+        // Supprimer le client de la map
+        if (!client.getUser().getNickname().empty()) {
+            removeNickname(client.getUser().getNickname());
+        }
+        
+        close(client_fd);
+        _clients.erase(client_fd);
+        
+        // Retirer le client de la structure pollfd
+        for (int i = 0; i < nfds; ++i) { 
+            if (fds[i].fd == client_fd) {
+                // Déplace le dernier élément dans la position de l'élément supprimé
+                fds[i] = fds[nfds - 1];
+                nfds--;
+                break;
+            }
+        }
+        return; // Sortir pour ne pas traiter plus loin
+    }
 
-		if (!client.getUser().getNickname().empty())
-			removeNickname(client.getUser().getNickname());
+    // Traitement des messages reçus
+    if (static_cast<size_t>(bytes_received) >= sizeof(buffer) - 1) {
+        std::string netcatMessage = "Error: Command too long\n";
+        std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Command too long\r\n";
+        sendErrorMessage(client, netcatMessage, irssiMessage);
+        return;
+    }
 
-		close(client_fd);
-		// Supprimer le client de la map
-		_clients.erase(client_fd);
+    buffer[bytes_received] = '\0'; // Null-terminate the buffer
+    std::string message(buffer);
 
-		// Retirer le client de la structure pollfd
-		for (int i = 0; i < nfds; ++i) { 
-			if (fds[i].fd == client_fd) {
-				fds[i] = fds[nfds - 1];
-				nfds--;
-				break;
-			}
-		}
-	}
-	else {
-		if (static_cast<size_t>(bytes_received) >= sizeof(buffer) - 1) {
-			std::string netcatMessage = "Error: Command too long\n";
-			std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Command too long\r\n";
-			sendErrorMessage(client, netcatMessage, irssiMessage);
-			memset(buffer, 0, sizeof(buffer));
-			return;
-		}
+    if (message.size() > MAX_TOPIC_SIZE) {
+        std::string netcatMessage = "Error: Message too long\n";
+        std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Message too long\r\n";
+        sendErrorMessage(client, netcatMessage, irssiMessage);
+        return;
+    }
 
-		buffer[bytes_received] = '\0';
-		std::string message(buffer);
+    std::vector<std::string> tokens = split(message);
+    if (tokens.empty()) {
+        std::string netcatMessage = "Error: Unknown command\n";
+        std::string irssiMessage = ERR_UNKNOWNCOMMAND(client.getUser().getNickname(), message);
+        sendErrorMessage(client, netcatMessage, irssiMessage);
+        return;
+    }
 
-		if (message.size() > MAX_TOPIC_SIZE) {
-			std::string netcatMessage = "Error: Message too long\n";
-			std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Message too long\r\n";
-			sendErrorMessage(client, netcatMessage, irssiMessage);
-			memset(buffer, 0, sizeof(buffer)); 
-			return;
-		}
-
-		std::vector<std::string> tokens = split(message);
-		if (tokens.empty()) {
-			std::string netcatMessage = "Error: Unknown command\n";
-			std::string irssiMessage = ERR_UNKNOWNCOMMAND(client.getUser().getNickname(), message);
-			sendErrorMessage(client, netcatMessage, irssiMessage);
-			memset(buffer, 0, sizeof(buffer)); 
-			return;
-		}
-
-		parseClientMsg(message, client);
-	}
+    parseClientMsg(message, client);
 }
+
 
 void Server::logRPLirssi(Client& client) {
 

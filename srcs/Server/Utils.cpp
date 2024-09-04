@@ -40,20 +40,23 @@ std::vector<std::string> splitComa(const std::string& str) {
 }
 
 void cleanUp() {
-    // Itérer explicitement avec un itérateur pour C++98
+    std::cout << "Cleaning up resources..." << std::endl;
+
+    // Itérateur pour parcourir la map des clients
     std::map<int, Client>::iterator it;
     for (it = _clients.begin(); it != _clients.end(); ++it) {
-        close(it->first);
+        close(it->first); // Ferme le socket du client
     }
+    _clients.clear(); // Vide la map des clients
 
-    // Fermez le socket du serveur
-    if (_server_socket != -1) {
-        close(_server_socket);
-    }
+    close(_server_socket); // Ferme le socket du serveur
 
-    std::cout << "All sockets closed. Exiting now." << std::endl;
-    exit(0); // Quittez proprement
+    // Réinitialiser les structures pollfd
+    nfds = 0;
+
+    std::cout << "All sockets closed." << std::endl;
 }
+
 
 
 // Déclaration de la fonction cleanUp globale
