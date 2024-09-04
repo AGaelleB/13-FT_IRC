@@ -75,14 +75,12 @@ std::string Client::setUserName() {
         // Vérifier l'état du client en utilisant poll_count
         if (poll_count <= 0) {
             std::cerr << "Poll error or timeout during username entry." << std::endl;
-            // handleClientDisconnection(this->getClientSocket());
             return "";
         }
 
         bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
         if (bytes_received <= 0) {
             std::cerr << RED << "Client disconnected during username entry ❌ [socket: " << this->getClientSocket() << RESET << std::endl;
-            // handleClientDisconnection(this->getClientSocket());
             return "";
         }
 

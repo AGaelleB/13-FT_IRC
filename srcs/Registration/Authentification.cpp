@@ -32,8 +32,6 @@ void Server::checkPassword(Client &client) {
     }
 }
 
-
-
 void Server::addUser(Client &client, const std::string &username, const std::string &nickname) {
 	static int current_index = 1;
 	User user(current_index++, username, nickname);
@@ -65,13 +63,11 @@ void Server::handleClientDisconnection(int client_fd) {
 
 
 void Server::authenticateAndRegister(Client &client) {
-    try {
-        checkPassword(client);
-        std::string username = client.setUserName();
-        std::string nickname = client.setNickName(*this);
-        addUser(client, username, nickname);
-    } catch (const std::exception& e) {
-        std::cerr << "Error during authentication and registration: " << e.what() << std::endl;
-        handleClientDisconnection(client.getClientSocket());
-    }
+	std::string username;
+	std::string nickname;
+
+	checkPassword(client);
+	username = client.setUserName();
+	nickname = client.setNickName(*this);
+	addUser(client, username, nickname);
 }

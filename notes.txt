@@ -11,9 +11,3 @@
 
 
 verifier leaks et fd
-
-
-problem:
-ctrl^C lors du MDP de netcat -> bloque le ctrl^C du server on reste bloqué
-
-ctrl^C lors dune cmd en cours de netcat -> bloque les autres creations de client netcat 

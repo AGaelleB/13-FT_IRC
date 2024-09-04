@@ -1,67 +1,66 @@
 #include "../../includes/Server.hpp"
 
 void Server::handleClientMessage(int client_fd, Client& client) {
-    char buffer[1024];
-    memset(buffer, 0, sizeof(buffer)); 
-    ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+	char buffer[1024];
+	memset(buffer, 0, sizeof(buffer)); 
+	ssize_t bytes_received = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
-    if (bytes_received <= 0) {
-        // Le client s'est déconnecté ou une erreur est survenue
-        if (bytes_received == 0) {
-            std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ [socket: " << client_fd << "]" << RESET << std::endl;
-        } else {
-            std::cerr << RED << "Error: data reception failed [socket: " << client_fd << "]" << RESET << std::endl;
-        }
-        
-        // Supprimer le client de la map
-        if (!client.getUser().getNickname().empty()) {
-            removeNickname(client.getUser().getNickname());
-        }
-        
-        close(client_fd);
-        _clients.erase(client_fd);
-        
-        // Retirer le client de la structure pollfd
-        for (int i = 0; i < nfds; ++i) { 
-            if (fds[i].fd == client_fd) {
-                // Déplace le dernier élément dans la position de l'élément supprimé
-                fds[i] = fds[nfds - 1];
-                nfds--;
-                break;
-            }
-        }
-        return; // Sortir pour ne pas traiter plus loin
-    }
+	if (bytes_received <= 0) {
+		if (bytes_received == 0) {
+			std::cout << RED << "\nClient " << client.getUser().getNickname() << " is disconnected! ❌ [socket: " << client_fd << "]" << RESET << std::endl;
+		}
+		else {
+			std::cerr << "Error: data reception failed [socket: " << client_fd << "]" << std::endl;
+		}
 
-    // Traitement des messages reçus
-    if (static_cast<size_t>(bytes_received) >= sizeof(buffer) - 1) {
-        std::string netcatMessage = "Error: Command too long\n";
-        std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Command too long\r\n";
-        sendErrorMessage(client, netcatMessage, irssiMessage);
-        return;
-    }
+		if (!client.getUser().getNickname().empty())
+			removeNickname(client.getUser().getNickname());
 
-    buffer[bytes_received] = '\0'; // Null-terminate the buffer
-    std::string message(buffer);
+		close(client_fd);
+		// Supprimer le client de la map
+		_clients.erase(client_fd);
 
-    if (message.size() > MAX_TOPIC_SIZE) {
-        std::string netcatMessage = "Error: Message too long\n";
-        std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Message too long\r\n";
-        sendErrorMessage(client, netcatMessage, irssiMessage);
-        return;
-    }
+		// Retirer le client de la structure pollfd
+		for (int i = 0; i < nfds; ++i) { 
+			if (fds[i].fd == client_fd) {
+				fds[i] = fds[nfds - 1];
+				nfds--;
+				break;
+			}
+		}
+	}
+	else {
+		if (static_cast<size_t>(bytes_received) >= sizeof(buffer) - 1) {
+			std::string netcatMessage = "Error: Command too long\n";
+			std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Command too long\r\n";
+			sendErrorMessage(client, netcatMessage, irssiMessage);
+			memset(buffer, 0, sizeof(buffer));
+			return;
+		}
 
-    std::vector<std::string> tokens = split(message);
-    if (tokens.empty()) {
-        std::string netcatMessage = "Error: Unknown command\n";
-        std::string irssiMessage = ERR_UNKNOWNCOMMAND(client.getUser().getNickname(), message);
-        sendErrorMessage(client, netcatMessage, irssiMessage);
-        return;
-    }
+		buffer[bytes_received] = '\0';
+		std::string message(buffer);
 
-    parseClientMsg(message, client);
+		if (message.size() > MAX_TOPIC_SIZE) {
+			std::string netcatMessage = "Error: Message too long\n";
+			std::string irssiMessage = ":localhost 400 " + client.getUser().getNickname() + " :Message too long\r\n";
+			sendErrorMessage(client, netcatMessage, irssiMessage);
+			memset(buffer, 0, sizeof(buffer)); 
+			return;
+		}
+
+		std::vector<std::string> tokens = split(message);
+		if (tokens.empty()) {
+			std::string netcatMessage = "Error: Unknown command\n";
+			std::string irssiMessage = ERR_UNKNOWNCOMMAND(client.getUser().getNickname(), message);
+			sendErrorMessage(client, netcatMessage, irssiMessage);
+			memset(buffer, 0, sizeof(buffer)); 
+			return;
+		}
+
+		parseClientMsg(message, client);
+	}
 }
-
 
 void Server::logRPLirssi(Client& client) {
 
@@ -124,13 +123,11 @@ bool Server::parsingDataNetcat(Client &client, int new_client_socket) {
 }
 
 void Server::detectClient(int client_socket) {
-    char buffer[1024] = {0};
-    bool data_received = false;
+	char buffer[1024] = {0};
+	bool data_received = false;
 	const int max_attempts = 10;
 	const int delay_between_attempts = 5000;
 
-
-    // Vérifiez si poll_count indique que des événements ont été détectés
 	for (int attempt = 0; attempt < max_attempts; ++attempt) {
 		usleep(delay_between_attempts);
 		ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, MSG_DONTWAIT);
@@ -139,74 +136,47 @@ void Server::detectClient(int client_socket) {
 			data_received = true;
 			break;
 		}
-		if (poll_count > 0) {
-			// Recherchez dans fds si le client_socket est prêt
-			for (int i = 0; i < nfds; ++i) {
-				if (fds[i].fd == client_socket && (fds[i].revents & POLLIN)) {
-					ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer) - 1, 0);
-					if (bytes_received > 0) {
-						buffer[bytes_received] = '\0';
-						data_received = true;
-					}
-					else if (bytes_received == 0) {
-						std::cerr << RED << "Client disconnected [socket: " << client_socket << "]" << RESET << std::endl;
-						close(client_socket);
-						_clients.erase(client_socket);
-						return;
-					}
-					else {
-						std::cerr << RED << "Error receiving data [socket: " << client_socket << "]" << RESET << std::endl;
-						close(client_socket);
-						_clients.erase(client_socket);
-						return;
-					}
+	}
+
+	// Access the client object by reference
+	Client& client = _clients[client_socket];
+
+	if (data_received) {
+		std::string answer(buffer);
+		if (findCapLs(answer) == 0) {
+			if (checkPasswordirssi(answer, client) == 1) {
+				this->_irssi_data = answer;
+				parsingDataIrssi(client, client_socket);
+				if (isRegistered(client)) {
+					client.isIrssi = true;
+					std::cout << GREEN << "\nNew connection accepted! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
+					std::cout << GREEN << "<" << client.getUser().getNickname() << "> is connected with irssi!\n" << RESET;
 				}
+			}
+			else {
+				client.sendClientMsg(client_socket, ERROR_ARGS_IRSSI);
+				close(client_socket);
+				_clients.erase(client_socket);
+			}
+		}
+	}
+	else {
+		std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
+		if (parsingDataNetcat(client, client_socket)) {
+			if (isRegistered(client)) {
+				std::cout << GREEN << "\nNew connection accepted! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
+				std::cerr << GREEN << "<" << client.getUser().getNickname() << "> is connected with netcat!\n" << RESET;
+			}
+			else {
+				std::cerr << RED << "\nClient disconnected during registration process, client_socket: " << client.getClientSocket() << RESET << std::endl;
+				close(client_socket);
+				_clients.erase(client_socket);
 			}
 		}
 		else {
-			std::cerr << BLUE << "No data received within the timeout period. Continuing..." << RESET << std::endl;
+			std::cerr << RED << "\nClient disconnected during registration process, client_socket: " << client.getClientSocket() << RESET << std::endl;
+			close(client_socket);
+			_clients.erase(client_socket);
 		}
 	}
-
-    // Accéder à l'objet client par référence
-    Client& client = _clients[client_socket];
-
-    if (data_received) {
-        std::string answer(buffer);
-        if (findCapLs(answer) == 0) {
-            if (checkPasswordirssi(answer, client) == 1) {
-                this->_irssi_data = answer;
-                parsingDataIrssi(client, client_socket);
-                if (isRegistered(client)) {
-                    client.isIrssi = true;
-                    std::cout << GREEN << "\nNew connection accepted! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
-                    std::cout << GREEN << "<" << client.getUser().getNickname() << "> is connected with irssi!\n" << RESET;
-                }
-            }
-			else {
-                client.sendClientMsg(client_socket, ERROR_ARGS_IRSSI);
-                close(client_socket);
-                _clients.erase(client_socket);
-            }
-        }
-    }
-	else {
-        std::cout << BLUE << "\n. . . Waiting for client registration . . . " << RESET << std::endl;
-        if (parsingDataNetcat(client, client_socket)) {
-            if (isRegistered(client)) {
-                std::cout << GREEN << "\nNew connection accepted! ✅ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
-                std::cerr << GREEN << "<" << client.getUser().getNickname() << "> is connected with netcat!\n" << RESET;
-            }
-			else {
-                std::cerr << RED << "\nClient disconnected during registration process, client_socket: " << client.getClientSocket() << RESET << std::endl;
-                close(client_socket);
-                _clients.erase(client_socket);
-            }
-        }
-		else {
-            std::cerr << RED << "\nClient disconnected during registration process, client_socket: " << client.getClientSocket() << RESET << std::endl;
-            close(client_socket);
-            _clients.erase(client_socket);
-        }
-    }
 }

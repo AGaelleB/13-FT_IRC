@@ -5,9 +5,6 @@ struct pollfd	fds[1024];
 int				nfds = 1;
 int				poll_count;
 
-std::map<int, Client> _clients;    // Définition sans extern
-int _server_socket = -1;           // Définition sans extern
-
 /************************************* CONST ET DEST *************************************/
 
 Server::Server() : _server_socket(-1), _password("1234"), _port(6667) {
@@ -72,79 +69,52 @@ void Server::initializeServer() {
 	signal(SIGTSTP, Server::TstpSignalHandler);	// catch the signal (ctrl + z)
 }
 
-
 void Server::acceptNewConnection() {
-    if (_clients.size() >= _MAX_CLIENTS) {
-        std::cerr << ERROR_MAX_CLIENT_SERVER << std::endl;
-        int new_client_socket = accept(_server_socket, NULL, NULL);
-        if (new_client_socket != -1) {
-            Client tempClient;
-            tempClient.sendClientMsg(new_client_socket, ERROR_MAX_CLIENT);
-            close(new_client_socket);
-        }
-        return;
-    }
+	if (_clients.size() >= _MAX_CLIENTS) {
+		std::cerr << ERROR_MAX_CLIENT_SERVER << std::endl;
+		int new_client_socket = accept(_server_socket, NULL, NULL);
+		if (new_client_socket != -1) {
+			Client tempClient;
+			tempClient.sendClientMsg(new_client_socket, ERROR_MAX_CLIENT);
+			close(new_client_socket);
+		}
+		return;
+	}
 
-    Client client;
-    socklen_t client_len = sizeof(client.getClientAddr());
-    int new_client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
-    if (new_client_socket == -1) {
-        std::cerr << "Error: connection not accepted" << std::endl;
-        return;
-    }
-
-    fds[nfds].fd = new_client_socket;
-    fds[nfds].events = POLLIN;
-    nfds++;
-
-    _clients[new_client_socket] = client;
-    detectClient(new_client_socket);
+	Client client;
+	socklen_t client_len = sizeof(client.getClientAddr());
+	int new_client_socket = accept(_server_socket, (struct sockaddr*)&client.getClientAddr(), &client_len);
+	if (new_client_socket == -1) {
+		std::cerr << "Error: connection not accepted" << std::endl;
+		return;
+	}
+	fds[nfds].fd = new_client_socket;
+	fds[nfds].events = POLLIN;
+	
+	nfds++;
+	_clients[new_client_socket] = client;
+	detectClient(new_client_socket);
 }
 
-
-// void Server::handlePollEvents() {
-//     for (int i = 0; i < nfds; ++i) {
-//         if (fds[i].revents & POLLIN) {
-//             std::cout << "Event detected on fd " << fds[i].fd << std::endl;
-//             if (fds[i].fd == _server_socket) {
-//                 acceptNewConnection();
-//             } else if (fds[i].fd == STDIN_FILENO) {
-//                 std::string command;
-//                 std::getline(std::cin, command);
-//                 if (command == "/STOP") {
-//                     std::cout << "Received /STOP command" << std::endl;
-//                     _shutdown_signal = true;
-//                     break;
-//                 }
-//             } else {
-//                 handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
-//             }
-//         }
-//     }
-// }
-
-
-
 void Server::handlePollEvents() {
-    for (int i = 0; i < nfds; i++) {
-        if (fds[i].revents == 0) {
-            continue;
-        }
-
-        if (fds[i].revents & POLLIN) {
-            if (fds[i].fd == _server_socket) {
-                // Nouvelle connexion entrante
-                acceptNewConnection();
-            } else {
-                // Données sur un socket existant
-                handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
-            }
-        } else if (fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) {
-            // Gestion des erreurs et déconnexions
-            std::cerr << "Client disconnected or error on socket: " << fds[i].fd << std::endl;
-            handleClientDisconnection(fds[i].fd);
-        }
-    }
+	for (int i = 0; i < nfds; ++i) {
+		if (fds[i].revents & POLLIN) {
+			if (fds[i].fd == _server_socket) {
+				acceptNewConnection();
+			}
+			else if (fds[i].fd == STDIN_FILENO) {
+				std::string command;
+				std::getline(std::cin, command);
+				if (command == "/STOP") {
+					std::cout << "Received /STOP command" << std::endl;
+					_shutdown_signal = true;
+					break;
+				}
+			}
+			else
+				handleClientMessage(fds[i].fd, _clients[fds[i].fd]);
+		}
+	}
 }
 
 void Server::stopServer() {
@@ -159,29 +129,22 @@ void Server::stopServer() {
 }
 
 void Server::startServer() {
-    initializeServer();
+	initializeServer();
 
-    // Initialiser le tableau fds
-    memset(fds, 0, sizeof(fds));
+	// Set up pollfd for server socket and stdin
+	fds[0].fd = _server_socket;
+	fds[0].events = POLLIN;
+	fds[1].fd = STDIN_FILENO;
+	fds[1].events = POLLIN;
+	nfds = 2; // We have two fds to monitor: server socket and stdin
 
-    // Configuration initiale de pollfd
-    fds[0].fd = _server_socket;
-    fds[0].events = POLLIN;
-    nfds = 1;
-
-    while (!_shutdown_signal) {
-        poll_count = poll(fds, nfds, 1000); // 1 seconde d'attente
-        if (poll_count == -1) {
-            std::cerr << "Error: poll failed" << std::endl;
-            break;
-        } else if (poll_count == 0) {
-            // Timeout - aucun événement détecté
-            continue;
-        }
-
-        // Gérer les événements de poll
-        handlePollEvents();
-    }
-    stopServer();
+	while (!_shutdown_signal) {
+		poll_count = poll(fds, nfds, 1000);
+		if (poll_count == -1) {
+			std::cerr << "Error: poll failed" << std::endl;
+			break;
+		}
+		handlePollEvents();
+	}
+	stopServer();
 }
-
