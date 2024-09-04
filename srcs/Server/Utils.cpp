@@ -39,14 +39,34 @@ std::vector<std::string> splitComa(const std::string& str) {
 	return (tokens);
 }
 
-void Server::SignalHandler(int sig) {
-	std::cout << std::endl << "Signal Received!" << std::endl;
-	Server::_shutdown_signal = true;
-	(void)sig;
+void cleanUp() {
+    // Itérer explicitement avec un itérateur pour C++98
+    std::map<int, Client>::iterator it;
+    for (it = _clients.begin(); it != _clients.end(); ++it) {
+        close(it->first);
+    }
+
+    // Fermez le socket du serveur
+    if (_server_socket != -1) {
+        close(_server_socket);
+    }
+
+    std::cout << "All sockets closed. Exiting now." << std::endl;
+    exit(0); // Quittez proprement
 }
 
 
+// Déclaration de la fonction cleanUp globale
+extern void cleanUp();
+
+void Server::SignalHandler(int sig) {
+    std::cout << std::endl << "Signal Received! Cleaning up and shutting down..." << std::endl;
+    Server::_shutdown_signal = true;
+    cleanUp(); // Appelez la fonction de nettoyage globale
+    (void)sig;
+}
+
 void Server::TstpSignalHandler(int sig) {
-	std::cout << std::endl << "SIGTSTP (Ctrl+Z) Received! Ignoring suspension" << std::endl;
-	(void)sig;
+    std::cout << std::endl << "SIGTSTP (Ctrl+Z) Received! Ignoring suspension" << std::endl;
+    (void)sig;
 }

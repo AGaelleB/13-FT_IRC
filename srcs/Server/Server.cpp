@@ -5,6 +5,8 @@ struct pollfd	fds[1024];
 int				nfds = 1;
 int				poll_count;
 
+std::map<int, Client> _clients;    // Définition sans extern
+int _server_socket = -1;           // Définition sans extern
 
 /************************************* CONST ET DEST *************************************/
 

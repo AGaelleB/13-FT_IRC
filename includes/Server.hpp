@@ -12,6 +12,8 @@ extern struct pollfd fds[1024];
 extern int nfds;
 extern int poll_count;
 
+extern std::map<int, Client> _clients;  // Déclaration avec extern
+extern int _server_socket;              // Déclaration avec extern
 
 class Client;
 class Channel;
@@ -72,6 +74,9 @@ class Server {
 		void		startServer();
 
 		Client&		getClientBySocket(int socket);
+
+        std::map<int, Client>& getClients() { return _clients; }
+        int getServerSocket() const { return _server_socket; }
 
 
 		/******************************* COMMANDES ********************************/
