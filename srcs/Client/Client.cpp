@@ -1,4 +1,3 @@
-
 #include "../../includes/Client.hpp"
 
 /************************************* CONST ET DEST *************************************/
@@ -66,77 +65,75 @@ bool Client::checkName(const std::string& username) {
 }
 
 std::string Client::setUserName() {
-    char buffer[1024];
-    ssize_t bytes_received;
+	char buffer[1024];
+	ssize_t bytes_received;
 
-    while (true) {
-        this->sendClientMsg(this->getClientSocket(), MSG_USERNAME);
+	while (true) {
+		this->sendClientMsg(this->getClientSocket(), MSG_USERNAME);
 
-        // Vérifier l'état du client en utilisant poll_count
-        if (poll_count <= 0) {
-            std::cerr << "Poll error or timeout during username entry." << std::endl;
-            return "";
-        }
+		// Vérifier l'état du client en utilisant poll_count
+		if (poll_count <= 0) {
+			std::cerr << "Poll error or timeout during username entry." << std::endl;
+			return ("");
+		}
 
-        bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
-        if (bytes_received <= 0) {
-            std::cerr << RED << "Client disconnected during username entry ❌ [socket: " << this->getClientSocket() << RESET << std::endl;
-            return "";
-        }
+		bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
+		if (bytes_received <= 0) {
+			std::cerr << RED << "Client disconnected, no username entry ❌ [socket: " << this->getClientSocket() << "]" << RESET << std::endl;
+			return ("");
+		}
 
-        buffer[bytes_received] = '\0';
-        std::string username = trim(buffer);
+		buffer[bytes_received] = '\0';
+		std::string username = trim(buffer);
 
-        if (username.length() < MIN_NAME_SIZE || username.length() > MAX_NAME_SIZE) {
-            this->sendClientMsg(this->getClientSocket(), ERROR_USERNAME_LENGHT);
-            continue;
-        }
+		if (username.length() < MIN_NAME_SIZE || username.length() > MAX_NAME_SIZE) {
+			this->sendClientMsg(this->getClientSocket(), ERROR_USERNAME_LENGHT);
+			continue;
+		}
 
-        if (this->checkName(username)) {
-            return username;
-        }
+		if (this->checkName(username))
+			return (username);
 
-        this->sendClientMsg(this->getClientSocket(), ERROR_USERNAME);
-    }
+		this->sendClientMsg(this->getClientSocket(), ERROR_USERNAME);
+	}
 }
 
 std::string Client::setNickName(Server& server) {
-    char buffer[1024];
-    ssize_t bytes_received;
+	char buffer[1024];
+	ssize_t bytes_received;
 
-    while (true) {
-        this->sendClientMsg(this->getClientSocket(), MSG_NICKNAME);
+	while (true) {
+		this->sendClientMsg(this->getClientSocket(), MSG_NICKNAME);
 
-        // Vérifier l'état du client en utilisant poll_count
-        if (poll_count <= 0) {
-            std::cerr << "Poll error or timeout during nickname entry." << std::endl;
-            server.handleClientDisconnection(this->getClientSocket());
-            return "";
-        }
+		// Vérifier l'état du client en utilisant poll_count
+		if (poll_count <= 0) {
+			std::cerr << "Poll error or timeout during nickname entry." << std::endl;
+			server.handleClientDisconnection(this->getClientSocket());
+			return ("");
+		}
 
-        bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
-        if (bytes_received <= 0) {
-            std::cerr << RED << "Client disconnected during nickname entry ❌ [socket: " << this->getClientSocket() << RESET << std::endl;
-            server.handleClientDisconnection(this->getClientSocket());
-            return "";
-        }
+		bytes_received = recv(this->getClientSocket(), buffer, sizeof(buffer) - 1, 0);
+		if (bytes_received <= 0) {
+			std::cerr << RED << "Client disconnected, no nickname entry ❌ [socket: " << this->getClientSocket() << "]" << RESET << std::endl;
+			server.handleClientDisconnection(this->getClientSocket());
+			return ("");
+		}
 
-        buffer[bytes_received] = '\0';
-        std::string nickname = trim(buffer);
+		buffer[bytes_received] = '\0';
+		std::string nickname = trim(buffer);
 
-        if (nickname.length() < MIN_NAME_SIZE || nickname.length() > MAX_NAME_SIZE) {
-            this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_LENGHT);
-            continue;
-        }
+		if (nickname.length() < MIN_NAME_SIZE || nickname.length() > MAX_NAME_SIZE) {
+			this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_LENGHT);
+			continue;
+		}
 
-        if (this->checkName(nickname)) {
-            if (server.isNicknameAvailable(nickname)) {
-                return nickname;
-            } else {
-                this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_NOT_AVAILABLE);
-            }
-        } else {
-            this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME);
-        }
-    }
+		if (this->checkName(nickname)) {
+			if (server.isNicknameAvailable(nickname))
+				return (nickname);
+			else
+				this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME_NOT_AVAILABLE);
+		}
+		else
+			this->sendClientMsg(this->getClientSocket(), ERROR_NICKNAME);
+	}
 }

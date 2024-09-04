@@ -168,13 +168,13 @@ void Server::detectClient(int client_socket) {
 				std::cerr << GREEN << "<" << client.getUser().getNickname() << "> is connected with netcat!\n" << RESET;
 			}
 			else {
-				std::cerr << RED << "\nClient disconnected during registration process, client_socket: " << client.getClientSocket() << RESET << std::endl;
+				std::cerr << RED << "Client disconnected during registration process ❌ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
 				close(client_socket);
 				_clients.erase(client_socket);
 			}
 		}
 		else {
-			std::cerr << RED << "\nClient disconnected during registration process, client_socket: " << client.getClientSocket() << RESET << std::endl;
+			std::cerr << RED << "Client disconnected during registration process ❌ [socket: " << client.getClientSocket() << "]" << RESET << std::endl;
 			close(client_socket);
 			_clients.erase(client_socket);
 		}

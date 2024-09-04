@@ -45,7 +45,6 @@ void Server::SignalHandler(int sig) {
 	(void)sig;
 }
 
-
 void Server::TstpSignalHandler(int sig) {
 	std::cout << std::endl << "SIGTSTP (Ctrl+Z) Received! Ignoring suspension" << std::endl;
 	(void)sig;
