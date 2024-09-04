@@ -215,6 +215,11 @@ class Server {
 		// Utils.cpp
 		static void	SignalHandler(int sig);
 		static void TstpSignalHandler(int sig);
+
+
+void handleClientDisconnection(int client_fd);
+
+
 };
 
 #endif // SERVER_HPP
