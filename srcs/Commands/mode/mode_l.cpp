@@ -8,7 +8,7 @@
 
 void Server::modeLCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
 	if (tokens.size() != 4) {
-		std::string netcatMessage = "Error: Must be: /MODE <channel> <+l> <max users>\r\n";
+		std::string netcatMessage = std::string(RED) + "Error: Must be: /MODE <channel> <+l> <max users>\r\n" + std::string(RESET);
 		std::string irssiMessage = ":localhost 461 " + client.getUser().getNickname() + " MODE_L :Not enough parameters\r\n";
 		sendErrorMessage(client, netcatMessage, irssiMessage);
 		return;
