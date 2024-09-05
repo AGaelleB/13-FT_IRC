@@ -4,9 +4,9 @@ void Server::checkPassword(Client &client) {
 	char buffer[1024];
 	ssize_t bytes_received;
 
-	client.sendClientMsg(client.getClientSocket(), MSG_PASSWORD);
 
 	while (true) {
+		client.sendClientMsg(client.getClientSocket(), MSG_PASSWORD);
 		if (poll_count <= 0) {
 			std::cerr << "Poll error or timeout during password entry." << std::endl;
 			handleClientDisconnection(client.getClientSocket());

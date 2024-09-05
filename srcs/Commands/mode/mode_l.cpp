@@ -14,6 +14,13 @@ void Server::modeLCmd(Client& client, std::vector<std::string> tokens, Channel& 
 		return;
 	}
 
+	if (!channel.isOperator(client.getClientSocket())) {
+		std::string errorMessage = std::string(RED) + "Error: Only channel operators can use this mode.\r\n" + std::string(RESET);
+		std::string irssiMessage = ":localhost 482 " + client.getUser().getNickname() + " " + channel.getName() + " :You're not channel operator\r\n";
+		sendErrorMessage(client, errorMessage, irssiMessage);
+		return;
+	}
+
 	std::string fullMessage;
 
 	if (tokens[2] == "+l") {

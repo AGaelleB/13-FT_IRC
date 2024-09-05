@@ -8,9 +8,16 @@
 
 void Server::modeTCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
 	if (tokens.size() != 3) {
-		std::string netcatMessage = "Error: Must be: /MODE <channel> <+t / -t>\r\n";
+		std::string netcatMessage = std::string(RED) + "Error: Must be: /MODE <channel> <+t / -t>\r\n" + std::string(RESET);
 		std::string irssiMessage = ":localhost 461 " + client.getUser().getNickname() + " MODE_T :Not enough parameters\r\n";
 		sendErrorMessage(client, netcatMessage, irssiMessage);
+		return;
+	}
+
+	if (!channel.isOperator(client.getClientSocket())) {
+		std::string errorMessage = std::string(RED) + "Error: Only channel operators can use this mode.\r\n" + std::string(RESET);
+		std::string irssiMessage = ":localhost 482 " + client.getUser().getNickname() + " " + channel.getName() + " :You're not channel operator\r\n";
+		sendErrorMessage(client, errorMessage, irssiMessage);
 		return;
 	}
 

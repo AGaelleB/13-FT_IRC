@@ -20,7 +20,8 @@
 // password
 # define MSG_PASSWORD BOLD "Enter Server password: " RESET
 # define ERROR_PASSWORD_TOO_LONG RED "Error: password is too long\n\n" RESET
-# define ERROR_PASSWORD RED "Wrong password\n\n" RESET
+# define ERROR_PASSWORD RED "Wrong password\n" RESET
+
 
 // commands
 # define UNKNOWN_CMD "Unknown command\n"

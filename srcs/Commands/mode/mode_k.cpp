@@ -11,6 +11,14 @@
  */
 
 void Server::modeKCmd(Client& client, std::vector<std::string> tokens, Channel& channel, std::string channelName) {
+
+	if (!channel.isOperator(client.getClientSocket())) {
+		std::string errorMessage = std::string(RED) + "Error: Only channel operators can use this mode.\r\n" + std::string(RESET);
+		std::string irssiMessage = ":localhost 482 " + client.getUser().getNickname() + " " + channel.getName() + " :You're not channel operator\r\n";
+		sendErrorMessage(client, errorMessage, irssiMessage);
+		return;
+	}
+
 	if (tokens[2] == "+k") {
 		if (tokens.size() != 4) {
 			std::string errorMsgNetcat = std::string(RED) + "Error: Invalid number of parameters for +k mode. Usage: /mode <channel> +k <key>\n" + std::string(RESET);

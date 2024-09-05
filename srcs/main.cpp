@@ -8,7 +8,7 @@ int main(int ac, char **av) {
 
 	int port = std::atoi(av[1]);
 	if (port < 1000 || port > 9999 || std::strlen(av[1]) != 4) {
-		std::cout << RED << "Error: port must contain 4 digits" << RESET << std::endl;
+		std::cout << RED << "Error: port must contain 4 digits between port 1000 and port 9999" << RESET << std::endl;
 		return (-1);
 	}
 

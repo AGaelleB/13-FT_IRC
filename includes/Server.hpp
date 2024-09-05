@@ -6,7 +6,7 @@
 # include "./Client.hpp"
 # include "./Channel.hpp"
 
-# define MAX_SIZE_MSG 150
+# define MAX_SIZE_MSG 350
 
 extern struct pollfd fds[1024];
 extern int nfds;

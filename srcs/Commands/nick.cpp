@@ -10,11 +10,6 @@ bool Server::isNicknameAvailable(const std::string& nickname) {
 
 void Server::removeNickname(const std::string& nickname) {
 	_nicknames.erase(nickname);
-
-	if (_nicknames.find(nickname) == _nicknames.end())
-		std::cout << GREEN << "The nickname: " << nickname << " has been weel removed" << RESET << std::endl;
-	else
-		std::cout << RED << "Failed to remove nickname: " << nickname << RESET << std::endl;
 }
 
 void Server::addNickname(const std::string& nickname) {
