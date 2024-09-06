@@ -1,5 +1,7 @@
 # 13-FT_IRC
 
+![Alt text](/mnt/nfs/homes/abonnefo/Pictures/Screenshots/irc.png?raw=true "IRC_validation")
+
 ## Résumé
 
 L’objectif de ce projet est de reproduire le fonctionnement d’un serveur IRC. On utilisera un vrai client IRC afin de se connecter à notre serveur et ainsi de le tester.
