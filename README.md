@@ -1,6 +1,6 @@
 # 13-FT_IRC
 
-![Alt text](/mnt/nfs/homes/abonnefo/Pictures/Screenshots/irc.png?raw=true "IRC_validation")
+![irc](https://github.com/user-attachments/assets/a9fb5001-b4c4-45c6-ad16-7823905643de)
 
 ## Résumé
 
