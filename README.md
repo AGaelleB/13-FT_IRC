@@ -34,6 +34,8 @@ To start the server, use the following command:
 ./ircserv 6667 1
 ```
 
+![Screenshot from 2024-12-17 13-15-04](https://github.com/user-attachments/assets/9fe21d94-1c43-4565-83b5-b00884b33ba6)
+
 ## Connecting Clients
 
 You can connect clients to the server in different ways:
@@ -44,6 +46,8 @@ You can connect clients to the server in different ways:
 nc localhost 6667
 ```
 
+![Screenshot from 2024-12-17 13-15-12](https://github.com/user-attachments/assets/a2c8105b-c3b2-4f24-998b-b2be85f422f1)
+
 ### Irssi
 
 Launch `irssi` and then type:
@@ -51,6 +55,8 @@ Launch `irssi` and then type:
 ```sh
 /connect localhost 6667 1
 ```
+
+![Screenshot from 2024-12-17 13-15-28](https://github.com/user-attachments/assets/0dc48e25-1874-41a8-a711-cd984fc0f493)
 
 ## List of Commands
 
