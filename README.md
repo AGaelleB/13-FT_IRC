@@ -235,9 +235,3 @@ Be careful, VS Code leaves file descriptors open, so test in a terminal.
 valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./ircserv 6667 1
 valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes nc localhost 6667
 ```
-
-# OVERVIEW OF THE PROJECT
-
-
-
-
