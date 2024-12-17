@@ -2,43 +2,41 @@
 
 ![irc](https://github.com/user-attachments/assets/a9fb5001-b4c4-45c6-ad16-7823905643de)
 
-## Résumé
+## Summary
 
-L’objectif de ce projet est de reproduire le fonctionnement d’un serveur IRC. On utilisera un vrai client IRC afin de se connecter à notre serveur et ainsi de le tester.
+The objective of this project is to reproduce the functionality of an IRC server. We will use a real IRC client to connect to our server and test it.
 
 ## Introduction
 
-Internet Relay Chat (IRC) est un protocole de communication textuel sur Internet. Il sert à la communication instantanée principalement sous la forme de discussions en groupe par l’intermédiaire de canaux de discussion, mais peut aussi être utilisé pour de la communication directe entre deux personnes.
+Internet Relay Chat (IRC) is a text-based communication protocol on the Internet. It is primarily used for instant communication through group discussions via chat channels, but it can also be used for direct communication between two people.
 
-## Partie Obligatoire
+## Mandatory Part
 
-### Nom du programme
+### Program Name
 
 - **ircserv**
 
-### Fonctions externes autorisées
+### Allowed External Functions
 
-- `socket`, `close`, `setsockopt`, `getsockname`, `getprotobyname`, `gethostbyname`, `getaddrinfo`, `freeaddrinfo`, `bind`, `connect`, `listen`, `accept`, `htons`, `htonl`, `ntohs`, `ntohl`, `inet_addr`, `inet_ntoa`, `send`, `recv`, `signal`, `sigaction`, `lseek`, `fstat`,`poll` (ou équivalent)
+- `socket`, `close`, `setsockopt`, `getsockname`, `getprotobyname`, `gethostbyname`, `getaddrinfo`, `freeaddrinfo`, `bind`, `connect`, `listen`, `accept`, `htons`, `htonl`, `ntohs`, `ntohl`, `inet_addr`, `inet_ntoa`, `send`, `recv`, `signal`, `sigaction`, `lseek`, `fstat`, `poll` (or equivalent)
 
-### Description générale
+### General Description
 
-- Développer un serveur IRC en C++ 98.
-[expliquer le sujet]
+- Develop an IRC server in C++ 98.
 
+# IRC Server User Guide
 
-# Guide d'utilisation du serveur IRC
+## Starting the Server
 
-## Démarrage du serveur
-
-Pour démarrer le serveur, utilisez la commande suivante :
+To start the server, use the following command:
 
 ```sh
 ./ircserv 6667 1
 ```
 
-## Connexion des clients
+## Connecting Clients
 
-Vous pouvez connecter des clients au serveur de différentes manières :
+You can connect clients to the server in different ways:
 
 ### Netcat
 
@@ -48,142 +46,143 @@ nc localhost 6667
 
 ### Irssi
 
-Lancez `irssi`, puis tapez :
+Launch `irssi` and then type:
 
 ```sh
 /connect localhost 6667 1
 ```
 
-## Liste des commandes
+## List of Commands
 
-- **Aide :**
+- **Help:**
 
   ```sh
   /help
   ```
 
-- **Envoyer un message privé :**
+- **Send a private message:**
 
   ```sh
-  /PRIVMSG <nom de l'utilisateur> [message]
+  /PRIVMSG <username> [message]
   ```
 
-- **Rejoindre un channel :**
+- **Join a channel:**
 
   ```sh
-  /JOIN [nom du channel]
+  /JOIN [channel name]
   ```  
 
-- **Changer de pseudo :**
+- **Change nickname:**
 
   ```sh
-  /nick [nouveau pseudo]
+  /nick [new nickname]
   ```
 
-- **Lister les channels :**
+- **List channels:**
 
   ```sh
   /list
   ```
 
-- **Message privé :**
+- **Private message:**
 
   ```sh
-  /msg [nom de l'utilisateur] [message]
+  /msg [username] [message]
   ```
 
-- **Rejoindre un channel :**
+- **Join a channel:**
 
   ```sh
-  /join [nom du channel]
+  /join [channel name]
   ```
 
-- **Quitter le serveur :**
+- **Quit the server:**
 
   ```sh
-  /quit [optionnel - raison]
+  /quit [optional - reason]
   ```
 
-- **Quitter un channel :**
+- **Leave a channel:**
 
   ```sh
-  /part [nom du channel]
+  /part [channel name]
   ```
 
-- **Changer le sujet du channel :**
+- **Change channel topic:**
 
   ```sh
-  /topic [nouveau sujet]
+  /topic [new topic]
   ```
 
-- **Exclure un utilisateur du channel :**
+- **Kick a user from a channel:**
 
   ```sh
-  /kick [nom de l'utilisateur]
+  /kick [username]
   ```
 
-- **Inviter un utilisateur dans un channel :**
+- **Invite a user to a channel:**
 
   ```sh
-  /invite [nom de l'utilisateur]
+  /invite [username]
   ```
 
 ## MODE
 
-- **Changer le mode d'un utilisateur ou d'un channel :**
+- **Change user or channel mode:**
 
   ```sh
-  /mode [nom de l'utilisateur] [nom du channel] [mode]
+  /mode [username] [channel name] [mode]
   ```
 
-
-### Description des modes
+### Mode Descriptions
 
 1. **Mode i (Invite Only)**
-   - **Description** : Rend le channel accessible uniquement sur invitation.
-   - **Usage** : Seuls les utilisateurs invités peuvent rejoindre le channel.
-   - **Commande** :
+   - **Description**: Makes the channel accessible only by invitation.
+   - **Usage**: Only invited users can join the channel.
+   - **Command**:
      ```sh
-     /mode #nom_du_channel +i
-     /mode #nom_du_channel -i
+     /mode #channel_name +i
+     /mode #channel_name -i
      ```
 
 2. **Mode t (Topic Protection)**
-   - **Description** : Seuls les opérateurs de channel peuvent changer le sujet du channel.
-   - **Usage** : Empêche les utilisateurs non opérateurs de modifier le sujet du channel.
-   - **Commande** :
+   - **Description**: Only channel operators can change the channel topic.
+   - **Usage**: Prevents non-operators from modifying the channel topic.
+   - **Command**:
      ```sh
-     /mode #nom_du_channel +t
-     /mode #nom_du_channel -t
+     /mode #channel_name +t
+     /mode #channel_name -t
      ```
 
 3. **Mode k (Channel Key)**
-   - **Description** : Protège le channel avec un mot de passe.
-   - **Usage** : Les utilisateurs doivent fournir le mot de passe pour rejoindre le channel.
-   - **Commande** :
+   - **Description**: Protects the channel with a password.
+   - **Usage**: Users must provide the password to join the channel.
+   - **Command**:
      ```sh
-     /mode #nom_du_channel +k [mot_de_passe]
-     /mode #nom_du_channel -k
+     /mode #channel_name +k [password]
+     /mode #channel_name -k
      ```
 
 4. **Mode o (Operator)**
-   - **Description** : Donne ou retire le statut d'opérateur à un utilisateur dans le channel.
-   - **Usage** : Les opérateurs ont des privilèges supplémentaires comme changer le sujet ou expulser des utilisateurs.
-   - **Commande** :
+   - **Description**: Grants or removes operator status for a user in the channel.
+   - **Usage**: Operators have additional privileges such as changing the topic or kicking users.
+   - **Command**:
      ```sh
-     /mode #nom_du_channel +o [nom_de_l'utilisateur]
-     /mode #nom_du_channel -o [nom_de_l'utilisateur]
+     /mode #channel_name +o [username]
+     /mode #channel_name -o [username]
      ```
 
 5. **Mode l (Channel Limit)**
-   - **Description** : Limite le nombre d'utilisateurs pouvant rejoindre le channel.
-   - **Usage** : Empêche plus d'utilisateurs que la limite spécifiée de rejoindre le channel.
-   - **Commande** :
+   - **Description**: Limits the number of users allowed in the channel.
+   - **Usage**: Prevents more users than the specified limit from joining the channel.
+   - **Command**:
      ```sh
-     /mode #nom_du_channel +l [limite_d'utilisateur]
-## Mise en pause et reprise du client
+     /mode #channel_name +l [user_limit]
+     ```
 
-Pour mettre en pause le client, utilisez `Ctrl+Z`. Pour le reprendre, tapez :
+## Pausing and Resuming the Client
+
+To pause the client, use `Ctrl+Z`. To resume, type:
 
 ```sh
 fg
@@ -191,41 +190,48 @@ fg
 
 # BONUS
 
-## L’envoi de fichier
+## File Transfer
 
-Pour envoyer un fichier entre deux clients utilisant irssi et netcat, on utilise le protocole DCC (Direct Client-to-Client) qui est spécifiquement conçu pour ce type de transfert sur IRC.
+To send a file between two clients using Irssi and Netcat, we use the DCC (Direct Client-to-Client) protocol, which is specifically designed for this type of transfer over IRC.
 
-### Utilisation de irssi et DCC
+### Using Irssi and DCC
 
-- **Commande sur l'ordinateur de l'émetteur (client irssi) :**
-```sh
-/dcc send <pseudo_destinataire> <chemin_du_fichier>
-```
-
-- **Commande sur l'ordinateur du récepteur (client irssi) :**
+- **Command on the sender's computer (Irssi client):**
 
 ```sh
-/dcc get <pseudo_emetteur> <nom_du_fichier>
+/dcc send <recipient_username> <file_path>
 ```
 
-## Le bot
+- **Command on the receiver's computer (Irssi client):**
 
-Notre bot IRC surveille les messages envoyés dans les canaux et expulse les utilisateurs qui utilisent des mots interdits. Il maintient une liste de mots bannis et vérifie chaque message. Si un mot interdit est détecté, l'utilisateur est expulsé du canal et une notification est envoyée aux autres membres.
+```sh
+/dcc get <sender_username> <file_name>
+```
+
+## The Bot
+
+Our IRC bot monitors messages sent in channels and kicks users who use forbidden words. It maintains a list of banned words and checks each message. If a forbidden word is detected, the user is kicked from the channel, and a notification is sent to other members.
 
 1. **Mode b (ban word)**
-   - **Description** : Le mode +b permet aux opérateurs de canal d'ajouter/supprimer des mots à la liste des mots bannis.
-   - **Usage** : Seuls les opérateurs peuvent ajouter/retirer des mots interdits pour mieux modérer le canal.
-   - **Commande** :
+   - **Description**: The +b mode allows channel operators to add/remove words to the banned words list.
+   - **Usage**: Only operators can add/remove forbidden words to better moderate the channel.
+   - **Command**:
      ```sh
-     /mode #nom_du_channel +b [mot_banni]
-     /mode #nom_du_channel -b [mot_debanni]
+     /mode #channel_name +b [banned_word]
+     /mode #channel_name -b [unbanned_word]
      ```
 
-# Commandes pour les leaks
+# Commands for Memory Leaks
 
-Attention, VS Code laisse des fds open, a tester sur un terminal
+Be careful, VS Code leaves file descriptors open, so test in a terminal.
 
 ```sh
 valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes ./ircserv 6667 1
 valgrind --leak-check=full --show-leak-kinds=all --track-fds=yes nc localhost 6667
 ```
+
+# OVERVIEW OF THE PROJECT
+
+
+
+
